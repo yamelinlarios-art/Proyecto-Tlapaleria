@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 /**
  * Entidad de negocio Devolucion
  * 
- * @author Kevin Dydier López Flores
+ * @author Javitos
  */
 @Entity // Define esta clase como una entidad persistente en Spring Boot
 public class Devolucion {

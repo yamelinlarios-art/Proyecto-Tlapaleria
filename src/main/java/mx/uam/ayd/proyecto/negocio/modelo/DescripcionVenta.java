@@ -9,7 +9,7 @@ import jakarta.persistence.Id;
 /**
  * Entidad de negocio DescripcionVenta (Detalle de la venta)
  * 
- * @author Kevin Dydier López Flores
+ * @author Javitos 
  */
 @Entity 
 public class DescripcionVenta {
