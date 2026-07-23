@@ -19,6 +19,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import mx.uam.ayd.proyecto.negocio.modelo.MovimientoInventario;
 
 /**
  * Ventana para consultar el historial de movimientos de inventario.
