@@ -86,3 +86,6 @@ public class ControlConsultarInventario {
 
 //////////////7 agregue comentario para verificAR  COMMIT 
 /// 
+/// 
+/// /////////////////////// puse otro comentario para ver si a todos le llega 
+/// 
