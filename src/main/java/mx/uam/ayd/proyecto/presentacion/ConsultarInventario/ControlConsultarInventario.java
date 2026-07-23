@@ -82,3 +82,7 @@ public class ControlConsultarInventario {
         ventana.setVisible(false);
     }
 }
+
+
+//////////////7 agregue comentario para verificAR  COMMIT 
+/// 
