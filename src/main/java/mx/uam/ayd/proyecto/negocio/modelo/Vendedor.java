@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 /**
  * Entidad de negocio Vendedor
  * 
- * @author Kevin Dydier López Flores
+ * @author javitos
  */
 @Entity // Le dice a Spring que esta es una entidad persistente para la BD
 public class Vendedor {

@@ -5,12 +5,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 /**
  * Entidad de negocio Venta
  * 
- * @author Lopez Flores Kevin Dydier 
+ * @author javitos
  */
 @Entity 
 public class Venta {
