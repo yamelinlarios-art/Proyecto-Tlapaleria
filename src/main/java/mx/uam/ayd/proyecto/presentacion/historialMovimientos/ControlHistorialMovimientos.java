@@ -60,8 +60,7 @@ public class ControlHistorialMovimientos {
         List<MovimientoInventario> movimientos =
                 servicioMovimientoInventario.obtenerMovimientos();
 
-        ventanaHistorialMovimientos
-                .muestraMovimientos(movimientos);
+        ventanaHistorialMovimientos.muestraMovimientos(movimientos);
     }
 
     /**
@@ -92,3 +91,5 @@ public class ControlHistorialMovimientos {
                 .consultarDetalleMovimiento(idMovimiento);
     }
 }
+
+//dajlkjcsk

@@ -82,4 +82,3 @@ public class ControlConsultarInventario {
         ventana.setVisible(false);
     }
 }
-
