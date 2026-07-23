@@ -91,7 +91,7 @@ public class ServicioUsuario {
 
 	/**
 	 * Recupera todos los usuarios existentes
-	 * 
+	 *
 	 * @return Una lista con los usuarios (o lista vacía)
 	 */
 	public List <Usuario> recuperaUsuarios() {
@@ -101,6 +101,7 @@ public class ServicioUsuario {
 		
 		List <Usuario> usuarios = new ArrayList<>();
 		
+		 
 		for(Usuario usuario:usuarioRepository.findAll()) {
 			usuarios.add(usuario);
 		}

@@ -7,157 +7,124 @@ import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 
 /**
- * Entidad de negocio Devolucion
- * 
- * @author Javitos
+ * Entidad de negocio Devolucion (HU10 - Devolución de productos dañados)
+ *
+ * @author Yamelin
+ *
  */
-@Entity // Define esta clase como una entidad persistente en Spring Boot
+@Entity
 public class Devolucion {
 
-    @Id 
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // ID autoincrementable
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idDevolucion;
 
+    private long idProducto;
+    private int cantidad;
     private String motivo;
-
     private String tipoDevolucion;
+    private LocalDateTime fecha;
 
-    private LocalDateTime fecha; 
-
-    private int idProducto;
-
+    // Atributos colaborativos opcionales (para auditoría o relación con personal/proveedor)
     private int idProveedor;
-
     private String numeroEmpleado;
 
-    /**
-     * Constructor vacío requerido por JPA
-     */
+    // Constructor por defecto requerido por JPA
     public Devolucion() {
     }
 
-    /**
-     * @return the idDevolucion
-     */
+    //          MÉTODOS DE ACCESO: GETTERS
+
     public long getIdDevolucion() {
         return idDevolucion;
     }
 
-    /**
-     * @param idDevolucion the idDevolucion to set
-     */
-    public void setIdDevolucion(long idDevolucion) {
-        this.idDevolucion = idDevolucion;
+    public long getIdProducto() {
+        return idProducto;
     }
 
-    /**
-     * @return the motivo
-     */
+    public int getCantidad() {
+        return cantidad;
+    }
+
     public String getMotivo() {
         return motivo;
     }
 
-    /**
-     * @param motivo the motivo to set
-     */
-    public void setMotivo(String motivo) {
-        this.motivo = motivo;
-    }
-
-    /**
-     * @return the tipoDevolucion
-     */
     public String getTipoDevolucion() {
         return tipoDevolucion;
     }
 
-    /**
-     * @param tipoDevolucion the tipoDevolucion to set
-     */
-    public void setTipoDevolucion(String tipoDevolucion) {
-        this.tipoDevolucion = tipoDevolucion;
-    }
-
-    /**
-     * @return the fecha
-     */
     public LocalDateTime getFecha() {
         return fecha;
     }
 
-    /**
-     * @param fecha the fecha to set
-     */
-    public void setFecha(LocalDateTime fecha) {
-        this.fecha = fecha;
-    }
-
-    /**
-     * @return the idProducto
-     */
-    public int getIdProducto() {
-        return idProducto;
-    }
-
-    /**
-     * @param idProducto the idProducto to set
-     */
-    public void setIdProducto(int idProducto) {
-        this.idProducto = idProducto;
-    }
-
-    /**
-     * @return the idProveedor
-     */
     public int getIdProveedor() {
         return idProveedor;
     }
 
-    /**
-     * @param idProveedor the idProveedor to set
-     */
-    public void setIdProveedor(int idProveedor) {
-        this.idProveedor = idProveedor;
-    }
-
-    /**
-     * @return the numeroEmpleado
-     */
     public String getNumeroEmpleado() {
         return numeroEmpleado;
     }
 
-    /**
-     * @param numeroEmpleado the numeroEmpleado to set
-     */
+    //          MÉTODOS DE ACCESO: SETTERS
+
+    public void setIdDevolucion(long idDevolucion) {
+        this.idDevolucion = idDevolucion;
+    }
+
+    public void setIdProducto(long idProducto) {
+        this.idProducto = idProducto;
+    }
+
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
+    }
+
+    public void setMotivo(String motivo) {
+        this.motivo = motivo;
+    }
+
+    public void setTipoDevolucion(String tipoDevolucion) {
+        this.tipoDevolucion = tipoDevolucion;
+    }
+
+    public void setFecha(LocalDateTime fecha) {
+        this.fecha = fecha;
+    }
+
+    public void setIdProveedor(int idProveedor) {
+        this.idProveedor = idProveedor;
+    }
+
     public void setNumeroEmpleado(String numeroEmpleado) {
         this.numeroEmpleado = numeroEmpleado;
     }
 
+    //          MÉTODOS SOBREESCRITOS (@Override)
+
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
         Devolucion other = (Devolucion) obj;
         return idDevolucion == other.idDevolucion;
     }
 
     @Override
     public int hashCode() {
-        return (int) (31 * idDevolucion);
+        return Long.hashCode(idDevolucion);
     }
 
     @Override
     public String toString() {
-        return "Devolucion [idDevolucion=" + idDevolucion + ", motivo=" + motivo + ", tipoDevolucion=" + tipoDevolucion 
-                + ", fecha=" + fecha + ", idProducto=" + idProducto + ", idProveedor=" + idProveedor 
-                + ", numeroEmpleado=" + numeroEmpleado + "]";
+        return "Devolucion{" +
+                "idDevolucion=" + idDevolucion +
+                ", idProducto=" + idProducto +
+                ", cantidad=" + cantidad +
+                ", motivo='" + motivo + '\'' +
+                ", tipoDevolucion='" + tipoDevolucion + '\'' +
+                ", fecha=" + fecha +
+                '}';
     }
 }
