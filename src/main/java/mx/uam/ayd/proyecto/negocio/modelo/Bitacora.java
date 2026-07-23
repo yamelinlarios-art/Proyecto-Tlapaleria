@@ -283,4 +283,4 @@ public class Bitacora { // Clase pública para que las demás capas interactúen
 
 } 
 
-//comentario ver funcionamiento
+// borre el comentario que estaba aqui jajajjajja 
