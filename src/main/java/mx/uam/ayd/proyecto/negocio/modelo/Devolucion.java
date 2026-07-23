@@ -100,10 +100,10 @@ public class Devolucion {
     }
 
     /**
-     * @param idProducto the idProducto to set
+     * @param idProducto2 the idProducto to set
      */
-    public void setIdProducto(int idProducto) {
-        this.idProducto = idProducto;
+    public void setIdProducto(long idProducto2) {
+        this.idProducto = idProducto2;
     }
 
     /**
@@ -159,5 +159,10 @@ public class Devolucion {
         return "Devolucion [idDevolucion=" + idDevolucion + ", motivo=" + motivo + ", tipoDevolucion=" + tipoDevolucion 
                 + ", fecha=" + fecha + ", idProducto=" + idProducto + ", idProveedor=" + idProveedor 
                 + ", numeroEmpleado=" + numeroEmpleado + "]";
+    }
+
+    public void setCantidad(int cantidad) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setCantidad'");
     }
 }
