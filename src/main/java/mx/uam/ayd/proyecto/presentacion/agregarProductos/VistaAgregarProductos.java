@@ -11,7 +11,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -23,17 +22,15 @@ import mx.uam.ayd.proyecto.negocio.modelo.DescripcionVenta;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 import mx.uam.ayd.proyecto.negocio.modelo.Venta;
 
-/**
- * @author Tu Nombre
- */
 @Component
 public class VistaAgregarProductos {
 
     private Stage stage;
     private ControlAgregarProductos control;
 
+    // Cambiamos el ComboBox por el Campo de Texto para buscar
     @FXML
-    private ComboBox<Producto> comboProductos;
+    private TextField txtBuscarProducto;
 
     @FXML
     private TextField txtCantidad;
@@ -58,102 +55,84 @@ public class VistaAgregarProductos {
 
     private boolean initialized = false;
 
-    /////////////////////////////////////////////////////////////////////// CONSTRUCTOR
+    // Almacenamos el catálogo de productos enviado por el ServicioProducto
+    private Iterable<Producto> catalogoProductos;
+
     public VistaAgregarProductos() {
     }
 
-    /**
-     * Inicializa los componentes de la interfaz en el hilo de JavaFX
-     */
-   private void initializeUI() {
-    if (initialized) {
-        return;
+    private void initializeUI() {
+        if (initialized) {
+            return;
+        }
+
+        try {
+            stage = new Stage();
+            stage.setTitle("Agregar Productos a la Venta");
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/vista-agregar-productos.fxml"));
+            loader.setController(this);
+            Scene scene = new Scene(loader.load(), 700, 500);
+            stage.setScene(scene);
+
+            // Mapeo de columnas
+            colNombre.setCellValueFactory(new PropertyValueFactory<>("productoNombre"));
+            colPrecio.setCellValueFactory(new PropertyValueFactory<>("precioUnitario"));
+            colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
+            colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
+
+            initialized = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    try {
-        stage = new Stage();
-        stage.setTitle("Agregar Productos a la Venta");
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/vista-agregar-productos.fxml"));
-        loader.setController(this);
-        
-        Scene scene = new Scene(loader.load(), 700, 500);
-        stage.setScene(scene);
-
-        // Mapeo de columnas con las propiedades de DescripcionVenta
-        colNombre.setCellValueFactory(new PropertyValueFactory<>("productoNombre"));
-        colPrecio.setCellValueFactory(new PropertyValueFactory<>("precioUnitario"));
-        colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
-        colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
-
-        initialized = true;
-    } catch (IOException e) {
-        e.printStackTrace();
-    }
-}
-
-    /**
-     * Establece el controlador asociado
-     */
     public void setControl(ControlAgregarProductos control) {
         this.control = control;
     }
 
     /**
-     * Muestra la ventana y establece el catálogo de productos inicial.
-     * Corresponde a mostrarVentanaVenta en el diagrama de secuencia.
+     * Corresponde a mostrarVentanaVenta en tu diagrama de secuencia / HU
      */
-   public void mostrarVentanaVenta(ControlAgregarProductos control, Iterable<Producto> productos) {
-    if (!Platform.isFxApplicationThread()) {
-        Platform.runLater(() -> this.mostrarVentanaVenta(control, productos));
-        return;
-    }
-
-    this.setControl(control);
-    
-    // 1. Cargamos la interfaz de usuario en este mismo hilo
-    initializeUI();
-
-    // 2. Ahora que FXML ya inyectó los controles, podemos usarlos de forma segura
-    if (comboProductos != null) {
-        comboProductos.getItems().clear();
-        for (Producto p : productos) {
-            comboProductos.getItems().add(p);
+    public void mostrarVentanaVenta(ControlAgregarProductos control, Iterable<Producto> productos) {
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> this.mostrarVentanaVenta(control, productos));
+            return;
         }
+
+        this.setControl(control);
+        this.catalogoProductos = productos; // Guardamos el catálogo localmente
+
+        initializeUI();
+
+        // Limpiamos la entrada de texto y el carrito
+        if (txtBuscarProducto != null) {
+            txtBuscarProducto.clear();
+        }
+
+        control.iniciarVenta();
+        if (tablaCarrito != null) {
+            tablaCarrito.getItems().clear();
+        }
+        if (lblTotal != null) {
+            lblTotal.setText("$0.00");
+        }
+
+        stage.show();
     }
 
-    // 3. Se inicia la venta y se limpia la tabla
-    control.iniciarVenta();
-    if (tablaCarrito != null) {
-        tablaCarrito.getItems().clear();
-    }
-    if (lblTotal != null) {
-        lblTotal.setText("$0.00");
-    }
-
-    stage.show();
-}
-
-    /**
-     * Refresca la tabla del carrito y el total según la Venta actualizada.
-     * Corresponde a mostrarVenta en el diagrama de secuencia.
-     */
-  public void mostrarVenta(Venta venta) {
+    public void mostrarVenta(Venta venta) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> this.mostrarVenta(venta));
             return;
         }
 
-        // Usa getProductos() que es el getter real de tu entidad Venta
         if (venta != null && venta.getProductos() != null) {
             tablaCarrito.setItems(FXCollections.observableArrayList(venta.getProductos()));
             lblTotal.setText(String.format("$%.2f", venta.getTotal()));
         }
     }
 
-    /**
-     * Muestra un mensaje de advertencia/error al usuario
-     */
     public void muestraMensajeError(String mensaje) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> this.muestraMensajeError(mensaje));
@@ -167,22 +146,45 @@ public class VistaAgregarProductos {
         alert.showAndWait();
     }
 
-    /////////////////////////////////////////////////////////////////////// FXML Event Handlers
+    // =========================================================================
+    // FXML EVENT HANDLERS
+    // =========================================================================
 
     @FXML
     private void handleAgregarProducto() {
-        Producto productoSeleccionado = comboProductos.getValue();
+        String textoBusqueda = txtBuscarProducto.getText().trim();
+
+        if (textoBusqueda.isEmpty()) {
+            muestraMensajeError("Por favor ingresa el nombre o código del producto.");
+            return;
+        }
+
+        // Búsqueda en el catálogo del producto deseado por nombre (ignora mayúsculas/minúsculas)
+        Producto productoSeleccionado = null;
+        if (catalogoProductos != null) {
+            for (Producto p : catalogoProductos) {
+                if (p.getNombre().equalsIgnoreCase(textoBusqueda)) {
+                    productoSeleccionado = p;
+                    break;
+                }
+            }
+        }
+
+        if (productoSeleccionado == null) {
+            muestraMensajeError("No se encontró el producto: " + textoBusqueda);
+            return;
+        }
 
         try {
             int cantidad = Integer.parseInt(txtCantidad.getText().trim());
 
-            if (productoSeleccionado == null) {
-                muestraMensajeError("Por favor selecciona un producto.");
+            if (cantidad <= 0) {
+                muestraMensajeError("La cantidad debe ser mayor a 0.");
                 return;
             }
 
-            // Llamada al controlador para procesar la adición
-            control.agregarProducto(productoSeleccionado, cantidad);
+            // Llamada directa al método original de tu HU
+            control.agregarProductos(productoSeleccionado, cantidad);
 
         } catch (NumberFormatException e) {
             muestraMensajeError("Ingresa un número entero válido en la cantidad.");
@@ -193,8 +195,9 @@ public class VistaAgregarProductos {
     private void handleNuevaVenta() {
         if (control != null) {
             control.iniciarVenta();
-            tablaCarrito.getItems().clear();
-            lblTotal.setText("$0.00");
+            if (txtBuscarProducto != null) txtBuscarProducto.clear();
+            if (tablaCarrito != null) tablaCarrito.getItems().clear();
+            if (lblTotal != null) lblTotal.setText("$0.00");
         }
     }
 

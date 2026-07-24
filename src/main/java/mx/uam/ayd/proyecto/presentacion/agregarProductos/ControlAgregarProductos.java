@@ -47,7 +47,7 @@ public class ControlAgregarProductos {
      * @param producto Producto seleccionado en la vista
      * @param cantidad Cantidad ingresada por el usuario
      */
-    public void agregarProducto(Producto producto, int cantidad) {
+    public void agregarProductos(Producto producto, int cantidad) {
         // 1. Verifica si hay existencias suficientes
         boolean disponible = servicioProducto.verificaDisponibilidad(producto, cantidad);
 
