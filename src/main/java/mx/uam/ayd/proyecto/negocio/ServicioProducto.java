@@ -5,7 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import java.util.ArrayList;
+import java.util.List;
 import mx.uam.ayd.proyecto.datos.ProductoRepository;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 
