@@ -19,8 +19,7 @@
                <children>
                   <Button mnemonicParsing="false" onAction="#handleNuevaVenta" text="Nueva Venta" />
                   <Label text="Producto:" />
-                  <!-- Asignamos el fx:id al TextField -->
-                  <TextField fx:id="txtBuscarProducto" promptText="Nombre o código" prefWidth="180.0" />
+                  <TextField fx:id="txtBuscarProducto" prefWidth="180.0" promptText="Nombre o código" />
                   <Label text="Cantidad:" />
                   <TextField fx:id="txtCantidad" prefWidth="60.0" text="1" />
                   <Button mnemonicParsing="false" onAction="#handleAgregarProducto" text="Agregar" />
@@ -46,8 +45,10 @@
       <HBox alignment="CENTER_RIGHT" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
             <Button mnemonicParsing="false" onAction="#handleCerrar" text="Cancelar" />
-            <Label prefHeight="17.0" prefWidth="398.0" />
-            <Button alignment="CENTER_RIGHT" mnemonicParsing="false" text="Siguiente" />
+            <Button mnemonicParsing="false" onAction="#handleEliminarProducto" text="Eliminar Producto" />
+            <Label prefHeight="17.0" prefWidth="280.0" />
+            <!-- AQUÍ CONECTAMOS EL BOTÓN SIGUIENTE -->
+            <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#handleSiguiente" text="Siguiente" />
             <Label text="Total:">
                <font>
                   <Font name="System Bold" size="18.0" />

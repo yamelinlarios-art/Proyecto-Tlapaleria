@@ -65,4 +65,19 @@ public class ControlAgregarProductos {
             vistaAgregarProductos.muestraMensajeError("No hay inventario suficiente para el producto: " + producto.getNombre());
         }
     }
+   public void continuarRegistroVenta() {
+    // Validamos que el carrito no esté vacío
+    if (this.ventaActual == null || 
+        this.ventaActual.getProductos() == null || 
+        this.ventaActual.getProductos().isEmpty()) {
+        
+        vistaAgregarProductos.muestraMensajeError("Debes agregar al menos un producto a la compra para poder continuar.");
+        return;
+    }
+
+    // Si hay productos, avanzamos al siguiente controlador (ej. Registro de Venta o Cobro)
+    // controlRegistroVenta.inicia(this.ventaActual);
+    
+    System.out.println("Avanzando al registro de la venta con un total de: $" + this.ventaActual.getTotal());
+}
 }

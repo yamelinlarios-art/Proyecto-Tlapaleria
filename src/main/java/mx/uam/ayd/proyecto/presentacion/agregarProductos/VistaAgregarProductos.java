@@ -150,46 +150,45 @@ public class VistaAgregarProductos {
     // FXML EVENT HANDLERS
     // =========================================================================
 
-    @FXML
-    private void handleAgregarProducto() {
-        String textoBusqueda = txtBuscarProducto.getText().trim();
+   @FXML
+private void handleAgregarProducto() {
+    String textoBusqueda = txtBuscarProducto.getText().trim().toLowerCase();
 
-        if (textoBusqueda.isEmpty()) {
-            muestraMensajeError("Por favor ingresa el nombre o código del producto.");
-            return;
-        }
+    if (textoBusqueda.isEmpty()) {
+        muestraMensajeError("Por favor ingresa el nombre o código del producto.");
+        return;
+    }
 
-        // Búsqueda en el catálogo del producto deseado por nombre (ignora mayúsculas/minúsculas)
-        Producto productoSeleccionado = null;
-        if (catalogoProductos != null) {
-            for (Producto p : catalogoProductos) {
-                if (p.getNombre().equalsIgnoreCase(textoBusqueda)) {
-                    productoSeleccionado = p;
-                    break;
-                }
+    // Busca cualquier producto cuyo nombre contenga el texto ingresado
+    Producto productoSeleccionado = null;
+    if (catalogoProductos != null) {
+        for (Producto p : catalogoProductos) {
+            if (p.getNombre().toLowerCase().contains(textoBusqueda)) {
+                productoSeleccionado = p;
+                break; // Toma la primera coincidencia
             }
-        }
-
-        if (productoSeleccionado == null) {
-            muestraMensajeError("No se encontró el producto: " + textoBusqueda);
-            return;
-        }
-
-        try {
-            int cantidad = Integer.parseInt(txtCantidad.getText().trim());
-
-            if (cantidad <= 0) {
-                muestraMensajeError("La cantidad debe ser mayor a 0.");
-                return;
-            }
-
-            // Llamada directa al método original de tu HU
-            control.agregarProductos(productoSeleccionado, cantidad);
-
-        } catch (NumberFormatException e) {
-            muestraMensajeError("Ingresa un número entero válido en la cantidad.");
         }
     }
+
+    if (productoSeleccionado == null) {
+        muestraMensajeError("No se encontró ningún producto que coincida con: " + textoBusqueda);
+        return;
+    }
+
+    try {
+        int cantidad = Integer.parseInt(txtCantidad.getText().trim());
+
+        if (cantidad <= 0) {
+            muestraMensajeError("La cantidad debe ser mayor a 0.");
+            return;
+        }
+
+        control.agregarProductos(productoSeleccionado, cantidad);
+
+    } catch (NumberFormatException e) {
+        muestraMensajeError("Ingresa un número entero válido en la cantidad.");
+    }
+}
 
     @FXML
     private void handleNuevaVenta() {
@@ -205,4 +204,10 @@ public class VistaAgregarProductos {
     private void handleCerrar() {
         stage.close();
     }
+    @FXML
+private void handleSiguiente() {
+    if (control != null) {
+        control.continuarRegistroVenta();
+    }
+}
 }
