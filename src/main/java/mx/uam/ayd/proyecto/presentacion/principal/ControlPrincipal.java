@@ -1,6 +1,8 @@
 package mx.uam.ayd.proyecto.presentacion.principal;
 
 import jakarta.annotation.PostConstruct;
+import javafx.fxml.FXMLLoader;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -70,6 +72,9 @@ public class ControlPrincipal {
         
         this.ventana = ventana;
     }
+
+
+    @Autowired
 
     @PostConstruct
     public void init() {

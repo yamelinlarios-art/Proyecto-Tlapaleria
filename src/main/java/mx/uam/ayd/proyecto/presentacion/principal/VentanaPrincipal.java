@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.input.MouseEvent;
 import org.springframework.stereotype.Component;
+import javafx.scene.Parent;
 
 import java.io.IOException;
 
@@ -46,10 +47,14 @@ public class VentanaPrincipal {
             stage = new Stage();
             stage.setTitle("Mi Aplicación");
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-principal.fxml"));
-            loader.setController(this);
-            Scene scene = new Scene(loader.load(), 1366, 768);
-            stage.setScene(scene);
+FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-principal.fxml"));
+
+// En lugar de setController, usamos setControllerFactory para pasarle ESTA misma instancia:
+loader.setControllerFactory(clazz -> this);
+
+Parent root = loader.load();
+Scene scene = new Scene(root, 1366, 768);
+stage.setScene(scene);
 
             initialized = true;
         } catch (IOException e) {

@@ -223,7 +223,8 @@
                                                       <Label onMouseClicked="#handleRevisarAlertas" text="Alerta Bajo Stock" textFill="#EF5350">
                                                          <font>
                                                             <Font size="14.0" />
-                                                         </font></Label>
+                                                         </font>
+                                                      </Label>
                                                       <Label textFill="#EF5350">
                                                          <font>
                                                             <Font name="System Bold" size="20.0" />
