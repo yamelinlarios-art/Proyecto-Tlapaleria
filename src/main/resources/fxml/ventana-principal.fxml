@@ -15,12 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane
-    prefHeight="768.0"
-    prefWidth="1366.0"
-    style="-fx-background-color: #F4F7FC;"
-    xmlns="http://javafx.com/javafx/26"
-    xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #F4F7FC;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
 
     <children>
       <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -198,33 +193,13 @@
                                                 </Label>
                                              </children>
                                           </VBox>
-                                          <HBox HBox.hgrow="ALWAYS" />
+                                          <HBox HBox.hgrow="ALWAYS">
+                                             <children>
+                                                <Button mnemonicParsing="false" onAction="#handleAlertasStock" prefHeight="82.0" prefWidth="149.0" text="Alerta Stock" textFill="#c40b08" />
+                                             </children></HBox>
                                           <!-- Tarjetas de Estadísticas (Mini-tarjetas) -->
                                           <HBox spacing="15.0">
                                              <children>
-                                                <!-- SKUs Totales -->
-                                                <VBox alignment="CENTER" prefHeight="80.0" prefWidth="120.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-border-color: #EEEEEE; -fx-border-width: 1;" />
-                                                <!-- Valor Stock -->
-                                                <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="80.0" prefWidth="120.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-border-color: #EEEEEE; -fx-border-width: 1;">
-                                                   <children>
-                                                      <Label text="\$4.2M">
-                                                         <font>
-                                                            <Font name="System Bold" size="20.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </VBox>
-                                                <!-- Ventas Hoy -->
-                                                <VBox alignment="CENTER" layoutX="145.0" layoutY="10.0" prefHeight="80.0" prefWidth="120.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-border-color: #EEEEEE; -fx-border-width: 1;">
-                                                   <children>
-                                                      <Label text="Ventas Hoy" textFill="#757575" />
-                                                      <Label text="\$18.4k" textFill="#0D47A1">
-                                                         <font>
-                                                            <Font name="System Bold" size="20.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </VBox>
                                                 <!-- Stock Bajo -->
                                                 <VBox alignment="CENTER" layoutX="280.0" layoutY="10.0" prefHeight="80.0" prefWidth="120.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-border-color: #EEEEEE; -fx-border-width: 1;">
                                                    <children>
@@ -238,6 +213,16 @@
                                                 </VBox>
                                              </children>
                                           </HBox>
+                                          <VBox alignment="CENTER" prefHeight="80.0" prefWidth="120.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-border-color: #EEEEEE; -fx-border-width: 1;">
+                                             <children>
+                                                <Label text="Ventas Hoy" textFill="#757575" />
+                                                <Label text="\$18.4k" textFill="#0D47A1">
+                                                   <font>
+                                                      <Font name="System Bold" size="20.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </VBox>
                                        </children>
                                     </HBox>
                                     
@@ -370,7 +355,7 @@
                                           <!-- 6. Fila 2, Tarjeta 3: Consultar Inventario (Rectángulo horizontal) -->
                                           <Button fx:id="btnConsultarInventario" layoutX="145.0" layoutY="280.0" maxWidth="1.7976931348623157E308" minHeight="130.0" mnemonicParsing="false" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" textFill="#212121" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1">
                                              <graphic>
-                                                <HBox alignment="CENTER" spacing="15.0">
+                                                <HBox alignment="CENTER" prefHeight="58.0" prefWidth="78.0" spacing="15.0">
                                                    <children>
                                                       <Label text="📋" textFill="#0D47A1">
                                                          <font>
