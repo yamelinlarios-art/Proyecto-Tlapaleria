@@ -58,7 +58,7 @@ public class VentanaRegistrarMercancia {
             stage.setTitle("Registrar mercancía");
 
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/fxml/vista-registrar-mercancia.fxml"));
+                    getClass().getResource("/fxml/ventana-registrar-mercancia.fxml"));
 
             loader.setController(this);
 
