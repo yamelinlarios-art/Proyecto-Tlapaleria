@@ -65,38 +65,32 @@ public class VistaAgregarProductos {
     /**
      * Inicializa los componentes de la interfaz en el hilo de JavaFX
      */
-    private void initializeUI() {
-        if (initialized) {
-            return;
-        }
-
-        // Crear la UI solo si estamos en el hilo de JavaFX
-        if (!Platform.isFxApplicationThread()) {
-            Platform.runLater(this::initializeUI);
-            return;
-        }
-
-        try {
-            stage = new Stage();
-            stage.setTitle("Agregar Productos a la Venta");
-
-            // Carga del FXML de la vista
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/vista-agregar-productos.fxml"));
-            loader.setController(this);
-            Scene scene = new Scene(loader.load(), 700, 500);
-            stage.setScene(scene);
-
-            // Mapeo de columnas con las propiedades de DescripcionVenta
-            colNombre.setCellValueFactory(new PropertyValueFactory<>("productoNombre"));
-            colPrecio.setCellValueFactory(new PropertyValueFactory<>("precioUnitario"));
-            colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
-            colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
-
-            initialized = true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+   private void initializeUI() {
+    if (initialized) {
+        return;
     }
+
+    try {
+        stage = new Stage();
+        stage.setTitle("Agregar Productos a la Venta");
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/vista-agregar-productos.fxml"));
+        loader.setController(this);
+        
+        Scene scene = new Scene(loader.load(), 700, 500);
+        stage.setScene(scene);
+
+        // Mapeo de columnas con las propiedades de DescripcionVenta
+        colNombre.setCellValueFactory(new PropertyValueFactory<>("productoNombre"));
+        colPrecio.setCellValueFactory(new PropertyValueFactory<>("precioUnitario"));
+        colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
+        colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
+
+        initialized = true;
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
 
     /**
      * Establece el controlador asociado
@@ -109,28 +103,36 @@ public class VistaAgregarProductos {
      * Muestra la ventana y establece el catálogo de productos inicial.
      * Corresponde a mostrarVentanaVenta en el diagrama de secuencia.
      */
-    public void mostrarVentanaVenta(ControlAgregarProductos control, Iterable<Producto> productos) {
-        if (!Platform.isFxApplicationThread()) {
-            Platform.runLater(() -> this.mostrarVentanaVenta(control, productos));
-            return;
-        }
+   public void mostrarVentanaVenta(ControlAgregarProductos control, Iterable<Producto> productos) {
+    if (!Platform.isFxApplicationThread()) {
+        Platform.runLater(() -> this.mostrarVentanaVenta(control, productos));
+        return;
+    }
 
-        this.setControl(control);
-        initializeUI();
+    this.setControl(control);
+    
+    // 1. Cargamos la interfaz de usuario en este mismo hilo
+    initializeUI();
 
-        // Carga de productos en el ComboBox
+    // 2. Ahora que FXML ya inyectó los controles, podemos usarlos de forma segura
+    if (comboProductos != null) {
         comboProductos.getItems().clear();
         for (Producto p : productos) {
             comboProductos.getItems().add(p);
         }
-
-        // Se inicia la venta y se limpia la tabla
-        control.iniciarVenta();
-        tablaCarrito.getItems().clear();
-        lblTotal.setText("$0.00");
-
-        stage.show();
     }
+
+    // 3. Se inicia la venta y se limpia la tabla
+    control.iniciarVenta();
+    if (tablaCarrito != null) {
+        tablaCarrito.getItems().clear();
+    }
+    if (lblTotal != null) {
+        lblTotal.setText("$0.00");
+    }
+
+    stage.show();
+}
 
     /**
      * Refresca la tabla del carrito y el total según la Venta actualizada.
