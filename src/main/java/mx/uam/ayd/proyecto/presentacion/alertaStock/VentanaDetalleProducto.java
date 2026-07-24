@@ -63,7 +63,7 @@ public class VentanaDetalleProducto {
 			stage.initModality(Modality.APPLICATION_MODAL);
 			
 			// Carga del FXML del diálogo
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/dialogo-detalle-producto.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-dialogo-detalle-producto.fxml"));
 			loader.setController(this);
 			Scene scene = new Scene(loader.load(), 400, 350);
 			stage.setScene(scene);
