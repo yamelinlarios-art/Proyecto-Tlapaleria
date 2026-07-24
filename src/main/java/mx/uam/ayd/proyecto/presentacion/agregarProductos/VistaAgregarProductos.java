@@ -210,4 +210,26 @@ private void handleSiguiente() {
         control.continuarRegistroVenta();
     }
 }
+@FXML
+private void handleEliminarProducto() {
+    DescripcionVenta seleccion = tablaCarrito.getSelectionModel().getSelectedItem();
+    if (seleccion == null) {
+        muestraMensajeError("Por favor selecciona un producto de la tabla para eliminar.");
+        return;
+    }
+
+    if (control != null) {
+        // Removemos el elemento seleccionado de la tabla
+        tablaCarrito.getItems().remove(seleccion);
+        
+        // Recalculamos el total sin streams (sin advertencias)
+        double nuevoTotal = 0.0;
+        for (DescripcionVenta item : tablaCarrito.getItems()) {
+            if (item != null) {
+                nuevoTotal += item.getSubtotal();
+            }
+        }
+        lblTotal.setText(String.format("$%.2f", nuevoTotal));
+    }
+}
 }
