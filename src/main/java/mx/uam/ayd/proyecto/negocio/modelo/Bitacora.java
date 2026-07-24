@@ -1,8 +1,12 @@
 package mx.uam.ayd.proyecto.negocio.modelo;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 
 /*
@@ -24,15 +28,19 @@ public class Bitacora { // Clase pública para que las demás capas interactúen
     private double precioNuevo;
 
     // Clases ocupadas para la HU-10
-    private int idDevolucion;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_devolucion", nullable = true)
+    private Devolucion devolucion;
+
     private int cantidad;
     private String motivo;
     private String descripcion;
 
-
-
     // Clases compartidas (Se ocupan para HU-09 como para HU-10)
-    private int idProducto;    
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_producto", nullable = true)
+    private Producto producto;
+
     private LocalDateTime fechaHora;    
 
     // Métodos de acceso: getters
@@ -50,8 +58,8 @@ public class Bitacora { // Clase pública para que las demás capas interactúen
         return precioNuevo;
     }
 
-    public int getIdDevolucion() {
-        return idDevolucion;
+    public Devolucion getDevolucion() {
+        return devolucion;
     }
 
     public int getCantidad() {
@@ -62,8 +70,12 @@ public class Bitacora { // Clase pública para que las demás capas interactúen
         return motivo;
     }
 
-    public int getIdProducto() {
-         return idProducto;
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public Producto getProducto() {
+         return producto;
     }
 
     public LocalDateTime getFechaHora() {
@@ -85,26 +97,25 @@ public class Bitacora { // Clase pública para que las demás capas interactúen
         this.precioNuevo = precioNuevo;
     }
 
-    public void setIdDevolucion(int idDevolucion) {
-        this.idDevolucion = idDevolucion;
+    public void setDevolucion(Devolucion devolucion) {
+        this.devolucion = devolucion;
     }
-
 
     public void setCantidad(int cantidad) {
         this.cantidad = cantidad;
     }
 
-
     public void setMotivo(String motivo) {
         this.motivo = motivo;
     }
 
-
-    public void setIdProducto(int idProducto) {
-        this.idProducto = idProducto;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
-
+    public void setProducto(Producto producto) {
+        this.producto = producto;
+    }
 
     public void setFechaHora(LocalDateTime fechaHora) {
         this.fechaHora = fechaHora;
@@ -158,8 +169,8 @@ public class Bitacora { // Clase pública para que las demás capas interactúen
 
     public String toString() {
         return "Bitacora [idBitacora=" + idBitacora + ", precioAnterior=" + precioAnterior + ", precioNuevo="
-                + precioNuevo + ", idDevolucion=" + idDevolucion + ", idProducto=" + idProducto + ", fechaHora="
-                + fechaHora + ", cantidad=" + cantidad + ", motivo=" + motivo + "]";
+                + precioNuevo + ", devolucion=" + devolucion + ", producto=" + producto + ", fechaHora=" 
+                + fechaHora + ", cantidad=" + cantidad + ", motivo=" + motivo + ", descripcion=" + descripcion + "]";
     }
 
-} 
+}
