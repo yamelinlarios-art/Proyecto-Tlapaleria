@@ -12,14 +12,14 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml/1"
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
             prefWidth="1100.0"
             prefHeight="650.0"
             minWidth="900.0"
             minHeight="550.0"
             style="-fx-background-color: #f4f6f8;">
 
-    <!-- Encabezado -->
     <top>
         <VBox spacing="5.0"
               style="-fx-background-color: #263238;">
@@ -31,18 +31,19 @@
                         left="30.0"/>
             </padding>
 
-            <Label text="Consultar inventario"
-                   style="-fx-font-size: 26px;
-                          -fx-font-weight: bold;
-                          -fx-text-fill: white;"/>
+            <children>
+                <Label text="Consultar inventario"
+                       style="-fx-font-size: 26px;
+                              -fx-font-weight: bold;
+                              -fx-text-fill: white;"/>
 
-            <Label text="Consulta la información y existencia de los productos registrados."
-                   style="-fx-font-size: 14px;
-                          -fx-text-fill: #cfd8dc;"/>
+                <Label text="Consulta la información y existencia de los productos registrados."
+                       style="-fx-font-size: 14px;
+                              -fx-text-fill: #cfd8dc;"/>
+            </children>
         </VBox>
     </top>
 
-    <!-- Contenido principal -->
     <center>
         <VBox spacing="18.0">
 
@@ -53,145 +54,170 @@
                         left="30.0"/>
             </padding>
 
-            <!-- Panel de búsqueda -->
-            <VBox spacing="10.0"
-                  style="-fx-background-color: white;
-                         -fx-background-radius: 10px;
-                         -fx-border-radius: 10px;
-                         -fx-border-color: #dfe5e8;
-                         -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);">
+            <children>
 
-                <padding>
-                    <Insets top="18.0"
-                            right="20.0"
-                            bottom="18.0"
-                            left="20.0"/>
-                </padding>
+                <VBox spacing="10.0"
+                      style="-fx-background-color: white;
+                             -fx-background-radius: 10px;
+                             -fx-border-radius: 10px;
+                             -fx-border-color: #dfe5e8;
+                             -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);">
 
-                <Label text="Buscar producto"
-                       style="-fx-font-size: 16px;
-                              -fx-font-weight: bold;
-                              -fx-text-fill: #263238;"/>
+                    <padding>
+                        <Insets top="18.0"
+                                right="20.0"
+                                bottom="18.0"
+                                left="20.0"/>
+                    </padding>
 
-                <HBox spacing="12.0">
+                    <children>
 
-                    <TextField fx:id="textFieldNombre"
-                               promptText="Escribe el nombre del producto"
-                               prefHeight="40.0"
-                               HBox.hgrow="ALWAYS"
-                               style="-fx-background-color: #f8fafb;
-                                      -fx-border-color: #b0bec5;
-                                      -fx-border-radius: 6px;
-                                      -fx-background-radius: 6px;
-                                      -fx-font-size: 14px;
-                                      -fx-padding: 0 12 0 12;"/>
+                        <Label text="Buscar producto"
+                               style="-fx-font-size: 16px;
+                                      -fx-font-weight: bold;
+                                      -fx-text-fill: #263238;"/>
 
-                    <Button text="Buscar"
-                            onAction="#onBuscarProducto"
-                            prefWidth="125.0"
-                            prefHeight="40.0"
-                            style="-fx-background-color: #1565c0;
-                                   -fx-text-fill: white;
-                                   -fx-font-size: 14px;
-                                   -fx-font-weight: bold;
-                                   -fx-background-radius: 6px;
-                                   -fx-cursor: hand;"/>
+                        <HBox spacing="12.0"
+                              alignment="CENTER_LEFT">
 
-                    <Button text="Mostrar todos"
-                            onAction="#onMostrarTodos"
-                            prefWidth="145.0"
-                            prefHeight="40.0"
-                            style="-fx-background-color: #546e7a;
-                                   -fx-text-fill: white;
-                                   -fx-font-size: 14px;
-                                   -fx-font-weight: bold;
-                                   -fx-background-radius: 6px;
-                                   -fx-cursor: hand;"/>
-                </HBox>
-            </VBox>
+                            <children>
 
-            <!-- Panel de tabla -->
-            <VBox spacing="12.0"
-                  VBox.vgrow="ALWAYS"
-                  style="-fx-background-color: white;
-                         -fx-background-radius: 10px;
-                         -fx-border-radius: 10px;
-                         -fx-border-color: #dfe5e8;
-                         -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);">
+                                <TextField fx:id="textFieldNombre"
+                                           promptText="Escribe el nombre del producto"
+                                           prefHeight="40.0"
+                                           HBox.hgrow="ALWAYS"
+                                           style="-fx-background-color: #f8fafb;
+                                                  -fx-border-color: #b0bec5;
+                                                  -fx-border-radius: 6px;
+                                                  -fx-background-radius: 6px;
+                                                  -fx-font-size: 14px;
+                                                  -fx-padding: 0 12 0 12;"/>
 
-                <padding>
-                    <Insets top="18.0"
-                            right="20.0"
-                            bottom="18.0"
-                            left="20.0"/>
-                </padding>
+                                <Button text="Buscar"
+                                        onAction="#onBuscarProducto"
+                                        prefWidth="125.0"
+                                        prefHeight="40.0"
+                                        style="-fx-background-color: #1565c0;
+                                               -fx-text-fill: white;
+                                               -fx-font-size: 14px;
+                                               -fx-font-weight: bold;
+                                               -fx-background-radius: 6px;
+                                               -fx-cursor: hand;"/>
 
-                <HBox alignment="CENTER_LEFT"
-                      spacing="10.0">
+                                <Button text="Mostrar todos"
+                                        onAction="#onMostrarTodos"
+                                        prefWidth="145.0"
+                                        prefHeight="40.0"
+                                        style="-fx-background-color: #546e7a;
+                                               -fx-text-fill: white;
+                                               -fx-font-size: 14px;
+                                               -fx-font-weight: bold;
+                                               -fx-background-radius: 6px;
+                                               -fx-cursor: hand;"/>
 
-                    <Label text="Productos registrados"
-                           style="-fx-font-size: 17px;
-                                  -fx-font-weight: bold;
-                                  -fx-text-fill: #263238;"/>
+                            </children>
+                        </HBox>
 
-                    <Region HBox.hgrow="ALWAYS"/>
+                    </children>
+                </VBox>
 
-                    <Label text="Selecciona o consulta un producto"
-                           style="-fx-font-size: 12px;
-                                  -fx-text-fill: #78909c;"/>
-                </HBox>
+                <VBox spacing="12.0"
+                      VBox.vgrow="ALWAYS"
+                      style="-fx-background-color: white;
+                             -fx-background-radius: 10px;
+                             -fx-border-radius: 10px;
+                             -fx-border-color: #dfe5e8;
+                             -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);">
 
-                <TableView fx:id="tablaProductos"
-                           VBox.vgrow="ALWAYS"
-                           prefHeight="390.0"
-                           columnResizePolicy="CONSTRAINED_RESIZE_POLICY"
-                           placeholder="No hay productos para mostrar"
-                           style="-fx-background-color: white;
-                                  -fx-border-color: #e0e6e9;
-                                  -fx-border-radius: 6px;">
+                    <padding>
+                        <Insets top="18.0"
+                                right="20.0"
+                                bottom="18.0"
+                                left="20.0"/>
+                    </padding>
 
-                    <columns>
-                        <TableColumn fx:id="colId"
-                                     text="ID"
-                                     prefWidth="65.0"
-                                     minWidth="55.0"/>
+                    <children>
 
-                        <TableColumn fx:id="colNombre"
-                                     text="Nombre"
-                                     prefWidth="180.0"
-                                     minWidth="130.0"/>
+                        <HBox alignment="CENTER_LEFT"
+                              spacing="10.0">
 
-                        <TableColumn fx:id="colTipoProducto"
-                                     text="Tipo"
-                                     prefWidth="150.0"
-                                     minWidth="100.0"/>
+                            <children>
 
-                        <TableColumn fx:id="colMarca"
-                                     text="Marca"
-                                     prefWidth="135.0"
-                                     minWidth="90.0"/>
+                                <Label text="Productos registrados"
+                                       style="-fx-font-size: 17px;
+                                              -fx-font-weight: bold;
+                                              -fx-text-fill: #263238;"/>
 
-                        <TableColumn fx:id="colCategoria"
-                                     text="Categoría"
-                                     prefWidth="145.0"
-                                     minWidth="100.0"/>
+                                <Region HBox.hgrow="ALWAYS"/>
 
-                        <TableColumn fx:id="colPrecio"
-                                     text="Precio"
-                                     prefWidth="105.0"
-                                     minWidth="80.0"/>
+                                <Label text="Consulta los productos disponibles"
+                                       style="-fx-font-size: 12px;
+                                              -fx-text-fill: #78909c;"/>
 
-                        <TableColumn fx:id="colExistencia"
-                                     text="Existencia"
-                                     prefWidth="105.0"
-                                     minWidth="85.0"/>
-                    </columns>
-                </TableView>
-            </VBox>
+                            </children>
+                        </HBox>
+
+                        <TableView fx:id="tablaProductos"
+                                   VBox.vgrow="ALWAYS"
+                                   prefHeight="390.0"
+                                   columnResizePolicy="CONSTRAINED_RESIZE_POLICY"
+                                   style="-fx-background-color: white;
+                                          -fx-border-color: #e0e6e9;
+                                          -fx-border-radius: 6px;">
+
+                            <placeholder>
+                                <Label text="No hay productos para mostrar"
+                                       style="-fx-font-size: 14px;
+                                              -fx-text-fill: #78909c;"/>
+                            </placeholder>
+
+                            <columns>
+
+                                <TableColumn fx:id="colId"
+                                             text="ID"
+                                             prefWidth="65.0"
+                                             minWidth="55.0"/>
+
+                                <TableColumn fx:id="colNombre"
+                                             text="Nombre"
+                                             prefWidth="180.0"
+                                             minWidth="130.0"/>
+
+                                <TableColumn fx:id="colTipoProducto"
+                                             text="Tipo"
+                                             prefWidth="150.0"
+                                             minWidth="100.0"/>
+
+                                <TableColumn fx:id="colMarca"
+                                             text="Marca"
+                                             prefWidth="135.0"
+                                             minWidth="90.0"/>
+
+                                <TableColumn fx:id="colCategoria"
+                                             text="Categoría"
+                                             prefWidth="145.0"
+                                             minWidth="100.0"/>
+
+                                <TableColumn fx:id="colPrecio"
+                                             text="Precio"
+                                             prefWidth="105.0"
+                                             minWidth="80.0"/>
+
+                                <TableColumn fx:id="colExistencia"
+                                             text="Existencia"
+                                             prefWidth="105.0"
+                                             minWidth="85.0"/>
+
+                            </columns>
+                        </TableView>
+
+                    </children>
+                </VBox>
+
+            </children>
         </VBox>
     </center>
 
-    <!-- Pie de ventana -->
     <bottom>
         <HBox alignment="CENTER_RIGHT"
               spacing="10.0"
@@ -206,16 +232,18 @@
                         left="30.0"/>
             </padding>
 
-            <Button text="Regresar"
-                    onAction="#onRegresar"
-                    prefWidth="120.0"
-                    prefHeight="38.0"
-                    style="-fx-background-color: #c62828;
-                           -fx-text-fill: white;
-                           -fx-font-size: 14px;
-                           -fx-font-weight: bold;
-                           -fx-background-radius: 6px;
-                           -fx-cursor: hand;"/>
+            <children>
+                <Button text="Regresar"
+                        onAction="#onRegresar"
+                        prefWidth="120.0"
+                        prefHeight="38.0"
+                        style="-fx-background-color: #c62828;
+                               -fx-text-fill: white;
+                               -fx-font-size: 14px;
+                               -fx-font-weight: bold;
+                               -fx-background-radius: 6px;
+                               -fx-cursor: hand;"/>
+            </children>
         </HBox>
     </bottom>
 
