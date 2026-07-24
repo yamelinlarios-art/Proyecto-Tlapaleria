@@ -17,7 +17,7 @@ import mx.uam.ayd.proyecto.presentacion.registrarMercancia.ControlRegistrarMerca
 import mx.uam.ayd.proyecto.presentacion.alertaStock.ControlRevisarExistencia;
 import mx.uam.ayd.proyecto.presentacion.registroVenta.ControlRegistroVenta;
 import mx.uam.ayd.proyecto.presentacion.agregarProductos.ControlAgregarProductos;
-import mx.uam.ayd.proyecto.presentacion.agregarProductos.ControlAgregarProductos;
+
 /**
  * @author humbertocervantes
  */
