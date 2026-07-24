@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefWidth="480.0" spacing="15.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uam.ayd.proyecto.presentacion.devolucion.VentanaDevolucionProducto">
+<VBox prefWidth="480.0" spacing="15.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <padding>
       <Insets bottom="20.0" left="25.0" right="25.0" top="20.0" />
    </padding>
@@ -31,11 +31,11 @@
 
       <!-- Formulario de Entrada -->
       <GridPane hgap="10.0" vgap="12.0">
-        <columnConstraints">
+        <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="120.0" prefWidth="130.0" />
           <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="280.0" />
         </columnConstraints>
-        <rowConstraints">
+        <rowConstraints>
           <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
