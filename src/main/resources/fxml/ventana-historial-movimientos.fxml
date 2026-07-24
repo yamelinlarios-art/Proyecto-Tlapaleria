@@ -8,124 +8,222 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/21"
-            xmlns:fx="http://javafx.com/fxml">
-
-    <!-- ======================= -->
-    <!-- Encabezado -->
-    <!-- ======================= -->
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml/1"
+            prefWidth="1150.0"
+            prefHeight="680.0"
+            minWidth="950.0"
+            minHeight="560.0"
+            style="-fx-background-color: #f4f6f8;">
 
     <top>
-
-        <VBox spacing="10">
+        <VBox spacing="5.0"
+              style="-fx-background-color: #263238;">
 
             <padding>
-                <Insets top="15"
-                        right="15"
-                        bottom="15"
-                        left="15"/>
+                <Insets top="22.0"
+                        right="30.0"
+                        bottom="22.0"
+                        left="30.0"/>
             </padding>
 
-            <Label text="Historial de Movimientos"
-                   style="-fx-font-size:20px;
-                          -fx-font-weight:bold;" />
+            <Label text="Historial de movimientos"
+                   style="-fx-font-size: 26px;
+                          -fx-font-weight: bold;
+                          -fx-text-fill: white;"/>
 
-            <HBox spacing="10">
-
-                <Label text="Buscar:" />
-
-                <TextField fx:id="txtBuscar"
-                           promptText="Tipo de movimiento..." />
-
-                <Button text="Buscar"
-                        onAction="#buscar"/>
-
-                <Button text="Actualizar"
-                        onAction="#actualizar"/>
-
-            </HBox>
-
+            <Label text="Consulta las entradas, salidas y modificaciones realizadas en el inventario."
+                   style="-fx-font-size: 14px;
+                          -fx-text-fill: #cfd8dc;"/>
         </VBox>
-
     </top>
 
-    <!-- ======================= -->
-    <!-- Tabla -->
-    <!-- ======================= -->
-
     <center>
-
-        <TableView fx:id="tblMovimientos">
-
-            <columns>
-
-                <TableColumn
-                        fx:id="colId"
-                        text="ID"
-                        prefWidth="60"/>
-
-                <TableColumn
-                        fx:id="colFecha"
-                        text="Fecha"
-                        prefWidth="170"/>
-
-                <TableColumn
-                        fx:id="colTipo"
-                        text="Tipo"
-                        prefWidth="120"/>
-
-                <TableColumn
-                        fx:id="colProducto"
-                        text="Producto"
-                        prefWidth="220"/>
-
-                <TableColumn
-                        fx:id="colCantidad"
-                        text="Cantidad"
-                        prefWidth="90"/>
-
-                <TableColumn
-                        fx:id="colExistenciaAnterior"
-                        text="Existencia Anterior"
-                        prefWidth="140"/>
-
-                <TableColumn
-                        fx:id="colExistenciaActual"
-                        text="Existencia Actual"
-                        prefWidth="140"/>
-
-            </columns>
-
-        </TableView>
-
-    </center>
-
-    <!-- ======================= -->
-    <!-- Botones inferiores -->
-    <!-- ======================= -->
-
-    <bottom>
-
-        <HBox spacing="10"
-              alignment="CENTER_RIGHT">
+        <VBox spacing="18.0">
 
             <padding>
-                <Insets top="15"
-                        right="15"
-                        bottom="15"
-                        left="15"/>
+                <Insets top="25.0"
+                        right="30.0"
+                        bottom="25.0"
+                        left="30.0"/>
+            </padding>
+
+            <VBox spacing="10.0"
+                  style="-fx-background-color: white;
+                         -fx-background-radius: 10px;
+                         -fx-border-radius: 10px;
+                         -fx-border-color: #dfe5e8;">
+
+                <padding>
+                    <Insets top="18.0"
+                            right="20.0"
+                            bottom="18.0"
+                            left="20.0"/>
+                </padding>
+
+                <Label text="Buscar movimiento"
+                       style="-fx-font-size: 16px;
+                              -fx-font-weight: bold;
+                              -fx-text-fill: #263238;"/>
+
+                <HBox spacing="12.0"
+                      alignment="CENTER_LEFT">
+
+                    <TextField fx:id="txtBuscar"
+                               promptText="Escribe un producto, tipo de movimiento o dato relacionado"
+                               prefHeight="40.0"
+                               HBox.hgrow="ALWAYS"
+                               style="-fx-background-color: #f8fafb;
+                                      -fx-border-color: #b0bec5;
+                                      -fx-border-radius: 6px;
+                                      -fx-background-radius: 6px;
+                                      -fx-font-size: 14px;
+                                      -fx-padding: 0 12 0 12;"/>
+
+                    <Button text="Buscar"
+                            onAction="#buscar"
+                            prefWidth="120.0"
+                            prefHeight="40.0"
+                            style="-fx-background-color: #1565c0;
+                                   -fx-text-fill: white;
+                                   -fx-font-size: 14px;
+                                   -fx-font-weight: bold;
+                                   -fx-background-radius: 6px;"/>
+
+                    <Button text="Actualizar"
+                            onAction="#actualizar"
+                            prefWidth="125.0"
+                            prefHeight="40.0"
+                            style="-fx-background-color: #546e7a;
+                                   -fx-text-fill: white;
+                                   -fx-font-size: 14px;
+                                   -fx-font-weight: bold;
+                                   -fx-background-radius: 6px;"/>
+
+                </HBox>
+            </VBox>
+
+            <VBox spacing="12.0"
+                  VBox.vgrow="ALWAYS"
+                  style="-fx-background-color: white;
+                         -fx-background-radius: 10px;
+                         -fx-border-radius: 10px;
+                         -fx-border-color: #dfe5e8;">
+
+                <padding>
+                    <Insets top="18.0"
+                            right="20.0"
+                            bottom="18.0"
+                            left="20.0"/>
+                </padding>
+
+                <HBox alignment="CENTER_LEFT"
+                      spacing="10.0">
+
+                    <Label text="Movimientos registrados"
+                           style="-fx-font-size: 17px;
+                                  -fx-font-weight: bold;
+                                  -fx-text-fill: #263238;"/>
+
+                    <Region HBox.hgrow="ALWAYS"/>
+
+                    <Label text="Selecciona un movimiento para consultar sus detalles"
+                           style="-fx-font-size: 12px;
+                                  -fx-text-fill: #78909c;"/>
+
+                </HBox>
+
+                <TableView fx:id="tblMovimientos"
+                           prefHeight="410.0"
+                           VBox.vgrow="ALWAYS"
+                           columnResizePolicy="CONSTRAINED_RESIZE_POLICY"
+                           style="-fx-background-color: white;
+                                  -fx-border-color: #e0e6e9;
+                                  -fx-border-radius: 6px;">
+
+                    <columns>
+
+                        <TableColumn fx:id="colId"
+                                     text="ID"
+                                     prefWidth="65.0"
+                                     minWidth="55.0"/>
+
+                        <TableColumn fx:id="colFecha"
+                                     text="Fecha"
+                                     prefWidth="155.0"
+                                     minWidth="125.0"/>
+
+                        <TableColumn fx:id="colTipo"
+                                     text="Tipo"
+                                     prefWidth="145.0"
+                                     minWidth="105.0"/>
+
+                        <TableColumn fx:id="colProducto"
+                                     text="Producto"
+                                     prefWidth="200.0"
+                                     minWidth="130.0"/>
+
+                        <TableColumn fx:id="colCantidad"
+                                     text="Cantidad"
+                                     prefWidth="105.0"
+                                     minWidth="80.0"/>
+
+                        <TableColumn fx:id="colExistenciaAnterior"
+                                     text="Existencia anterior"
+                                     prefWidth="155.0"
+                                     minWidth="120.0"/>
+
+                        <TableColumn fx:id="colExistenciaActual"
+                                     text="Existencia actual"
+                                     prefWidth="145.0"
+                                     minWidth="110.0"/>
+
+                    </columns>
+                </TableView>
+
+            </VBox>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox alignment="CENTER_RIGHT"
+              spacing="12.0"
+              style="-fx-background-color: #eceff1;
+                     -fx-border-color: #d7dde0;
+                     -fx-border-width: 1 0 0 0;">
+
+            <padding>
+                <Insets top="14.0"
+                        right="30.0"
+                        bottom="14.0"
+                        left="30.0"/>
             </padding>
 
             <Button text="Ver detalle"
-                    onAction="#verDetalle"/>
+                    onAction="#verDetalle"
+                    prefWidth="140.0"
+                    prefHeight="38.0"
+                    style="-fx-background-color: #2e7d32;
+                           -fx-text-fill: white;
+                           -fx-font-size: 14px;
+                           -fx-font-weight: bold;
+                           -fx-background-radius: 6px;"/>
 
             <Button text="Cerrar"
-                    onAction="#cerrar"/>
+                    onAction="#cerrar"
+                    prefWidth="115.0"
+                    prefHeight="38.0"
+                    style="-fx-background-color: #c62828;
+                           -fx-text-fill: white;
+                           -fx-font-size: 14px;
+                           -fx-font-weight: bold;
+                           -fx-background-radius: 6px;"/>
 
         </HBox>
-
     </bottom>
 
 </BorderPane>
