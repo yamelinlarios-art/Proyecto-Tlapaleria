@@ -1,19 +1,16 @@
 package mx.uam.ayd.proyecto.negocio.modelo;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 
-/*
+/**
  * Entidad de negocio Bitacora
+ * 
  * @author Yamelin Larios Nepomuseno
  */
-
 @Entity
 public class Bitacora {
 
@@ -25,117 +22,99 @@ public class Bitacora {
     private double precioAnterior;
     private double precioNuevo;
 
-    // Atributos/Relaciones para la HU-10
+    // Atributos para la HU-10
     private long idDevolucion;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_devolucion", nullable = true)
-    private Devolucion devolucion;
-
     private int cantidad;
     private String motivo;
     private String descripcion;
 
-    // Atributos y relaciones compartidos (se ocupan tanto para HU-09 como para HU-10)
+    // Atributos compartidos (HU-09 y HU-10)
     private long idProducto;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_producto", nullable = true)
-    private Producto producto;
-
     private LocalDateTime fechaHora;
 
-    // Métodos de acceso: getters
+    // Constructor por defecto requerido por JPA
+    public Bitacora() {
+    }
+
+    // ==========================================
+    //            GETTERS Y SETTERS
+    // ==========================================
 
     public long getIdBitacora() {
         return idBitacora;
+    }
+
+    public void setIdBitacora(long idBitacora) {
+        this.idBitacora = idBitacora;
     }
 
     public double getPrecioAnterior() {
         return precioAnterior;
     }
 
-    public double getPrecioNuevo() {
-        return precioNuevo;
-    }
-
-    public long getIdDevolucion() {
-        return idDevolucion;
-    }
-
-    public Devolucion getDevolucion() {
-        return devolucion;
-    }
-
-    public int getCantidad() {
-        return cantidad;
-    }
-
-    public String getMotivo() {
-        return motivo;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public long getIdProducto() {
-        return idProducto;
-    }
-
-    public Producto getProducto() {
-        return producto;
-    }
-
-    public LocalDateTime getFechaHora() {
-        return fechaHora;
-    }
-
-    // Métodos de modificación: setters
-
-    public void setIdBitacora(long idBitacora) {
-        this.idBitacora = idBitacora;
-    }
-
     public void setPrecioAnterior(double precioAnterior) {
         this.precioAnterior = precioAnterior;
+    }
+
+    public double getPrecioNuevo() {
+        return precioNuevo;
     }
 
     public void setPrecioNuevo(double precioNuevo) {
         this.precioNuevo = precioNuevo;
     }
 
+    public long getIdDevolucion() {
+        return idDevolucion;
+    }
+
     public void setIdDevolucion(long idDevolucion) {
         this.idDevolucion = idDevolucion;
     }
 
-    public void setDevolucion(Devolucion devolucion) {
-        this.devolucion = devolucion;
+    public int getCantidad() {
+        return cantidad;
     }
 
     public void setCantidad(int cantidad) {
         this.cantidad = cantidad;
     }
 
+    public String getMotivo() {
+        return motivo;
+    }
+
     public void setMotivo(String motivo) {
         this.motivo = motivo;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
     }
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
 
+    public long getIdProducto() {
+        return idProducto;
+    }
+
     public void setIdProducto(long idProducto) {
         this.idProducto = idProducto;
     }
 
-    public void setProducto(Producto producto) {
-        this.producto = producto;
+    public LocalDateTime getFechaHora() {
+        return fechaHora;
     }
 
     public void setFechaHora(LocalDateTime fechaHora) {
         this.fechaHora = fechaHora;
     }
 
-    // Métodos sobreescritos (@Override)
+    // ==========================================
+    //          MÉTODOS SOBREESCRITOS
+    // ==========================================
 
     @Override
     public boolean equals(Object obj) {
@@ -157,8 +136,8 @@ public class Bitacora {
     @Override
     public String toString() {
         return "Bitacora [idBitacora=" + idBitacora + ", precioAnterior=" + precioAnterior + ", precioNuevo="
-                + precioNuevo + ", idDevolucion=" + idDevolucion + ", devolucion=" + devolucion + ", cantidad=" 
-                + cantidad + ", motivo=" + motivo + ", descripcion=" + descripcion + ", idProducto=" + idProducto 
-                + ", producto=" + producto + ", fechaHora=" + fechaHora + "]";
+                + precioNuevo + ", idDevolucion=" + idDevolucion + ", cantidad=" 
+                + cantidad + ", motivo=" + motivo + ", descripcion=" + descripcion 
+                + ", idProducto=" + idProducto + ", fechaHora=" + fechaHora + "]";
     }
 }

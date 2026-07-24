@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import mx.uam.ayd.proyecto.datos.ProductoRepository;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
-//port mx.uam.ayd.proyecto.negocio.ServicioBitacora;
 
 /**
  * Servicio encargado de la lógica de negocio de los productos.
@@ -158,7 +157,7 @@ public class ServicioProducto {
         // Asignamos el nuevo precio
         producto.setPrecio(nuevoPrecio);
 
-        // Registramos el cambio en la bitácora
+        // Registramos el cambio en la bitácora usando únicamente el idProducto (long)
         servicioBitacora.registrarCambioPrecio(idProducto, precioAnterior, nuevoPrecio);
 
         // Guardamos el producto actualizado en el repositorio

@@ -35,7 +35,7 @@ public class ServicioBitacora {
         
         // Instanciar y llenar el objeto Bitacora
         Bitacora bitacora = new Bitacora();
-        bitacora.setIdProducto((int) idProducto);
+        bitacora.setIdProducto(idProducto); // <--- Se asigna directamente como long
         bitacora.setPrecioAnterior(precioAnterior);
         bitacora.setPrecioNuevo(precioNuevo);
         bitacora.setFechaHora(LocalDateTime.now());
