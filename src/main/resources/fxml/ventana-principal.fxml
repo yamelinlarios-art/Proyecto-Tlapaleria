@@ -5,8 +5,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -15,12 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="768.0" 
-            prefWidth="1366.0" 
-            style="-fx-background-color: #F4F7FC;" 
-            xmlns="http://javafx.com/javafx/26" 
-            xmlns:fx="http://javafx.com/fxml/1" 
-            fx:controller="mx.uam.ayd.proyecto.presentacion.principal.ControlPrincipal">
+<AnchorPane prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #F4F7FC;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -33,12 +26,11 @@
                   <!-- Logotipo e Info de la Terminal -->
                   <HBox alignment="CENTER_LEFT" spacing="10.0">
                      <children>
-                        <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../images/logo_placeholder.png" />
-                           </image>
-                        </ImageView>
-                        <VBox />
+                        <Label text="🏪" textFill="#0D47A1">
+                           <font>
+                              <Font size="28.0" />
+                           </font>
+                        </Label>
                      </children>
                      <VBox.margin>
                         <Insets bottom="20.0" />
@@ -46,7 +38,7 @@
                   </HBox>
                   
                   <!-- Botones de Navegación -->
-                  <Button fx:id="btnVentas" alignment="BASELINE_LEFT" graphicTextGap="15.0" maxWidth="1.7976931348623157E308" minHeight="50.0" mnemonicParsing="false" style="-fx-background-color: #0D47A1; -fx-background-radius: 8;" text="Ventas" textFill="WHITE">
+                  <Button fx:id="btnVentas" alignment="BASELINE_LEFT" graphicTextGap="15.0" maxWidth="1.7976931348623157E308" minHeight="50.0" mnemonicParsing="false" onAction="#handleRealizarVenta" style="-fx-background-color: #0D47A1; -fx-background-radius: 8;" text="Ventas" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -62,7 +54,7 @@
                      </padding>
                   </Button>
                   
-                  <Button fx:id="btnInventario" alignment="BASELINE_LEFT" graphicTextGap="15.0" layoutX="25.0" layoutY="110.0" maxWidth="1.7976931348623157E308" minHeight="50.0" mnemonicParsing="false" style="-fx-background-color: transparent;" text="Inventario" textFill="#546E7A">
+                  <Button fx:id="btnInventario" alignment="BASELINE_LEFT" graphicTextGap="15.0" maxWidth="1.7976931348623157E308" minHeight="50.0" mnemonicParsing="false" onAction="#handleListarInventario" style="-fx-background-color: transparent;" text="Inventario" textFill="#546E7A">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -78,7 +70,7 @@
                      </padding>
                   </Button>
                   
-                  <Button fx:id="btnHistorial" alignment="BASELINE_LEFT" graphicTextGap="15.0" layoutX="25.0" layoutY="170.0" maxWidth="1.7976931348623157E308" minHeight="50.0" mnemonicParsing="false" style="-fx-background-color: transparent;" text="Historial" textFill="#546E7A">
+                  <Button fx:id="btnHistorial" alignment="BASELINE_LEFT" graphicTextGap="15.0" maxWidth="1.7976931348623157E308" minHeight="50.0" mnemonicParsing="false" onAction="#handleHistorialMovimientos" style="-fx-background-color: transparent;" text="Historial" textFill="#546E7A">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -164,11 +156,11 @@
                                     <Font size="20.0" />
                                  </font>
                               </Label>
-                              <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../images/user_avatar.png" />
-                                 </image>
-                              </ImageView>
+                              <Label text="👤" textFill="#757575">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font>
+                              </Label>
                            </children>
                         </HBox>
                      </children>
@@ -238,16 +230,6 @@
                                                 </VBox>
                                              </children>
                                           </HBox>
-                                          <VBox alignment="CENTER" prefHeight="80.0" prefWidth="120.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-border-color: #EEEEEE; -fx-border-width: 1;">
-                                             <children>
-                                                <Label text="Ventas Hoy" textFill="#757575" />
-                                                <Label text="\$18.4k" textFill="#0D47A1">
-                                                   <font>
-                                                      <Font name="System Bold" size="20.0" />
-                                                   </font>
-                                                </Label>
-                                             </children>
-                                          </VBox>
                                        </children>
                                     </HBox>
                                     
@@ -265,7 +247,7 @@
                                       </rowConstraints>
                                        <children>
                                           <!-- 1. Cobro / POS -->
-                                          <Button fx:id="btnPos" maxWidth="1.7976931348623157E308" minHeight="250.0" mnemonicParsing="false" style="-fx-background-color: #0D47A1; -fx-background-radius: 12;" textFill="WHITE" GridPane.columnSpan="2">
+                                          <Button fx:id="btnPos" maxWidth="1.7976931348623157E308" minHeight="250.0" mnemonicParsing="false" onAction="#handleRealizarVenta" style="-fx-background-color: #0D47A1; -fx-background-radius: 12;" textFill="WHITE" GridPane.columnSpan="2">
                                              <graphic>
                                                 <VBox alignment="CENTER" spacing="10.0">
                                                    <children>
@@ -298,7 +280,7 @@
                                           </Button>
 
                                           <!-- 2. Actualizar Precio -->
-                                          <Button fx:id="btnActualizarPrecio" maxWidth="1.7976931348623157E308" minHeight="250.0" mnemonicParsing="false" onAction="#abrirVentanaActualizarPrecio" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" textFill="#212121" GridPane.columnIndex="2">
+                                          <Button fx:id="btnActualizarPrecio" maxWidth="1.7976931348623157E308" minHeight="250.0" mnemonicParsing="false" onAction="#handleActualizarPrecio" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" textFill="#212121" GridPane.columnIndex="2">
                                              <graphic>
                                                 <VBox alignment="CENTER" spacing="10.0">
                                                    <children>
@@ -318,7 +300,7 @@
                                           </Button>
 
                                           <!-- 3. Devoluciones -->
-                                          <Button fx:id="btnDevoluciones" maxWidth="1.7976931348623157E308" minHeight="250.0" mnemonicParsing="false" onAction="#abrirVentanaDevoluciones" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" textFill="#212121" GridPane.columnIndex="3">
+                                          <Button fx:id="btnDevoluciones" maxWidth="1.7976931348623157E308" minHeight="250.0" mnemonicParsing="false" onAction="#abrirVentanaDevolucionProducto" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" textFill="#212121" GridPane.columnIndex="3">
                                              <graphic>
                                                 <VBox alignment="CENTER" spacing="10.0">
                                                    <children>
@@ -338,7 +320,7 @@
                                           </Button>
                                           
                                           <!-- 4. Entrada Mercancía -->
-                                          <Button fx:id="btnEntradaMercancia" maxWidth="1.7976931348623157E308" minHeight="130.0" mnemonicParsing="false" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" textFill="#212121" GridPane.rowIndex="1">
+                                          <Button fx:id="btnEntradaMercancia" maxWidth="1.7976931348623157E308" minHeight="130.0" mnemonicParsing="false" onAction="#handleRegistrarMercancia" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" textFill="#212121" GridPane.rowIndex="1">
                                              <graphic>
                                                 <VBox alignment="CENTER" spacing="10.0">
                                                    <children>
@@ -378,9 +360,9 @@
                                           </Button>
                                           
                                           <!-- 6. Consultar Inventario -->
-                                          <Button fx:id="btnConsultarInventario" maxWidth="1.7976931348623157E308" minHeight="130.0" mnemonicParsing="false" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" textFill="#212121" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                                          <Button fx:id="btnConsultarInventario" maxWidth="1.7976931348623157E308" minHeight="130.0" mnemonicParsing="false" onAction="#handleConsultarInventario" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" textFill="#212121" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1">
                                              <graphic>
-                                                <HBox alignment="CENTER" prefHeight="58.0" prefWidth="78.0" spacing="15.0">
+                                                <HBox alignment="CENTER" spacing="15.0">
                                                    <children>
                                                       <Label text="📋" textFill="#0D47A1">
                                                          <font>
@@ -432,19 +414,14 @@
                                                     <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
                                                   </rowConstraints>
                                                    <children>
-                                                      <Button fx:id="btnRegistrarMercancia" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" style="-fx-background-color: transparent;" text="Registrar Mercancía" textFill="#0D47A1">
+                                                      <Button fx:id="btnRegistrarMercancia" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleRegistrarMercancia" style="-fx-background-color: transparent;" text="Registrar Mercancía" textFill="#0D47A1">
                                                          <graphic>
                                                             <Label text="➕" />
                                                          </graphic>
                                                       </Button>
-                                                      <Button fx:id="btnRegistrarExistencia" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" style="-fx-background-color: transparent;" text="Registrar Existencia" textFill="#0D47A1" GridPane.columnIndex="1">
+                                                      <Button fx:id="btnAgregarUsuario" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleAgregarUsuario" style="-fx-background-color: transparent;" text="Agregar Usuario" textFill="#0D47A1" GridPane.columnIndex="1">
                                                          <graphic>
-                                                            <Label text="📊" />
-                                                         </graphic>
-                                                      </Button>
-                                                      <Button fx:id="btnAgregarProductos" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" style="-fx-background-color: transparent;" text="Agregar Productos" textFill="#0D47A1" GridPane.rowIndex="1">
-                                                         <graphic>
-                                                            <Label text="🏷️" />
+                                                            <Label text="👤" />
                                                          </graphic>
                                                       </Button>
                                                    </children>

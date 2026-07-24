@@ -12,9 +12,10 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="450.0" prefWidth="480.0" spacing="15.0" style="-fx-background-color: #f5f5f5;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefHeight="450.0" prefWidth="480.0" spacing="15.0" style="-fx-background-color: #f5f5f5;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <VBox alignment="CENTER" prefHeight="60.0" prefWidth="100.0" style="-fx-background-color: #03a9f4;">
+      <!-- Cabecera -->
+      <VBox alignment="CENTER" prefHeight="60.0" style="-fx-background-color: #03a9f4;">
          <children>
             <Label text="Actualizar Precio de Producto" textFill="WHITE">
                <font>
@@ -24,8 +25,10 @@
          </children>
       </VBox>
       
+      <!-- Contenido / Formulario -->
       <VBox spacing="15.0">
          <children>
+            <!-- 1. Búsqueda de Producto -->
             <Label text="1. Buscar Producto" textFill="#555555">
                <font>
                   <Font name="System Bold" size="14.0" />
@@ -44,6 +47,7 @@
             
             <Separator prefWidth="200.0" />
 
+            <!-- 2. Datos del Producto -->
             <Label text="2. Datos del Producto" textFill="#555555">
                <font>
                   <Font name="System Bold" size="14.0" />
@@ -77,6 +81,7 @@
             
             <Separator prefWidth="200.0" />
 
+            <!-- 3. Modificar Costo -->
             <Label text="3. Modificar Costo" textFill="#555555">
                <font>
                   <Font name="System Bold" size="14.0" />
@@ -93,12 +98,14 @@
                </children>
             </HBox>
             
+            <!-- Label de Feedback/Mensaje -->
             <Label fx:id="lblFeedback" alignment="CENTER" maxWidth="1.7976931348623157E308" prefHeight="30.0" style="-fx-background-radius: 3;" text="" visible="false">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>
             </Label>
 
+            <!-- Botones -->
             <HBox alignment="CENTER_RIGHT" prefHeight="50.0" spacing="10.0">
                <children>
                   <Button fx:id="btnActualizar" mnemonicParsing="false" onAction="#onActualizarPrecio" prefHeight="35.0" prefWidth="150.0" style="-fx-background-color: #4caf50;" text="Actualizar Precio" textFill="WHITE">
