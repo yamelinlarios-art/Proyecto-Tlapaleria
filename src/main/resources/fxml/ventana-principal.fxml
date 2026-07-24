@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #F4F7FC;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #F4F7FC;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uam.ayd.proyecto.presentacion.principal.VentanaPrincipal">
    <children>
       <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -218,10 +218,13 @@
                                                       </Label>
                                                    </children>
                                                 </VBox>
-                                                <VBox alignment="CENTER" prefHeight="80.0" prefWidth="120.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-border-color: #EEEEEE; -fx-border-width: 1;">
+                                                <VBox alignment="CENTER" onMouseClicked="#handleRevisarAlertas" prefHeight="80.0" prefWidth="120.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-border-color: #EEEEEE; -fx-border-width: 1;">
                                                    <children>
-                                                      <Label text="Bajo Stock" textFill="#EF5350" />
-                                                      <Label text="24" textFill="#EF5350">
+                                                      <Label onMouseClicked="#handleRevisarAlertas" text="Alerta Bajo Stock" textFill="#EF5350">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font></Label>
+                                                      <Label textFill="#EF5350">
                                                          <font>
                                                             <Font name="System Bold" size="20.0" />
                                                          </font>

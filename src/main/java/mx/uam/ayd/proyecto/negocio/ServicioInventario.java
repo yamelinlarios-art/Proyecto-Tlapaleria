@@ -18,7 +18,7 @@ import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 
 /**
  *
- * @author Kevin Dydier y yael Mora Simón
+ * @author Kevin Dydier y Yael Mora Simón
  */
 @Service
 public class ServicioInventario {
@@ -44,20 +44,23 @@ public class ServicioInventario {
         log.info("Iniciando consulta de alertas de inventario...");
         List<Producto> productosConAlerta = new ArrayList<>();
 
-        //Recuperar todos los registros de inventario
+        // Recuperar todos los registros de inventario
         Iterable<Inventario> todosLosInventarios = inventarioRepository.findAll();
 
         for (Inventario item : todosLosInventarios) {
-            //Validar Stock Mínimo
+            // Validar Stock Mínimo
             if (item.getExistenciaActual() <= item.getStockMinimo()) {
                 
-                //Recuperar el producto para obtener su Clave Única
+                // Recuperar el producto para obtener su Clave Única
                 Producto producto = productoRepository.findById(item.getIdProducto()).orElse(null);
 
                 if (producto != null) {
+                    // Sincronizar el stock del inventario hacia el objeto Producto para la UI
+                    producto.setExistenciaActual(item.getExistenciaActual());
+                    
                     productosConAlerta.add(producto);
                     
-                    //Registrar el evento en la Bitácora
+                    // Registrar el evento en la Bitácora (RN-02)
                     registrarEventoAlerta(producto.getIdProducto(), producto.getClave());
                 }
             }
@@ -67,9 +70,7 @@ public class ServicioInventario {
         return productosConAlerta;
     }
 
-
-    //Métod para encapsular el registro de acciones de control
-
+    // Método para encapsular el registro de acciones de control (RN-02)
     private void registrarEventoAlerta(long idProducto, String claveProducto) {
         Bitacora evento = new Bitacora();
         evento.setIdProducto((int) idProducto);
@@ -87,42 +88,57 @@ public class ServicioInventario {
      * @return El producto solicitado
      */
     public Producto obtenerDetalleProducto(long idProducto) {
-        return productoRepository.findById(idProducto).orElse(null);
-    }
-     
-    /**
- * Recupera todos los registros del inventario.
- *
- * @return Lista de inventarios.
- */
-public List<Inventario> recuperaInventario() {
-
-    List<Inventario> inventarios = new ArrayList<>();
-
-    for (Inventario inventario : inventarioRepository.findAll()) {
-        inventarios.add(inventario);
-    }
-
-    return inventarios;
-}
-
-/**
- * Recupera únicamente los productos con bajo stock.
- *
- * @return Lista de inventarios con bajo stock.
- */
-public List<Inventario> obtenerProductosBajoStock() {
-
-    List<Inventario> productosBajoStock = new ArrayList<>();
-
-    for (Inventario inventario : inventarioRepository.findAll()) {
-
-        if (inventario.getExistenciaActual() <= inventario.getStockMinimo()) {
-            productosBajoStock.add(inventario);
+        Producto producto = productoRepository.findById(idProducto).orElse(null);
+        if (producto != null) {
+            // Buscar el inventario correspondiente para asignarle su existencia real
+            Inventario inventario = inventarioRepository.findById(idProducto).orElse(null);
+            if (inventario != null) {
+                producto.setExistenciaActual(inventario.getExistenciaActual());
+            }
         }
+        return producto;
     }
 
-    return productosBajoStock;
-}
+    /**
+     * Recupera el stock mínimo configurado para un producto en el inventario.
+     *
+     * @param idProducto
+     * @return El límite mínimo de stock
+     */
+    public int obtenerStockMinimo(long idProducto) {
+        Inventario inventario = inventarioRepository.findById(idProducto).orElse(null);
+        return (inventario != null) ? inventario.getStockMinimo() : 0;
+    }
+      
+    /**
+     * Recupera todos los registros del inventario.
+     *
+     * @return Lista de inventarios.
+     */
+    public List<Inventario> recuperaInventario() {
+        List<Inventario> inventarios = new ArrayList<>();
 
+        for (Inventario inventario : inventarioRepository.findAll()) {
+            inventarios.add(inventario);
+        }
+
+        return inventarios;
+    }
+
+    /**
+     * Recupera únicamente los productos con bajo stock.
+     *
+     * @return Lista de inventarios con bajo stock.
+     */
+    public List<Inventario> obtenerProductosBajoStock() {
+        List<Inventario> productosBajoStock = new ArrayList<>();
+
+        for (Inventario inventario : inventarioRepository.findAll()) {
+            if (inventario.getExistenciaActual() <= inventario.getStockMinimo()) {
+                productosBajoStock.add(inventario);
+            }
+        }
+
+        return productosBajoStock;
+    }
 }

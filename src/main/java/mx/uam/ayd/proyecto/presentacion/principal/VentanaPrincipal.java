@@ -7,7 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
+import javafx.scene.input.MouseEvent;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;

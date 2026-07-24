@@ -52,7 +52,7 @@ public class ControlPrincipal {
             ControlHistorialMovimientos controlHistorialMovimientos,
             ControlRevisarExistencia controlRevisarExistencia,
             ControlRegistroVenta controlRegistroVenta,
-             ControlAgregarProductos controlAgregarProductos,
+            ControlAgregarProductos controlAgregarProductos,
             VentanaPrincipal ventana) {
 
         this.controlAgregarUsuario = controlAgregarUsuario;

@@ -30,6 +30,7 @@ public class ControlRevisarExistencia {
 //////////////////////////////////////////////////////////////////////////////////////Metodos del controlador
 	public void inicia() {
 		this.ventanaRevision.muestra(this);
+		this.ventanaDetalle.setControl(this); // Asigna la referencia del controlador al detalle
 		this.consultarAlertas();
 	}
 
@@ -37,7 +38,7 @@ public class ControlRevisarExistencia {
 	public void consultarAlertas() {
 		List<Producto> productosAlerta = servicioInventario.consultarAlertas();
 		
-		if (productosAlerta.isEmpty()) {
+		if (productosAlerta == null || productosAlerta.isEmpty()) {
 			ventanaRevision.mostrarMensajeSinAlertas();
 		} else {
 			// Envía la lista a la vista para el resaltar en rojo los productos con bajo stock
@@ -54,9 +55,13 @@ public class ControlRevisarExistencia {
 	public void consultarDetalleProducto(long idProducto) {
 		// Recupera el producto y su stock mínimo desde el negocio
 		Producto producto = servicioInventario.obtenerDetalleProducto(idProducto);
-        
-        // En un diseño real, el stock mínimo se recupera del objeto Inventario asociado
-        // aquí simplificamos el paso de datos al diálogo de detalle
-		ventanaDetalle.muestra(producto, 10); // Ejemplo: 10 como stock mínimo
+		
+		if (producto != null) {
+			// En un diseño real, el stock mínimo se recupera del objeto Inventario asociado
+			// aquí simplificamos el paso de datos al diálogo de detalle
+			ventanaDetalle.muestra(producto, 10); // Ejemplo: 10 como stock mínimo
+		} else {
+			ventanaRevision.muestraDialogoConMensaje("No se pudo obtener la información del producto.");
+		}
 	}
 }
