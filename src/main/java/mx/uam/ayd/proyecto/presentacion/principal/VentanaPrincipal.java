@@ -149,9 +149,12 @@ stage.setScene(scene);
 
     @FXML
     private void handleRealizarVenta() {
+        System.out.println(">>> ¡EL BOTÓN SÍ DETECTA EL CLIC! <<<");
         if (control != null) {
             control.realizarVenta();
-        }
+        }else {
+        System.out.println(">>> ERROR: El objeto control es NULL <<<");
+    }
     }
 
     @FXML

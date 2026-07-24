@@ -383,7 +383,7 @@
 
                                                    <children>
 
-                                                      <Label text="💳🖥️" textFill="WHITE">
+                                                      <Label mouseTransparent="true" pickOnBounds="false" text="💳🖥️" textFill="WHITE">
 
                                                          <font>
                                                             <Font size="48.0" />
@@ -391,7 +391,7 @@
 
                                                       </Label>
 
-                                                      <Label text="Cobrar mercancía" textFill="WHITE">
+                                                      <Label mouseTransparent="true" pickOnBounds="false" text="Cobrar mercancía" textFill="WHITE">
 
                                                          <font>
                                                             <Font name="System Bold" size="24.0" />
@@ -399,7 +399,7 @@
 
                                                       </Label>
 
-                                                      <Label text="Procesar transacciones y emitir facturas." textFill="#BBDEFB" wrapText="true">
+                                                      <Label mouseTransparent="true" pickOnBounds="false" text="Procesar transacciones y emitir facturas." textFill="#BBDEFB" wrapText="true">
 
                                                          <font>
                                                             <Font size="14.0" />
@@ -407,7 +407,7 @@
 
                                                       </Label>
 
-                                                      <Label text="INICIAR TERMINAL →" textFill="WHITE">
+                                                      <Label mouseTransparent="true" pickOnBounds="false" text="INICIAR TERMINAL →" textFill="WHITE">
 
                                                          <font>
                                                             <Font name="System Bold" size="14.0" />
