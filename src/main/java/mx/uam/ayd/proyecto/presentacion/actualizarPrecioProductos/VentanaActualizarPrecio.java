@@ -6,11 +6,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import org.springframework.stereotype.Component;
-
 import java.io.IOException;
 
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
@@ -26,96 +26,61 @@ public class VentanaActualizarPrecio {
     private Stage stage;
     private ControlActualizarPrecio control;
     
-    @FXML
-    private TextField textFieldIdProducto;
-    
-    @FXML
-    private TextField textFieldNombreProducto;
-    
-    @FXML
-    private TextField textFieldPrecioActual;
-    
-    @FXML
-    private TextField textFieldNuevoPrecio;
+    @FXML private TextField txtIdProducto;
+    @FXML private Label lblNombreProducto;
+    @FXML private Label lblPrecioActual;
+    @FXML private TextField txtNuevoPrecio;
     
     private boolean initialized = false;
 
-    /**
-     * Constructor sin inicialización directa de la UI para compatibilidad con Spring/JavaFX.
-     */
-    public VentanaActualizarPrecio() {
-        // No inicializar componentes de JavaFX en el constructor
-    }
+    /** Constructor sin inicialización directa de la UI para compatibilidad con Spring/JavaFX. */
+    public VentanaActualizarPrecio() {}
     
-    /**
-     * Inicializa los componentes de la interfaz de usuario en el hilo de JavaFX.
-     */
+    /** Inicializa los componentes de la interfaz de usuario en el hilo de JavaFX. */
     private void initializeUI() {
-        if (initialized) {
-            return;
-        }
-        
+        if (initialized) return;
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(this::initializeUI);
             return;
         }
-        
         try {
             stage = new Stage();
             stage.setTitle("Actualizar Precio de Producto");
             
-            // Carga del archivo FXML correspondiente
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-actualizar-precio.fxml"));
             loader.setController(this);
-            Scene scene = new Scene(loader.load(), 350, 280);
-            stage.setScene(scene);
-            
+            stage.setScene(new Scene(loader.load()));
             initialized = true;
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
     
-    /**
-     * Establece el controlador asociado a esta ventana.
-     * 
-     * @param control El controlador asociado
-     */
+    /** Establece el controlador asociado a esta ventana. */
     public void setControl(ControlActualizarPrecio control) {
         this.control = control;
     }
     
-    /**
-     * Muestra la ventana de actualización de precio y limpia sus campos.
-     */
+    /** Muestra la ventana de actualización de precio y limpia sus campos. */
     public void muestra() {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(this::muestra);
             return;
         }
-        
         initializeUI();
-        
-        // Limpia o resetea los campos de texto
-        if (textFieldIdProducto != null) textFieldIdProducto.setText("");
-        if (textFieldNombreProducto != null) textFieldNombreProducto.setText("");
-        if (textFieldPrecioActual != null) textFieldPrecioActual.setText("");
-        if (textFieldNuevoPrecio != null) textFieldNuevoPrecio.setText("");
-        
+        if (txtIdProducto != null) txtIdProducto.setText("");
+        if (lblNombreProducto != null) lblNombreProducto.setText("-");
+        if (lblPrecioActual != null) lblPrecioActual.setText("-");
+        if (txtNuevoPrecio != null) txtNuevoPrecio.setText("");
         stage.show();
     }
     
-    /**
-     * Muestra un diálogo de información con un mensaje.
-     * 
-     * @param mensaje El mensaje a mostrar
-     */
+    /** Muestra un diálogo de información con un mensaje. */
     public void muestraDialogoConMensaje(String mensaje) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> this.muestraDialogoConMensaje(mensaje));
             return;
         }
-        
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("Información");
         alert.setHeaderText(null);
@@ -123,49 +88,34 @@ public class VentanaActualizarPrecio {
         alert.showAndWait();
     }
     
-    /**
-     * Oculta o muestra la ventana de manera segura.
-     * 
-     * @param visible true para mostrar, false para ocultar
-     */
+    /** Oculta o muestra la ventana de manera segura. */
     public void setVisible(boolean visible) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> this.setVisible(visible));
             return;
         }
-        
-        if (!initialized) {
-            if (visible) {
-                initializeUI();
-            } else {
-                return;
-            }
-        }
-        
-        if (visible) {
-            stage.show();
-        } else {
-            stage.hide();
+        if (!initialized && visible) initializeUI();
+        if (stage != null) {
+            if (visible) stage.show();
+            else stage.hide();
         }
     }
     
-    // Manejadores de eventos de FXML
+    // --- Manejadores de eventos de FXML ---
     
     @FXML
-    private void handleBuscarProducto() {
-        String idText = textFieldIdProducto.getText();
+    private void onBuscarProducto() {
+        String idText = txtIdProducto.getText();
         if (idText == null || idText.trim().isEmpty()) {
             muestraDialogoConMensaje("Por favor ingresa un ID de producto válido.");
             return;
         }
-        
         try {
             long idProducto = Long.parseLong(idText.trim());
             Producto producto = control.buscarProducto(idProducto);
-            
             if (producto != null) {
-                textFieldNombreProducto.setText(producto.getNombre());
-                textFieldPrecioActual.setText(String.valueOf(producto.getPrecio()));
+                lblNombreProducto.setText(producto.getNombre());
+                lblPrecioActual.setText(String.valueOf(producto.getPrecio()));
             } else {
                 muestraDialogoConMensaje("No se encontró ningún producto con el ID especificado.");
             }
@@ -175,29 +125,25 @@ public class VentanaActualizarPrecio {
     }
     
     @FXML
-    private void handleActualizarPrecio() {
-        String idText = textFieldIdProducto.getText();
-        String precioText = textFieldNuevoPrecio.getText();
-        
+    private void onActualizarPrecio() {
+        String idText = txtIdProducto.getText();
+        String precioText = txtNuevoPrecio.getText();
         if (idText == null || idText.trim().isEmpty() || precioText == null || precioText.trim().isEmpty()) {
             muestraDialogoConMensaje("Debes buscar un producto e ingresar el nuevo precio.");
             return;
         }
-        
         try {
             long idProducto = Long.parseLong(idText.trim());
             double nuevoPrecio = Double.parseDouble(precioText.trim());
-            
             if (nuevoPrecio <= 0) {
                 muestraDialogoConMensaje("El precio debe ser un número mayor a cero.");
                 return;
             }
-            
             Producto productoActualizado = control.actualizarPrecio(idProducto, nuevoPrecio);
             if (productoActualizado != null) {
                 muestraDialogoConMensaje("El precio del producto '" + productoActualizado.getNombre() + "' fue actualizado exitosamente.");
-                textFieldPrecioActual.setText(String.valueOf(productoActualizado.getPrecio()));
-                textFieldNuevoPrecio.setText("");
+                lblPrecioActual.setText(String.valueOf(productoActualizado.getPrecio()));
+                txtNuevoPrecio.setText("");
             } else {
                 muestraDialogoConMensaje("No se pudo actualizar el precio del producto.");
             }
