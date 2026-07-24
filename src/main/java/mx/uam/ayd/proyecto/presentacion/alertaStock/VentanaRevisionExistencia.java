@@ -57,52 +57,54 @@ public class VentanaRevisionExistencia {
 	/**
 	 * Inicializa los componentes de la interfaz en el hilo de JavaFX
 	 */
-	private void initializeUI() {
-		if (initialized) {
-			return;
-		}
-		
-		if (!Platform.isFxApplicationThread()) {
-			Platform.runLater(this::initializeUI);
-			return;
-		}
-		
-		try {
-			stage = new Stage();
-			stage.setTitle("Alertas de Inventario - Revisión de Existencias");
-			
-			// Carga del FXML diseñado previamente
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-revision-existencia.fxml"));
-			loader.setController(this);
-			Scene scene = new Scene(loader.load(), 700, 500);
-			stage.setScene(scene);
-			
-			// Configuración de columnas (RN-08: Clave Única)
-			colClave.setCellValueFactory(new PropertyValueFactory<>("clave"));
-			colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-			colStock.setCellValueFactory(new PropertyValueFactory<>("existenciaActual"));
-			
-			// Implementación de la RN-14: Resaltado visual automático en rojo
-			tablaAlertas.setRowFactory(tv -> new TableRow<Producto>() {
-                @Override
-                protected void updateItem(Producto item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (item == null || empty) {
-                        setStyle("");
-                    } else {
-                        // En esta vista, como es de alertas, todos los ítems suelen ir en rojo
-                        setStyle("-fx-background-color: #ffcdd2; -fx-text-fill: #b71c1c;");
-                    }
+private void initializeUI() {
+    if (initialized) {
+        return;
+    }
+    
+    if (!Platform.isFxApplicationThread()) {
+        Platform.runLater(this::initializeUI);
+        return;
+    }
+    
+    try {
+        stage = new Stage();
+        stage.setTitle("Alertas de Inventario - Revisión de Existencias");
+        
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-revision-existencia.fxml"));
+        
+        // 🚨 CAMBIO AQUÍ: Usar setControllerFactory en lugar de setController
+        loader.setControllerFactory(clazz -> this);
+        
+        Scene scene = new Scene(loader.load(), 700, 500);
+        stage.setScene(scene);
+        
+        // Configuración de columnas (RN-08: Clave Única)
+        colClave.setCellValueFactory(new PropertyValueFactory<>("clave"));
+        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        colStock.setCellValueFactory(new PropertyValueFactory<>("existenciaActual"));
+        
+        // Implementación de la RN-14: Resaltado visual automático en rojo
+        tablaAlertas.setRowFactory(tv -> new TableRow<Producto>() {
+            @Override
+            protected void updateItem(Producto item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item == null || empty) {
+                    setStyle("");
+                } else {
+                    setStyle("-fx-background-color: #ffcdd2; -fx-text-fill: #b71c1c;");
                 }
-            });
+            }
+        });
 
-			tablaAlertas.setItems(productosData);
-			initialized = true;
-            
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+        tablaAlertas.setItems(productosData);
+        initialized = true;
+        
+    } catch (IOException e) {
+        System.err.println("Error al cargar la ventana de alertas:");
+        e.printStackTrace(); // Revisa la consola si ocurre algún otro problema de renderizado
+    }
+}
 	
 	/**
 	 * Establece la conexión bidireccional con el controlador
