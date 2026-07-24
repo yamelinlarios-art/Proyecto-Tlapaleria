@@ -5,17 +5,23 @@
 <?import javafx.scene.layout.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx/11.0.1"
-            xmlns:fx="http://javafx.com/fxml/1">
-
+            xmlns:fx="http://javafx.com/fxml/1"
+            style="-fx-background-color: #F5F7FA;">
     <top>
         <VBox spacing="10" style="-fx-padding: 10px;">
-            <Label text="Registrar Entrada de Mercancía"
-                   style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+            <Label text="📦 Registrar Entrada de Mercancía"
+       style="-fx-font-size:22px;
+              -fx-font-weight:bold;
+              -fx-text-fill:#1565C0;"/>
         </VBox>
     </top>
 
     <center>
-        <GridPane hgap="10" vgap="10" style="-fx-padding: 15px;">
+        <GridPane hgap="10"
+          vgap="10"
+          style="-fx-padding:20;
+                 -fx-background-color:white;
+                 -fx-background-radius:12;">
 
             <Label text="Clave del producto:"
                    GridPane.rowIndex="0"
@@ -25,10 +31,14 @@
                        GridPane.rowIndex="0"
                        GridPane.columnIndex="1"/>
 
-            <Button text="Buscar"
-                    onAction="#handleBuscar"
-                    GridPane.rowIndex="0"
-                    GridPane.columnIndex="2"/>
+           <Button text="🔍 Buscar"
+        onAction="#handleBuscar"
+        GridPane.rowIndex="0"
+        GridPane.columnIndex="2"
+        style="-fx-background-color:#1976D2;
+               -fx-text-fill:white;
+               -fx-font-weight:bold;
+               -fx-background-radius:8;"/>
 
             <Label text="Nombre:"
                    GridPane.rowIndex="1"
@@ -64,11 +74,19 @@
               alignment="CENTER"
               style="-fx-padding: 10px;">
 
-            <Button text="Registrar"
-                    onAction="#handleRegistrar"/>
+           <Button text="✔ Registrar"
+        onAction="#handleRegistrar"
+        style="-fx-background-color:#43A047;
+               -fx-text-fill:white;
+               -fx-font-weight:bold;
+               -fx-background-radius:8;"/>
 
-            <Button text="Cerrar"
-                    onAction="#handleCerrar"/>
+            <Button text="✖ Cerrar"
+        onAction="#handleCerrar"
+        style="-fx-background-color:#E53935;
+               -fx-text-fill:white;
+               -fx-font-weight:bold;
+               -fx-background-radius:8;"/>
 
         </HBox>
     </bottom>
