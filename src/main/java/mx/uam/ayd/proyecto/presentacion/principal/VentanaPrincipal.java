@@ -128,4 +128,12 @@
 				control.devolucionProducto();
 			}
 		}
+
+		@FXML
+    	private void handleRevisarAlertas() {
+        if (control != null) {
+            // Le avisamos al control principal que queremos ver las alertas
+            control.revisarAlertasStock();
+        }
+    }
 	}
