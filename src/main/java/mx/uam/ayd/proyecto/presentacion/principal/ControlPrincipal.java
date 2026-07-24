@@ -16,7 +16,8 @@ import mx.uam.ayd.proyecto.presentacion.listarUsuarios.ControlListarUsuarios;
 import mx.uam.ayd.proyecto.presentacion.registrarMercancia.ControlRegistrarMercancia;
 import mx.uam.ayd.proyecto.presentacion.alertaStock.ControlRevisarExistencia;
 import mx.uam.ayd.proyecto.presentacion.registroVenta.ControlRegistroVenta;
-
+import mx.uam.ayd.proyecto.presentacion.agregarProductos.ControlAgregarProductos;
+import mx.uam.ayd.proyecto.presentacion.agregarProductos.ControlAgregarProductos;
 /**
  * @author humbertocervantes
  */
@@ -35,7 +36,7 @@ public class ControlPrincipal {
     private final ControlHistorialMovimientos controlHistorialMovimientos;
     private final ControlRevisarExistencia controlRevisarExistencia;
     private final ControlRegistroVenta controlRegistroVenta;
-    
+    private final ControlAgregarProductos controlAgregarProductos;
     private final VentanaPrincipal ventana;
 
     @Autowired
@@ -51,6 +52,7 @@ public class ControlPrincipal {
             ControlHistorialMovimientos controlHistorialMovimientos,
             ControlRevisarExistencia controlRevisarExistencia,
             ControlRegistroVenta controlRegistroVenta,
+             ControlAgregarProductos controlAgregarProductos,
             VentanaPrincipal ventana) {
 
         this.controlAgregarUsuario = controlAgregarUsuario;
@@ -64,6 +66,7 @@ public class ControlPrincipal {
         this.controlHistorialMovimientos = controlHistorialMovimientos;
         this.controlRevisarExistencia = controlRevisarExistencia;
         this.controlRegistroVenta = controlRegistroVenta;
+        this.controlAgregarProductos = controlAgregarProductos;
         
         this.ventana = ventana;
     }
