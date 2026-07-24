@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -12,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
+<BorderPane prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
    <top>
       <VBox spacing="10.0" BorderPane.alignment="CENTER">
          <children>
@@ -20,7 +19,7 @@
                <children>
                   <Button mnemonicParsing="false" onAction="#handleNuevaVenta" text="Nueva Venta" />
                   <Label text="Producto:" />
-                  <ComboBox fx:id="comboProductos" prefWidth="200.0" promptText="Seleccionar producto..." />
+                  <TextField text="Buscar producto" />
                   <Label text="Cantidad:" />
                   <TextField fx:id="txtCantidad" prefWidth="60.0" text="1" />
                   <Button mnemonicParsing="false" onAction="#handleAgregarProducto" text="Agregar" />
@@ -45,6 +44,9 @@
    <bottom>
       <HBox alignment="CENTER_RIGHT" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
+            <Button mnemonicParsing="false" text="cancelar" />
+            <Label prefHeight="17.0" prefWidth="398.0" />
+            <Button alignment="CENTER_RIGHT" mnemonicParsing="false" text="Siguiente" />
             <Label text="Total:">
                <font>
                   <Font name="System Bold" size="18.0" />
