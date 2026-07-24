@@ -1,12 +1,9 @@
 package mx.uam.ayd.proyecto.negocio.modelo;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 
 /*
@@ -14,52 +11,47 @@ import java.time.LocalDateTime;
  * @author Yamelin Larios Nepomuseno
  */
 
-@Entity // Esto le dice a Spring que esta es una entidad persistente para la base de datos
+@Entity
+public class Bitacora {
 
-public class Bitacora { // Clase pública para que las demás capas interactúen entre sí
-
-    @Id // Define que este atributo es la Llave Primaria de la tabla en la base de datos
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Indica que el ID se autoincrementará solo en la BD
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idBitacora;
 
-    // Clases (variables) ocupadas para la HU-09
+    // Atributos de la clase Bitacora según Diagrama de Dominio
     private double precioAnterior;
     private double precioNuevo;
-
-    // Clases ocupadas para la HU-10
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_devolucion", nullable = true)
-    private Devolucion devolucion;
-
+    private long idDevolucion;
+    private long idProducto; // <- ¡Agregado tal cual viene en tu diagrama!
+    private LocalDateTime fechaHora;
     private int cantidad;
     private String motivo;
     private String descripcion;
 
-    // Clases compartidas (Se ocupan para HU-09 como para HU-10)
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_producto", nullable = true)
-    private Producto producto; // <- TIPO DE DATO CORRECTO: Producto
-
-    private LocalDateTime fechaHora;    
-
-    // Métodos de acceso: getters
-    // Los Getters leen o recuperan el valor de un atributo. No modifican nada, solo "muestran" el dato.
+    // Getters
 
     public long getIdBitacora() {
         return idBitacora;
     }
 
     public double getPrecioAnterior() {
-         return precioAnterior;
+        return precioAnterior;
     }
 
     public double getPrecioNuevo() {
         return precioNuevo;
     }
 
-    public Devolucion getDevolucion() {
-        return devolucion;
+    public long getIdDevolucion() {
+        return idDevolucion;
+    }
+
+    public long getIdProducto() {
+        return idProducto;
+    }
+
+    public LocalDateTime getFechaHora() {
+        return fechaHora;
     }
 
     public int getCantidad() {
@@ -74,16 +66,7 @@ public class Bitacora { // Clase pública para que las demás capas interactúen
         return descripcion;
     }
 
-    public Producto getProducto() { // <- RETORNA Producto
-         return producto;          // <- DEVUELVE producto
-    }
-
-    public LocalDateTime getFechaHora() {
-        return fechaHora;
-    }
-
-    // Métodos de acceso: setters
-    // Los Setters establecen, asignan o modifican el valor de un atributo privado desde el exterior.
+    // Setters
 
     public void setIdBitacora(long idBitacora) {
         this.idBitacora = idBitacora;
@@ -97,8 +80,16 @@ public class Bitacora { // Clase pública para que las demás capas interactúen
         this.precioNuevo = precioNuevo;
     }
 
-    public void setDevolucion(Devolucion devolucion) {
-        this.devolucion = devolucion;
+    public void setIdDevolucion(long idDevolucion) {
+        this.idDevolucion = idDevolucion;
+    }
+
+    public void setIdProducto(long idProducto) {
+        this.idProducto = idProducto;
+    }
+
+    public void setFechaHora(LocalDateTime fechaHora) {
+        this.fechaHora = fechaHora;
     }
 
     public void setCantidad(int cantidad) {
@@ -113,64 +104,29 @@ public class Bitacora { // Clase pública para que las demás capas interactúen
         this.descripcion = descripcion;
     }
 
-    public void setProducto(Producto producto) {
-        this.producto = producto;
-    }
-
-    public void setFechaHora(LocalDateTime fechaHora) {
-        this.fechaHora = fechaHora;
-    }
-
-
-    //Métodos sobreescritos (@Override)
-
-    /**
-     * @Override indica que estamos rediseñando un método que ya viene de la clase padre Object.
-     * El método 'equals' sirve para comparar si dos objetos del tipo Bitacora son exactamente iguales.
-     * En este caso, Hibernate y Spring determinan que si dos bitácoras tienen el mismo 'idBitacora', son el mismo registro.
-     */
+    // Métodos sobreescritos (@Override)
 
     @Override
-
     public boolean equals(Object obj) {
-        if (this == obj) { // Si apuntan a la misma dirección de memoria, son idénticos y se detiene la validación devolviendo verdadero
+        if (this == obj) {
             return true;
         }
-
-        if (obj == null) { // Si el objeto a comparar es nulo, no son iguales y devuelve falso
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-
-        if (getClass() != obj.getClass()) { // Si son de clases diferentes, no son iguales y devuelve falso
-            return false;
-        }
-
         Bitacora other = (Bitacora) obj;
-        return idBitacora == other.idBitacora; // Compara si su ID es idéntico al de la bitácora actual para detectar registros duplicados
+        return idBitacora == other.idBitacora;
     }
 
-    /**
-     * El método 'hashCode' genera un número entero único (un hash) basado en la llave primaria.
-     * Es utilizado por Java para optimizar búsquedas si almacenas estos objetos en colecciones como Sets o Mapas.
-     */
-
     @Override
-
     public int hashCode() {
         return (int) (31 * idBitacora);
     }
 
-    /**
-     * El método 'toString' convierte el objeto y todos sus atributos actuales en una cadena de texto (String).
-     * Es sumamente útil para hacer depuración (debugging) e imprimir en la consola qué datos lleva tu objeto.
-     */
-
     @Override
-
     public String toString() {
         return "Bitacora [idBitacora=" + idBitacora + ", precioAnterior=" + precioAnterior + ", precioNuevo="
-                + precioNuevo + ", devolucion=" + devolucion + ", producto=" + producto + ", fechaHora=" 
+                + precioNuevo + ", idDevolucion=" + idDevolucion + ", idProducto=" + idProducto + ", fechaHora=" 
                 + fechaHora + ", cantidad=" + cantidad + ", motivo=" + motivo + ", descripcion=" + descripcion + "]";
     }
-
 }
