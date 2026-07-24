@@ -1,17 +1,19 @@
 package mx.uam.ayd.proyecto.negocio.modelo;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 
-/**
+/*
  * Entidad de negocio Devolucion (HU10 - Devolución de productos dañados)
- *
- * @author Yamelin
- *
+ * @author Yamelin Larios Nepomuseno
  */
+
 @Entity
 public class Devolucion {
 
@@ -19,14 +21,19 @@ public class Devolucion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idDevolucion;
 
-    private long idProducto;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_producto", nullable = false)
+    private Producto producto;
+
     private int cantidad;
     private String motivo;
     private String tipoDevolucion;
     private LocalDateTime fecha;
 
-    // Atributos colaborativos opcionales (para auditoría o relación con personal/proveedor)
-    private int idProveedor;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_proveedor", nullable = true)
+    private Proveedor proveedor;
+
     private String numeroEmpleado;
 
     // Constructor por defecto requerido por JPA
@@ -39,8 +46,8 @@ public class Devolucion {
         return idDevolucion;
     }
 
-    public long getIdProducto() {
-        return idProducto;
+    public Producto getProducto() {
+        return producto;
     }
 
     public int getCantidad() {
@@ -59,8 +66,8 @@ public class Devolucion {
         return fecha;
     }
 
-    public int getIdProveedor() {
-        return idProveedor;
+    public Proveedor getProveedor() {
+        return proveedor;
     }
 
     public String getNumeroEmpleado() {
@@ -73,8 +80,8 @@ public class Devolucion {
         this.idDevolucion = idDevolucion;
     }
 
-    public void setIdProducto(long idProducto) {
-        this.idProducto = idProducto;
+    public void setProducto(Producto producto) {
+        this.producto = producto;
     }
 
     public void setCantidad(int cantidad) {
@@ -93,8 +100,8 @@ public class Devolucion {
         this.fecha = fecha;
     }
 
-    public void setIdProveedor(int idProveedor) {
-        this.idProveedor = idProveedor;
+    public void setProveedor(Proveedor proveedor) {
+        this.proveedor = proveedor;
     }
 
     public void setNumeroEmpleado(String numeroEmpleado) {
@@ -105,26 +112,25 @@ public class Devolucion {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
         Devolucion other = (Devolucion) obj;
         return idDevolucion == other.idDevolucion;
     }
 
     @Override
     public int hashCode() {
-        return Long.hashCode(idDevolucion);
+        return (int) (31 * idDevolucion);
     }
 
     @Override
     public String toString() {
-        return "Devolucion{" +
-                "idDevolucion=" + idDevolucion +
-                ", idProducto=" + idProducto +
-                ", cantidad=" + cantidad +
-                ", motivo='" + motivo + '\'' +
-                ", tipoDevolucion='" + tipoDevolucion + '\'' +
-                ", fecha=" + fecha +
-                '}';
+        return "Devolucion [idDevolucion=" + idDevolucion + ", producto=" + producto + ", cantidad=" + cantidad
+                + ", motivo=" + motivo + ", tipoDevolucion=" + tipoDevolucion + ", fecha=" + fecha
+                + ", proveedor=" + proveedor + ", numeroEmpleado=" + numeroEmpleado + "]";
     }
 }
