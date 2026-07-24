@@ -1,9 +1,12 @@
 package mx.uam.ayd.proyecto.negocio.modelo;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 
 /*
@@ -18,17 +21,29 @@ public class Bitacora {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idBitacora;
 
-    // Atributos de la clase Bitacora según Diagrama de Dominio
+    // Atributos para HU-09
     private double precioAnterior;
     private double precioNuevo;
+
+    // Atributos/Relaciones para la HU-10
     private long idDevolucion;
-    private long idProducto; // <- ¡Agregado tal cual viene en tu diagrama!
-    private LocalDateTime fechaHora;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_devolucion", nullable = true)
+    private Devolucion devolucion;
+
     private int cantidad;
     private String motivo;
     private String descripcion;
 
-    // Getters
+    // Atributos y relaciones compartidos (se ocupan tanto para HU-09 como para HU-10)
+    private long idProducto;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_producto", nullable = true)
+    private Producto producto;
+
+    private LocalDateTime fechaHora;
+
+    // Métodos de acceso: getters
 
     public long getIdBitacora() {
         return idBitacora;
@@ -46,12 +61,8 @@ public class Bitacora {
         return idDevolucion;
     }
 
-    public long getIdProducto() {
-        return idProducto;
-    }
-
-    public LocalDateTime getFechaHora() {
-        return fechaHora;
+    public Devolucion getDevolucion() {
+        return devolucion;
     }
 
     public int getCantidad() {
@@ -66,7 +77,19 @@ public class Bitacora {
         return descripcion;
     }
 
-    // Setters
+    public long getIdProducto() {
+        return idProducto;
+    }
+
+    public Producto getProducto() {
+        return producto;
+    }
+
+    public LocalDateTime getFechaHora() {
+        return fechaHora;
+    }
+
+    // Métodos de modificación: setters
 
     public void setIdBitacora(long idBitacora) {
         this.idBitacora = idBitacora;
@@ -84,12 +107,8 @@ public class Bitacora {
         this.idDevolucion = idDevolucion;
     }
 
-    public void setIdProducto(long idProducto) {
-        this.idProducto = idProducto;
-    }
-
-    public void setFechaHora(LocalDateTime fechaHora) {
-        this.fechaHora = fechaHora;
+    public void setDevolucion(Devolucion devolucion) {
+        this.devolucion = devolucion;
     }
 
     public void setCantidad(int cantidad) {
@@ -102,6 +121,18 @@ public class Bitacora {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public void setIdProducto(long idProducto) {
+        this.idProducto = idProducto;
+    }
+
+    public void setProducto(Producto producto) {
+        this.producto = producto;
+    }
+
+    public void setFechaHora(LocalDateTime fechaHora) {
+        this.fechaHora = fechaHora;
     }
 
     // Métodos sobreescritos (@Override)
@@ -126,7 +157,8 @@ public class Bitacora {
     @Override
     public String toString() {
         return "Bitacora [idBitacora=" + idBitacora + ", precioAnterior=" + precioAnterior + ", precioNuevo="
-                + precioNuevo + ", idDevolucion=" + idDevolucion + ", idProducto=" + idProducto + ", fechaHora=" 
-                + fechaHora + ", cantidad=" + cantidad + ", motivo=" + motivo + ", descripcion=" + descripcion + "]";
+                + precioNuevo + ", idDevolucion=" + idDevolucion + ", devolucion=" + devolucion + ", cantidad=" 
+                + cantidad + ", motivo=" + motivo + ", descripcion=" + descripcion + ", idProducto=" + idProducto 
+                + ", producto=" + producto + ", fechaHora=" + fechaHora + "]";
     }
 }
