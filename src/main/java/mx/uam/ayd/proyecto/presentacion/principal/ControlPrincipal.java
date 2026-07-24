@@ -121,3 +121,30 @@ public class ControlPrincipal {
         controlDevolucion.inicia(); // Al usarlo, desaparece el warning de atributo no usado
     }
 }
+@Autowired
+public ControlPrincipal(
+        ControlAgregarUsuario controlAgregarUsuario,
+        ControlListarUsuarios controlListarUsuarios,
+        ControlListarGrupos controlListarGrupos,
+        ControlListarInventario controlListarInventario,
+        ControlRegistrarMercancia controlRegistrarMercancia,
+        ControlConsultarInventario controlConsultarInventario,
+        ControlHistorialMovimientos controlHistorialMovimientos,
+        VentanaPrincipal ventana) {
+            this.controlConsultarInventario = controlConsultarInventario;
+this.controlHistorialMovimientos = controlHistorialMovimientos;
+/**
+ * Método que arranca la historia de usuario
+ * "Consultar Inventario".
+ */
+public void consultarInventario() {
+    controlConsultarInventario.inicia();
+}
+
+/**
+ * Método que arranca la historia de usuario
+ * "Historial de Movimientos".
+ */
+public void historialMovimientos() {
+    controlHistorialMovimientos.inicia();
+}
