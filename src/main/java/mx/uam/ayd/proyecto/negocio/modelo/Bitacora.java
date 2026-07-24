@@ -39,7 +39,7 @@ public class Bitacora { // Clase pública para que las demás capas interactúen
     // Clases compartidas (Se ocupan para HU-09 como para HU-10)
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_producto", nullable = true)
-    private Producto producto;
+    private Producto producto; // <- TIPO DE DATO CORRECTO: Producto
 
     private LocalDateTime fechaHora;    
 
@@ -74,8 +74,8 @@ public class Bitacora { // Clase pública para que las demás capas interactúen
         return descripcion;
     }
 
-    public Producto getProducto() {
-         return producto;
+    public Producto getProducto() { // <- RETORNA Producto
+         return producto;          // <- DEVUELVE producto
     }
 
     public LocalDateTime getFechaHora() {
