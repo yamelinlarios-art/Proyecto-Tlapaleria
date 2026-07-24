@@ -15,12 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane
-    prefHeight="768.0"
-    prefWidth="1366.0"
-    style="-fx-background-color: #F4F7FC;"
-    xmlns="http://javafx.com/javafx/26"
-    xmlns:fx="http://javafx.com/fxml/1">
+<fx:root prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #F4F7FC;" type="AnchorPane" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uam.ayd.proyecto.presentacion.devolucionProducto">
 
     <children>
       <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -308,7 +303,7 @@
                                           </Button>
                                           
                                           <!-- 3. Tarjeta: Devoluciones -->
-                                          <Button fx:id="btnDevoluciones" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" minHeight="250.0" mnemonicParsing="false" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" textFill="#212121" GridPane.columnIndex="3">
+                                          <Button fx:id="btnDevoluciones" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" minHeight="250.0" mnemonicParsing="false" onAction="#abrirVentanaDevolucionProducto" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" textFill="#212121" GridPane.columnIndex="3">
                                              <graphic>
                                                 <VBox alignment="CENTER" spacing="15.0">
                                                    <children>
@@ -556,4 +551,4 @@
          </children>
       </HBox>
    </children>
-</AnchorPane>
+</fx:root>
