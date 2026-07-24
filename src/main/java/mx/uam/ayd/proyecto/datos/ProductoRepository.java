@@ -10,6 +10,12 @@ import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 public interface ProductoRepository extends CrudRepository<Producto, Long> {
 
     /**
+     * Busca un producto específico por su nombre ignorando mayúsculas y minúsculas (HU-05).
+     * @param nombre El nombre del producto (ej. "martillo" encontrará "Martillo")
+     * @return el producto o null si no existe
+     */
+    public Producto findByNombreIgnoreCase(String nombre);
+    /**
      * Busca un producto específico por su nombre.
      * @param nombre El nombre del producto (ej. "Martillo")
      * @return

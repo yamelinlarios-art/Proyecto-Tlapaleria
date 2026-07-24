@@ -39,16 +39,19 @@ public class ServicioProducto {
         return productoRepository.findAll();
     }
 
-    /**
-     * Busca un producto por su nombre.
-     * @param nombre Nombre del producto.
-     * @return Producto encontrado o null si no existe.
-     */
-    public Producto buscaProducto(String nombre) {
-        log.info("Buscando producto por nombre: {}", nombre);
-        return productoRepository.findByNombre(nombre);
+   /**
+ * Busca un producto por su nombre ignorando mayúsculas/minúsculas.
+ * 
+ * @param nombre El nombre del producto
+ * @return El producto encontrado o null si no existe
+ */
+public Producto buscaProducto(String nombre) {
+    if (nombre == null || nombre.trim().isEmpty()) {
+        return null;
     }
-
+    // Invoca el nuevo método IgnoreCase
+    return productoRepository.findByNombreIgnoreCase(nombre.trim());
+}
     /**
      * Verifica si hay suficiente stock disponible para la venta.
      * Corresponde a la llamada verificaDisponibilidad(producto, cantidad)

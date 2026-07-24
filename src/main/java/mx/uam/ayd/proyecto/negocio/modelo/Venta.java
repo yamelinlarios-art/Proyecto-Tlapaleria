@@ -51,23 +51,21 @@ public class Venta {
      */
 
     public boolean agregaProducto(Producto producto, int cantidad) {
-        if (producto == null || cantidad <= 0) {    //Valida que el producto exista y que la cantidad sea mayor a 0
-            return false;
-        }
-
-        // Crea el detalle/descripción de la venta
-        DescripcionVenta detalle = new DescripcionVenta();
-        detalle.setProducto(producto);
-        detalle.setCantidad(cantidad);
-
-        // Agrega a la lista
-        this.productos.add(detalle);
-
-        // Recalcula el total de la venta
-        calculaTotal();
-
-        return true;
+    if (producto == null || cantidad <= 0) {
+        return false;
     }
+
+    // Usamos el constructor parametrizado que ya asigna el precioUnitario correctamente
+    DescripcionVenta detalle = new DescripcionVenta(producto, cantidad);
+
+    // Agrega a la lista
+    this.productos.add(detalle);
+
+    // Recalcula el total de la venta
+    calculaTotal();
+
+    return true;
+}
 
     public void calculaTotal() {
         double acumulado = 0.0;
