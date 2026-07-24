@@ -115,5 +115,17 @@ public class VentanaPrincipal {
     }
 
 }
+	@FXML
+	private void handleActualizarPrecio() {
+		if (control != null) {
+			control.actualizarPrecio();
+		}
+	}
 
+	@FXML
+	private void handleDevolucionProducto() {
+		if (control != null) {
+			control.devolucionProducto();
+		}
+	}
 }
