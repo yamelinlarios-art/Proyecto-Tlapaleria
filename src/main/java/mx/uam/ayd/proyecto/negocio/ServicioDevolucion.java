@@ -75,11 +75,15 @@ public class ServicioDevolucion {
 
         // 2. Crear y guardar el registro de devolución
         Devolucion devolucion = new Devolucion();
-        devolucion.setIdProducto(idProducto);
+        
+        // LÍNEA 78: Se pasa la instancia 'producto' recuperada arriba
+
+        devolucion.setProducto(producto); 
+        
         devolucion.setCantidad(cantidad);
         devolucion.setMotivo(motivo);
         devolucion.setTipoDevolucion("DAÑADO");
-        devolucion.setFecha(LocalDateTime.now()); // Correcto: se utiliza setFecha() en lugar de setFechaHora()
+        devolucion.setFecha(LocalDateTime.now());
 
         Devolucion devolucionGuardada = devolucionRepository.save(devolucion);
         log.info("Devolución registrada exitosamente con ID: {} para el producto {}", 
