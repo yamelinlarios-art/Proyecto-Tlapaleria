@@ -1,139 +1,164 @@
-	package mx.uam.ayd.proyecto.presentacion.principal;
+package mx.uam.ayd.proyecto.presentacion.principal;
 
-	import javafx.application.Platform;
-	import javafx.fxml.FXML;
-	import javafx.fxml.FXMLLoader;
-	import javafx.scene.Scene;
-	import javafx.stage.Stage;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
 
-	import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Component;
 
-	import java.io.IOException;
+import java.io.IOException;
 
-	/**
-	 * Ventana principal usando JavaFX con FXML
-	 * 
-	 */
-	@Component
-	public class VentanaPrincipal {
+/**
+ * Ventana principal usando JavaFX con FXML
+ */
+@Component
+public class VentanaPrincipal {
 
-		private Stage stage;
-		private ControlPrincipal control;
-		private boolean initialized = false;
+    private Stage stage;
+    private ControlPrincipal control;
+    private boolean initialized = false;
 
-		/**
-		 * Constructor without UI initialization
-		 */
-		public VentanaPrincipal() {
-			// Don't initialize JavaFX components in constructor
-		}
-		
-		/**
-		 * Initialize UI components on the JavaFX application thread
-		 */
-		private void initializeUI() {
-			if (initialized) {
-				return;
-			}
-			
-			// Create UI only if we're on JavaFX thread
-			if (!Platform.isFxApplicationThread()) {
-				Platform.runLater(this::initializeUI);
-				return;
-			}
-			
-			try {
-				stage = new Stage();
-				stage.setTitle("Mi Aplicación");
-				
-				// Load FXML
-				FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-principal.fxml"));
-				loader.setController(this);
-				Scene scene = new Scene(loader.load(), 450, 300);
-				stage.setScene(scene);
-				
-				initialized = true;
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		public void setControlPrincipal(ControlPrincipal control) {
-			this.control = control;
-		}
-		/**
-		 * Muestra la ventana y establece el control
-		 * 
-		 * @param control El controlador asociado a esta ventana
-		 */
-		public void muestra() {
-			//this.control = control;
-			
-			if (!Platform.isFxApplicationThread()) {
-				Platform.runLater(() -> this.muestra());
-				return;
-			}
-			
-			initializeUI();
-			stage.show();
-		}
-		
-		// FXML Event Handlers
-		
-		@FXML
-		private void handleAgregarUsuario() {
-			if (control != null) {
-				control.agregarUsuario();
-			}
-		}
-		
-		@FXML
-		private void handleListarUsuarios() {
-			if (control != null) {
-				control.listarUsuarios();
-			}
-		}
-		
-		@FXML
-		private void handleListarGrupos() {
-			if (control != null) {
-				control.listarGrupos();
-			}
-		}
+    /**
+     * Constructor sin inicialización de UI
+     */
+    public VentanaPrincipal() {
+        // No inicializar componentes de JavaFX en el constructor
+    }
 
-		@FXML
-		private void handleListarInventario() {
-			if (control != null) {
-				control.listarInventario();
-		}
-	}
-		@FXML
-		private void handleRegistrarMercancia() {
+    /**
+     * Inicializa componentes UI en el hilo de aplicación de JavaFX
+     */
+    private void initializeUI() {
+        if (initialized) {
+            return;
+        }
 
-			if (control != null) {
-				control.registrarMercancia();
-		}
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(this::initializeUI);
+            return;
+        }
 
-	}
-		@FXML
-		private void handleActualizarPrecio() {
-			if (control != null) {
-				control.actualizarPrecio();
-			}
-		}
+        try {
+            stage = new Stage();
+            stage.setTitle("Mi Aplicación");
 
-		@FXML
-		private void handleDevolucionProducto() {
-			if (control != null) {
-				control.devolucionProducto();
-			}
-		}
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-principal.fxml"));
+            loader.setController(this);
+            Scene scene = new Scene(loader.load(), 1366, 768);
+            stage.setScene(scene);
 
-		@FXML
-    	private void handleRevisarAlertas() {
+            initialized = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setControlPrincipal(ControlPrincipal control) {
+        this.control = control;
+    }
+
+    /**
+     * Muestra la ventana principal
+     */
+    public void muestra() {
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(this::muestra);
+            return;
+        }
+
+        initializeUI();
+        stage.show();
+    }
+
+    // ==========================================
+    // HANDLERS DE EVENTOS FXML
+    // ==========================================
+
+    @FXML
+    private void handleAgregarUsuario() {
         if (control != null) {
-            // Le avisamos al control principal que queremos ver las alertas
+            control.agregarUsuario();
+        }
+    }
+
+    @FXML
+    private void handleListarUsuarios() {
+        if (control != null) {
+            control.listarUsuarios();
+        }
+    }
+
+    @FXML
+    private void handleListarGrupos() {
+        if (control != null) {
+            control.listarGrupos();
+        }
+    }
+
+    @FXML
+    private void handleListarInventario() {
+        if (control != null) {
+            control.listarInventario();
+        }
+    }
+
+    @FXML
+    private void handleRegistrarMercancia() {
+        if (control != null) {
+            control.registrarMercancia();
+        }
+    }
+
+    @FXML
+    private void handleActualizarPrecio() {
+        if (control != null) {
+            control.actualizarPrecio();
+        }
+    }
+
+    @FXML
+    private void handleDevolucionProducto() {
+        if (control != null) {
+            control.devolucionProducto();
+        }
+    }
+
+    /**
+     * Alias para vincular el botón de Devoluciones por Daños desde FXML
+     */
+    @FXML
+    private void abrirVentanaDevolucionProducto() {
+        handleDevolucionProducto();
+    }
+
+    @FXML
+    private void handleRevisarAlertas() {
+        if (control != null) {
             control.revisarAlertasStock();
         }
     }
-	}
+
+    @FXML
+    private void handleRealizarVenta() {
+        if (control != null) {
+            control.realizarVenta();
+        }
+    }
+
+    @FXML
+    private void handleConsultarInventario() {
+        if (control != null) {
+            control.consultarInventario();
+        }
+    }
+
+    @FXML
+    private void handleHistorialMovimientos() {
+        if (control != null) {
+            control.historialMovimientos();
+        }
+    }
+}
