@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -16,6 +18,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 import mx.uam.ayd.proyecto.negocio.modelo.DescripcionVenta;
@@ -27,14 +30,36 @@ public class VistaAgregarProductos {
 
     private Stage stage;
     private ControlAgregarProductos control;
+    private boolean initialized = false;
 
-    // Cambiamos el ComboBox por el Campo de Texto para buscar
+    // -------------------------------------------------------------------------
+    // CONTROLES FXML: SECCIÓN BÚSQUEDA Y CATÁLOGO DE PRODUCTOS
+    // -------------------------------------------------------------------------
     @FXML
     private TextField txtBuscarProducto;
 
     @FXML
     private TextField txtCantidad;
 
+    @FXML
+    private TableView<Producto> tablaCatalogo;
+
+    @FXML
+    private TableColumn<Producto, String> colCatNombre;
+
+    @FXML
+    private TableColumn<Producto, Double> colCatPrecio;
+
+    @FXML
+    private TableColumn<Producto, Integer> colCatStock;
+
+    // Listas observables para filtrado dinámico
+    private ObservableList<Producto> listaProductosObservable = FXCollections.observableArrayList();
+    private FilteredList<Producto> productosFiltrados;
+
+    // -------------------------------------------------------------------------
+    // CONTROLES FXML: SECCIÓN CARRITO Y DETALLE DE LA VENTA
+    // -------------------------------------------------------------------------
     @FXML
     private TableView<DescripcionVenta> tablaCarrito;
 
@@ -53,11 +78,9 @@ public class VistaAgregarProductos {
     @FXML
     private Label lblTotal;
 
-    private boolean initialized = false;
-
-    // Almacenamos el catálogo de productos enviado por el ServicioProducto
-    private Iterable<Producto> catalogoProductos;
-
+    // -------------------------------------------------------------------------
+    // CONSTRUCTOR E INICIALIZACIÓN DE LA INTERFAZ
+    // -------------------------------------------------------------------------
     public VistaAgregarProductos() {
     }
 
@@ -72,17 +95,38 @@ public class VistaAgregarProductos {
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/vista-agregar-productos.fxml"));
             loader.setController(this);
-            Scene scene = new Scene(loader.load(), 700, 500);
+            
+            BorderPane root = loader.load();
+            Scene scene = new Scene(root, 750, 600);
             stage.setScene(scene);
 
-            // Mapeo de columnas
+            // 1. Mapeo de columnas de la Tabla del Catálogo
+            colCatNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+            colCatPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
+            colCatStock.setCellValueFactory(new PropertyValueFactory<>("existencias")); // Ajusta a tu atributo en Producto (ej: existencias/stock)
+
+            // 2. Mapeo de columnas de la Tabla del Carrito
             colNombre.setCellValueFactory(new PropertyValueFactory<>("productoNombre"));
             colPrecio.setCellValueFactory(new PropertyValueFactory<>("precioUnitario"));
             colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
             colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
 
+            // 3. Listener para filtrado en tiempo real al escribir en el TextField (Escenario 1)
+            txtBuscarProducto.textProperty().addListener((observable, oldValue, newValue) -> {
+                if (productosFiltrados != null) {
+                    productosFiltrados.setPredicate(producto -> {
+                        if (newValue == null || newValue.trim().isEmpty()) {
+                            return true; // Si está vacío muestra todos los productos
+                        }
+                        String lowerCaseFilter = newValue.toLowerCase();
+                        return producto.getNombre().toLowerCase().contains(lowerCaseFilter);
+                    });
+                }
+            });
+
             initialized = true;
         } catch (IOException e) {
+            System.err.println("Error al cargar la interfaz FXML:");
             e.printStackTrace();
         }
     }
@@ -91,8 +135,12 @@ public class VistaAgregarProductos {
         this.control = control;
     }
 
+    // -------------------------------------------------------------------------
+    // MÉTODOS DE FLUJO (LLAMADOS DESDE EL CONTROL)
+    // -------------------------------------------------------------------------
+
     /**
-     * Corresponde a mostrarVentanaVenta en tu diagrama de secuencia / HU
+     * Muestra todos los productos al abrir la ventana y prepara la vista.
      */
     public void mostrarVentanaVenta(ControlAgregarProductos control, Iterable<Producto> productos) {
         if (!Platform.isFxApplicationThread()) {
@@ -101,16 +149,29 @@ public class VistaAgregarProductos {
         }
 
         this.setControl(control);
-        this.catalogoProductos = productos; // Guardamos el catálogo localmente
-
         initializeUI();
 
-        // Limpiamos la entrada de texto y el carrito
+        // Cargar catálogo de productos en la tabla superior
+        listaProductosObservable.clear();
+        if (productos != null) {
+            for (Producto p : productos) {
+                listaProductosObservable.add(p);
+            }
+        }
+
+        // Crear la lista filtrada y ligarla a la tabla del catálogo
+        productosFiltrados = new FilteredList<>(listaProductosObservable, p -> true);
+        if (tablaCatalogo != null) {
+            tablaCatalogo.setItems(productosFiltrados);
+        }
+
+        // Limpiar campo de texto y carrito
         if (txtBuscarProducto != null) {
             txtBuscarProducto.clear();
         }
 
         control.iniciarVenta();
+
         if (tablaCarrito != null) {
             tablaCarrito.getItems().clear();
         }
@@ -118,7 +179,9 @@ public class VistaAgregarProductos {
             lblTotal.setText("$0.00");
         }
 
-        stage.show();
+        if (initialized) {
+            stage.show();
+        }
     }
 
     public void mostrarVenta(Venta venta) {
@@ -146,49 +209,74 @@ public class VistaAgregarProductos {
         alert.showAndWait();
     }
 
-    // =========================================================================
-    // FXML EVENT HANDLERS
-    // =========================================================================
+    // -------------------------------------------------------------------------
+    // HANDLERS FXML (EVENTOS DE BOTONES)
+    // -------------------------------------------------------------------------
 
-   @FXML
-private void handleAgregarProducto() {
-    String textoBusqueda = txtBuscarProducto.getText().trim().toLowerCase();
+    @FXML
+    private void handleAgregarProducto() {
+        // Prioridad 1: Producto seleccionado directamente en la tabla
+        Producto productoSeleccionado = tablaCatalogo.getSelectionModel().getSelectedItem();
 
-    if (textoBusqueda.isEmpty()) {
-        muestraMensajeError("Por favor ingresa el nombre o código del producto.");
-        return;
-    }
-
-    // Busca cualquier producto cuyo nombre contenga el texto ingresado
-    Producto productoSeleccionado = null;
-    if (catalogoProductos != null) {
-        for (Producto p : catalogoProductos) {
-            if (p.getNombre().toLowerCase().contains(textoBusqueda)) {
-                productoSeleccionado = p;
-                break; // Toma la primera coincidencia
-            }
+        // Prioridad 2: Si no seleccionó en la tabla pero escribió en el buscador, toma el primer resultado
+        if (productoSeleccionado == null && productosFiltrados != null && !productosFiltrados.isEmpty()) {
+            productoSeleccionado = productosFiltrados.get(0);
         }
-    }
 
-    if (productoSeleccionado == null) {
-        muestraMensajeError("No se encontró ningún producto que coincida con: " + textoBusqueda);
-        return;
-    }
-
-    try {
-        int cantidad = Integer.parseInt(txtCantidad.getText().trim());
-
-        if (cantidad <= 0) {
-            muestraMensajeError("La cantidad debe ser mayor a 0.");
+        if (productoSeleccionado == null) {
+            muestraMensajeError("No se encontró ningún producto disponible para agregar.");
             return;
         }
 
-        control.agregarProductos(productoSeleccionado, cantidad);
+        try {
+            int cantidad = Integer.parseInt(txtCantidad.getText().trim());
 
-    } catch (NumberFormatException e) {
-        muestraMensajeError("Ingresa un número entero válido en la cantidad.");
+            if (cantidad <= 0) {
+                muestraMensajeError("La cantidad debe ser mayor a 0.");
+                return;
+            }
+
+            // Llamamos a tu HU en el controlador
+            control.agregarProductos(productoSeleccionado, cantidad);
+
+        } catch (NumberFormatException e) {
+            muestraMensajeError("Ingresa un número entero válido en la cantidad.");
+        }
     }
-}
+
+    @FXML
+    private void handleEliminarProducto() {
+        DescripcionVenta seleccion = tablaCarrito.getSelectionModel().getSelectedItem();
+        if (seleccion == null) {
+            muestraMensajeError("Por favor selecciona un producto del carrito para eliminar.");
+            return;
+        }
+
+        if (control != null) {
+            tablaCarrito.getItems().remove(seleccion);
+
+            // Recalculamos el total básico
+            double nuevoTotal = 0.0;
+            for (DescripcionVenta item : tablaCarrito.getItems()) {
+                if (item != null) {
+                    nuevoTotal += item.getSubtotal();
+                }
+            }
+            lblTotal.setText(String.format("$%.2f", nuevoTotal));
+        }
+    }
+
+    @FXML
+    private void handleSiguiente() {
+        if (tablaCarrito.getItems().isEmpty()) {
+            muestraMensajeError("Debes agregar al menos un producto a la compra para continuar.");
+            return;
+        }
+
+        if (control != null) {
+            control.continuarRegistroVenta();
+        }
+    }
 
     @FXML
     private void handleNuevaVenta() {
@@ -204,32 +292,4 @@ private void handleAgregarProducto() {
     private void handleCerrar() {
         stage.close();
     }
-    @FXML
-private void handleSiguiente() {
-    if (control != null) {
-        control.continuarRegistroVenta();
-    }
-}
-@FXML
-private void handleEliminarProducto() {
-    DescripcionVenta seleccion = tablaCarrito.getSelectionModel().getSelectedItem();
-    if (seleccion == null) {
-        muestraMensajeError("Por favor selecciona un producto de la tabla para eliminar.");
-        return;
-    }
-
-    if (control != null) {
-        // Removemos el elemento seleccionado de la tabla
-        tablaCarrito.getItems().remove(seleccion);
-        
-        // Recalculamos el total sin streams (sin advertencias)
-        double nuevoTotal = 0.0;
-        for (DescripcionVenta item : tablaCarrito.getItems()) {
-            if (item != null) {
-                nuevoTotal += item.getSubtotal();
-            }
-        }
-        lblTotal.setText(String.format("$%.2f", nuevoTotal));
-    }
-}
 }

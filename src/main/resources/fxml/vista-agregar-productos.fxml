@@ -11,43 +11,53 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
-   <top>
+<BorderPane prefHeight="600.0" prefWidth="750.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
       <VBox spacing="10.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox alignment="CENTER_LEFT" spacing="15.0">
+            <!-- SECCIÓN 1: BÚSQUEDA Y TABLA DE CATÁLOGO -->
+            <Label text="Catálogo de Productos Disponibles:" style="-fx-font-weight: bold;" />
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#handleNuevaVenta" text="Nueva Venta" />
-                  <Label text="Producto:" />
-                  <TextField fx:id="txtBuscarProducto" prefWidth="180.0" promptText="Nombre o código" />
+                  <Label text="Buscar:" />
+                  <TextField fx:id="txtBuscarProducto" prefWidth="250.0" promptText="Escribe nombre o código..." />
                   <Label text="Cantidad:" />
-                  <TextField fx:id="txtCantidad" prefWidth="60.0" text="1" />
-                  <Button mnemonicParsing="false" onAction="#handleAgregarProducto" text="Agregar" />
+                  <TextField fx:id="txtCantidad" prefWidth="50.0" text="1" />
+                  <Button mnemonicParsing="false" onAction="#handleAgregarProducto" text="Agregar a la compra" />
                </children>
             </HBox>
+            
+            <!-- Tabla que MUESTRA TODOS LOS PRODUCTOS que hay en la tienda -->
+            <TableView fx:id="tablaCatalogo" prefHeight="200.0" prefWidth="720.0">
+              <columns>
+                <TableColumn fx:id="colCatNombre" prefWidth="300.0" text="Producto" />
+                <TableColumn fx:id="colCatPrecio" prefWidth="150.0" text="Precio Unitario" />
+                <TableColumn fx:id="colCatStock" prefWidth="150.0" text="Existencias Disponibles" />
+              </columns>
+            </TableView>
+
+            <!-- SECCIÓN 2: DETALLE DE LA COMPRA (CARRITO) -->
+            <Label text="Detalle de la Venta (Carrito):" style="-fx-font-weight: bold;" />
+            <TableView fx:id="tablaCarrito" prefHeight="200.0" prefWidth="720.0">
+              <columns>
+                <TableColumn fx:id="colNombre" prefWidth="280.0" text="Producto" />
+                <TableColumn fx:id="colPrecio" prefWidth="130.0" text="Precio Unitario" />
+                <TableColumn fx:id="colCantidad" prefWidth="100.0" text="Cantidad" />
+                <TableColumn fx:id="colSubtotal" prefWidth="140.0" text="Subtotal" />
+              </columns>
+            </TableView>
          </children>
          <padding>
-            <Insets bottom="10.0" left="15.0" right="15.0" top="15.0" />
+            <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />
          </padding>
       </VBox>
-   </top>
-   <center>
-      <TableView fx:id="tablaCarrito" prefHeight="300.0" prefWidth="670.0" BorderPane.alignment="CENTER">
-        <columns>
-          <TableColumn fx:id="colNombre" prefWidth="250.0" text="Producto" />
-          <TableColumn fx:id="colPrecio" prefWidth="120.0" text="Precio Unitario" />
-            <TableColumn fx:id="colCantidad" prefWidth="100.0" text="Cantidad" />
-            <TableColumn fx:id="colSubtotal" prefWidth="150.0" text="Subtotal" />
-        </columns>
-      </TableView>
    </center>
    <bottom>
       <HBox alignment="CENTER_RIGHT" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
             <Button mnemonicParsing="false" onAction="#handleCerrar" text="Cancelar" />
             <Button mnemonicParsing="false" onAction="#handleEliminarProducto" text="Eliminar Producto" />
-            <Label prefHeight="17.0" prefWidth="280.0" />
-            <!-- AQUÍ CONECTAMOS EL BOTÓN SIGUIENTE -->
+            <Label prefHeight="17.0" prefWidth="250.0" />
             <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#handleSiguiente" text="Siguiente" />
             <Label text="Total:">
                <font>
