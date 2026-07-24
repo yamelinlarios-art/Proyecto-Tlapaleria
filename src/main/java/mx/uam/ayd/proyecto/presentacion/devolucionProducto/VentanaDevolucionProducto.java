@@ -11,7 +11,6 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import org.springframework.stereotype.Component;
-
 import java.io.IOException;
 
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
@@ -27,133 +26,86 @@ public class VentanaDevolucionProducto {
     private Stage stage;
     private ControlDevolucionProducto control;
     
-    @FXML
-    private TextField textFieldIdProducto;
-    
-    @FXML
-    private TextField textFieldNombreProducto;
-    
-    @FXML
-    private TextField textFieldCantidad;
-    
-    @FXML
-    private TextArea textAreaMotivo;
+    @FXML private TextField textFieldIdProducto;
+    @FXML private TextField textFieldNombreProducto;
+    @FXML private TextField textFieldCantidad;
+    @FXML private TextArea textAreaMotivo;
     
     private boolean initialized = false;
 
-    /**
-     * Constructor sin inicialización de UI para evitar conflictos en hilos de JavaFX.
-     */
-    public VentanaDevolucionProducto() {
-        // No inicializar la UI en el constructor
-    }
+    /** Constructor sin inicialización de UI para evitar conflictos en hilos de JavaFX. */
+    public VentanaDevolucionProducto() {}
     
-    /**
-     * Inicializa los componentes de la interfaz de usuario en el hilo de JavaFX.
-     */
+    /** Inicializa los componentes de la interfaz de usuario en el hilo de JavaFX. */
     private void initializeUI() {
-        if (initialized) {
-            return;
-        }
-        
+        if (initialized) return;
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(this::initializeUI);
             return;
         }
-        
         try {
             stage = new Stage();
             stage.setTitle("Devolución de Producto Dañado");
             
-            // Carga del archivo FXML correspondiente
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-devolucion-producto.fxml"));
             loader.setController(this);
-            Scene scene = new Scene(loader.load(), 400, 350);
-            stage.setScene(scene);
-            
+            stage.setScene(new Scene(loader.load()));
             initialized = true;
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
     
-    /**
-     * Establece el controlador asociado a esta ventana.
-     * 
-     * @param control El controlador de la vista
-     */
+    /** Establece el controlador asociado a esta ventana. */
     public void setControl(ControlDevolucionProducto control) {
         this.control = control;
     }
     
-    /**
-     * Muestra la ventana y resetea los campos.
-     */
+    /** Muestra la ventana y resetea los campos. */
     public void muestra() {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(this::muestra);
             return;
         }
-        
         initializeUI();
         limpiarCampos();
         stage.show();
     }
     
-    /**
-     * Muestra en la interfaz los datos del producto encontrado.
-     * 
-     * @param producto Producto obtenido de la base de datos
-     */
+    /** Muestra en la interfaz los datos del producto encontrado. */
     public void muestraProductoEncontrado(Producto producto) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> this.muestraProductoEncontrado(producto));
             return;
         }
-        
         if (producto != null) {
-            if (textFieldNombreProducto != null) {
-                textFieldNombreProducto.setText(producto.getNombre());
-            }
+            if (textFieldNombreProducto != null) textFieldNombreProducto.setText(producto.getNombre());
         } else {
             muestraError("No se encontró ningún producto con el ID especificado.");
-            if (textFieldNombreProducto != null) {
-                textFieldNombreProducto.setText("");
-            }
+            if (textFieldNombreProducto != null) textFieldNombreProducto.setText("");
         }
     }
     
-    /**
-     * Notifica un resultado exitoso al usuario y limpia el formulario.
-     * 
-     * @param mensaje Mensaje explicativo
-     */
+    /** Notifica un resultado exitoso al usuario y limpia el formulario. */
     public void muestraDevolucionExitosa(String mensaje) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> this.muestraDevolucionExitosa(mensaje));
             return;
         }
-        
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("Éxito");
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
-        
         limpiarCampos();
     }
     
-    /**
-     * Muestra una alerta de error al usuario.
-     * 
-     * @param mensaje Mensaje de error
-     */
+    /** Muestra una alerta de error al usuario. */
     public void muestraError(String mensaje) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> this.muestraError(mensaje));
             return;
         }
-        
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("Error");
         alert.setHeaderText(null);
@@ -161,29 +113,16 @@ public class VentanaDevolucionProducto {
         alert.showAndWait();
     }
     
-    /**
-     * Oculta o muestra la ventana.
-     * 
-     * @param visible true para mostrar, false para ocultar
-     */
+    /** Oculta o muestra la ventana. */
     public void setVisible(boolean visible) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> this.setVisible(visible));
             return;
         }
-        
-        if (!initialized) {
-            if (visible) {
-                initializeUI();
-            } else {
-                return;
-            }
-        }
-        
-        if (visible) {
-            stage.show();
-        } else {
-            stage.hide();
+        if (!initialized && visible) initializeUI();
+        if (stage != null) {
+            if (visible) stage.show();
+            else stage.hide();
         }
     }
     
@@ -194,7 +133,7 @@ public class VentanaDevolucionProducto {
         if (textAreaMotivo != null) textAreaMotivo.setText("");
     }
     
-    // Manejadores de eventos FXML
+    // --- Manejadores de eventos FXML ---
     
     @FXML
     private void handleBuscarProducto() {
@@ -203,7 +142,6 @@ public class VentanaDevolucionProducto {
             muestraError("Ingresa un ID de producto válido.");
             return;
         }
-        
         try {
             long idProducto = Long.parseLong(idText.trim());
             control.buscarProducto(idProducto);
