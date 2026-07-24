@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #F4F7FC;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tuempresa.pos.controller.MainDashboardController">
+<AnchorPane prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #F4F7FC;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tuempresa.pos.controller.MainDashboardController">
    <children>
       <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -34,16 +34,7 @@
                               <Image url="@../images/logo_placeholder.png" />
                            </image>
                         </ImageView>
-                        <VBox>
-                           <children>
-                              <Label text="Store Ops" textFill="#0D47A1">
-                                 <font>
-                                    <Font name="System Bold" size="20.0" />
-                                 </font>
-                              </Label>
-                              <Label text="Terminal #01" textFill="#757575" />
-                           </children>
-                        </VBox>
+                        <VBox />
                      </children>
                      <VBox.margin>
                         <Insets bottom="20.0" />
@@ -206,20 +197,10 @@
                                           <HBox spacing="15.0">
                                              <children>
                                                 <!-- SKUs Totales -->
-                                                <VBox alignment="CENTER" prefHeight="80.0" prefWidth="120.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-border-color: #EEEEEE; -fx-border-width: 1;">
-                                                   <children>
-                                                      <Label text="SKUs Totales" textFill="#757575" />
-                                                      <Label text="12,842">
-                                                         <font>
-                                                            <Font name="System Bold" size="20.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </VBox>
+                                                <VBox alignment="CENTER" prefHeight="80.0" prefWidth="120.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-border-color: #EEEEEE; -fx-border-width: 1;" />
                                                 <!-- Valor Stock -->
                                                 <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="80.0" prefWidth="120.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-border-color: #EEEEEE; -fx-border-width: 1;">
                                                    <children>
-                                                      <Label text="Valor Stock" textFill="#757575" />
                                                       <Label text="\$4.2M">
                                                          <font>
                                                             <Font name="System Bold" size="20.0" />
@@ -241,7 +222,7 @@
                                                 <!-- Stock Bajo -->
                                                 <VBox alignment="CENTER" layoutX="280.0" layoutY="10.0" prefHeight="80.0" prefWidth="120.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-border-color: #EEEEEE; -fx-border-width: 1;">
                                                    <children>
-                                                      <Label text="Stock Bajo" textFill="#EF5350" />
+                                                      <Label text="Bajo Stock" textFill="#EF5350" />
                                                       <Label text="24" textFill="#EF5350">
                                                          <font>
                                                             <Font name="System Bold" size="20.0" />
@@ -277,7 +258,7 @@
                                                             <Font size="48.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label text="Cobro / Punto de Venta" textFill="WHITE">
+                                                      <Label text="Cobrar mercancía" textFill="WHITE">
                                                          <font>
                                                             <Font name="System Bold" size="24.0" />
                                                          </font>
@@ -330,7 +311,7 @@
                                                             <Font size="48.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label text="Devoluciones (Daños)" textFill="#212121">
+                                                      <Label prefHeight="81.0" prefWidth="136.0" text="Devoluciones &#10;por daños de &#10;fábrica" textAlignment="CENTER" textFill="#212121">
                                                          <font>
                                                             <Font name="System Bold" size="18.0" />
                                                          </font>
@@ -554,7 +535,6 @@
                      </padding>
                      <children>
                         <Label text="🟢 SERVIDOR CONECTADO" textFill="#4CAF50" />
-                        <Label text="DB Version: 2.4.0-pro" textFill="#757575" />
                         <HBox HBox.hgrow="ALWAYS" />
                         <Label text="20:55:45" textFill="#757575" />
                         <Label text="|" textFill="#EEEEEE" />
