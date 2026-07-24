@@ -1,21 +1,573 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox prefHeight="449.0" prefWidth="591.0" spacing="10" style="-fx-padding: 15px;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
-    
-    <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Tlapaleria: La nueva" />
-    
-    <Button onAction="#handleAgregarUsuario" style="-fx-min-width: 200px; -fx-min-height: 30px;" text="Consultar inventario" />
-
-    <Button onAction="#handleListarInventario" style="-fx-min-width: 200px; -fx-min-height: 30px;" text="Consultar Bajo Stock" />
-
-    <Button onAction="#handleRegistrarMercancia" style="-fx-min-width: 200px; -fx-min-height: 30px;" text="Consultar carrito" />
-
-    <Button onAction="#handleListarUsuarios" style="-fx-min-width: 200px; -fx-min-height: 30px;" text="Actualizar el precio de los productos" />
-    
-    <Button onAction="#handleListarGrupos" style="-fx-min-width: 200px; -fx-min-height: 30px;" text="Devolver productos dañados" />
-    
-</VBox>
+<AnchorPane prefHeight="768.0" prefWidth="1366.0" style="-fx-background-color: #F4F7FC;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tuempresa.pos.controller.MainDashboardController">
+   <children>
+      <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <!-- MENÚ DE NAVEGACIÓN LATERAL (IZQUIERDA) -->
+            <VBox maxWidth="280.0" prefWidth="280.0" spacing="10.0" style="-fx-background-color: #EBF0F9;">
+               <padding>
+                  <Insets bottom="20.0" left="15.0" right="15.0" top="20.0" />
+               </padding>
+               <children>
+                  <!-- Logotipo e Info de la Terminal -->
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <!-- Coloca aquí tu logo -->
+                              <Image url="@../images/logo_placeholder.png" />
+                           </image>
+                        </ImageView>
+                        <VBox>
+                           <children>
+                              <Label text="Store Ops" textFill="#0D47A1">
+                                 <font>
+                                    <Font name="System Bold" size="20.0" />
+                                 </font>
+                              </Label>
+                              <Label text="Terminal #01" textFill="#757575" />
+                           </children>
+                        </VBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="20.0" />
+                     </VBox.margin>
+                  </HBox>
+                  
+                  <!-- Botones de Navegación -->
+                  <Button fx:id="btnVentas" alignment="BASELINE_LEFT" graphicTextGap="15.0" maxWidth="1.7976931348623157E308" minHeight="50.0" mnemonicParsing="false" style="-fx-background-color: #0D47A1; -fx-background-radius: 8;" text="Ventas" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                     <graphic>
+                        <!-- Usando un icono de texto para simplicidad, o un ImageView -->
+                        <Label text="💳" textFill="WHITE">
+                           <font>
+                              <Font size="18.0" />
+                           </font></Label>
+                     </graphic>
+                     <padding>
+                        <Insets left="20.0" />
+                     </padding>
+                  </Button>
+                  <Button fx:id="btnInventario" alignment="BASELINE_LEFT" graphicTextGap="15.0" layoutX="25.0" layoutY="110.0" maxWidth="1.7976931348623157E308" minHeight="50.0" mnemonicParsing="false" style="-fx-background-color: transparent;" text="Inventario" textFill="#546E7A">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <Label text="📦" textFill="#546E7A">
+                           <font>
+                              <Font size="18.0" />
+                           </font></Label>
+                     </graphic>
+                     <padding>
+                        <Insets left="20.0" />
+                     </padding>
+                  </Button>
+                  <Button fx:id="btnHistorial" alignment="BASELINE_LEFT" graphicTextGap="15.0" layoutX="25.0" layoutY="170.0" maxWidth="1.7976931348623157E308" minHeight="50.0" mnemonicParsing="false" style="-fx-background-color: transparent;" text="Historial" textFill="#546E7A">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <Label text="🕒" textFill="#546E7A">
+                           <font>
+                              <Font size="18.0" />
+                           </font></Label>
+                     </graphic>
+                     <padding>
+                        <Insets left="20.0" />
+                     </padding>
+                  </Button>
+                  
+                  <!-- Espaciador para empujar el botón de cerrar sesión hacia abajo -->
+                  <VBox VBox.vgrow="ALWAYS" />
+                  
+                  <Button fx:id="btnCerrarSesion" alignment="BASELINE_LEFT" graphicTextGap="15.0" maxWidth="1.7976931348623157E308" minHeight="50.0" mnemonicParsing="false" style="-fx-background-color: transparent;" text="Cerrar Sesión" textFill="#E57373">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                     <graphic>
+                        <Label text="🚪" textFill="#E57373">
+                           <font>
+                              <Font size="18.0" />
+                           </font></Label>
+                     </graphic>
+                     <padding>
+                        <Insets left="20.0" />
+                     </padding>
+                  </Button>
+               </children>
+            </VBox>
+            
+            <!-- ÁREA DE CONTENIDO PRINCIPAL (DERECHA) -->
+            <VBox fx:id="contentArea" HBox.hgrow="ALWAYS">
+               <children>
+                  <!-- CABECERA SUPERIOR (TOP BAR) -->
+                  <HBox alignment="CENTER_LEFT" minHeight="70.0" spacing="20.0" style="-fx-background-color: #FFFFFF; -fx-border-color: #EEEEEE; -fx-border-width: 0 0 1 0;">
+                     <padding>
+                        <Insets left="30.0" right="30.0" />
+                     </padding>
+                     <children>
+                        <Label text="La Nueva" textFill="#0D47A1">
+                           <font>
+                              <Font name="System Bold" size="24.0" />
+                           </font>
+                        </Label>
+                        
+                        <!-- Barra de Búsqueda -->
+                        <HBox alignment="CENTER_LEFT" maxWidth="400.0" prefHeight="40.0" style="-fx-background-color: #F1F3F4; -fx-background-radius: 8;" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label text="🔍" textFill="#757575">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets left="15.0" />
+                                 </HBox.margin>
+                              </Label>
+                              <TextField promptText="Buscar productos, órdenes..." style="-fx-background-color: transparent; -fx-prompt-text-fill: #9E9E9E;" HBox.hgrow="ALWAYS">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                           </children>
+                        </HBox>
+                        
+                        <HBox HBox.hgrow="ALWAYS" />
+                        
+                        <!-- Iconos de Perfil y Notificaciones -->
+                        <HBox alignment="CENTER" spacing="15.0">
+                           <children>
+                              <Label text="🔔" textFill="#757575">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <Label text="⚙️" textFill="#757575">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../images/user_avatar.png" />
+                                 </image>
+                              </ImageView>
+                           </children>
+                        </HBox>
+                     </children>
+                  </HBox>
+                  
+                  <!-- ÁREA DE CONTENIDO CENTRAL (PANEL DE CONTROL) -->
+                  <HBox VBox.vgrow="ALWAYS">
+                     <children>
+                        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;" HBox.hgrow="ALWAYS">
+                           <content>
+                              <VBox spacing="30.0">
+                                 <padding>
+                                    <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+                                 </padding>
+                                 <children>
+                                    <!-- Cabecera del Panel de Control y Estadísticas -->
+                                    <HBox alignment="BOTTOM_LEFT" spacing="10.0">
+                                       <children>
+                                          <VBox>
+                                             <children>
+                                                <Label text="CENTRO DE OPERACIONES" textFill="#0D47A1">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label text="Panel de Control" textFill="#212121">
+                                                   <font>
+                                                      <Font name="System Bold" size="32.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </VBox>
+                                          <HBox HBox.hgrow="ALWAYS" />
+                                          <!-- Tarjetas de Estadísticas (Mini-tarjetas) -->
+                                          <HBox spacing="15.0">
+                                             <children>
+                                                <!-- SKUs Totales -->
+                                                <VBox alignment="CENTER" prefHeight="80.0" prefWidth="120.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-border-color: #EEEEEE; -fx-border-width: 1;">
+                                                   <children>
+                                                      <Label text="SKUs Totales" textFill="#757575" />
+                                                      <Label text="12,842">
+                                                         <font>
+                                                            <Font name="System Bold" size="20.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                </VBox>
+                                                <!-- Valor Stock -->
+                                                <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="80.0" prefWidth="120.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-border-color: #EEEEEE; -fx-border-width: 1;">
+                                                   <children>
+                                                      <Label text="Valor Stock" textFill="#757575" />
+                                                      <Label text="\$4.2M">
+                                                         <font>
+                                                            <Font name="System Bold" size="20.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                </VBox>
+                                                <!-- Ventas Hoy -->
+                                                <VBox alignment="CENTER" layoutX="145.0" layoutY="10.0" prefHeight="80.0" prefWidth="120.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-border-color: #EEEEEE; -fx-border-width: 1;">
+                                                   <children>
+                                                      <Label text="Ventas Hoy" textFill="#757575" />
+                                                      <Label text="\$18.4k" textFill="#0D47A1">
+                                                         <font>
+                                                            <Font name="System Bold" size="20.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                </VBox>
+                                                <!-- Stock Bajo -->
+                                                <VBox alignment="CENTER" layoutX="280.0" layoutY="10.0" prefHeight="80.0" prefWidth="120.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-border-color: #EEEEEE; -fx-border-width: 1;">
+                                                   <children>
+                                                      <Label text="Stock Bajo" textFill="#EF5350" />
+                                                      <Label text="24" textFill="#EF5350">
+                                                         <font>
+                                                            <Font name="System Bold" size="20.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                </VBox>
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </HBox>
+                                    
+                                    <!-- GRID PRINCIPAL DE TARJETAS DE ACCIÓN -->
+                                    <GridPane hgap="20.0" vgap="20.0">
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                                        <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                                          <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                                          <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="100.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="250.0" vgrow="ALWAYS" />
+                                        <RowConstraints minHeight="10.0" prefHeight="130.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                                          <!-- 1. Tarjeta Grande: Cobro / Punto de Venta -->
+                                          <Button fx:id="btnPos" maxWidth="1.7976931348623157E308" minHeight="250.0" mnemonicParsing="false" style="-fx-background-color: #0D47A1; -fx-background-radius: 12;" textFill="WHITE" GridPane.columnSpan="2">
+                                             <graphic>
+                                                <VBox alignment="CENTER" spacing="10.0">
+                                                   <children>
+                                                      <Label text="💳🖥️" textFill="WHITE">
+                                                         <font>
+                                                            <Font size="48.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label text="Cobro / Punto de Venta" textFill="WHITE">
+                                                         <font>
+                                                            <Font name="System Bold" size="24.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label text="Procesar transacciones y emitir facturas." textFill="#BBDEFB" wrapText="true">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label text="INICIAR TERMINAL →" textFill="WHITE">
+                                                         <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                         </font>
+                                                         <VBox.margin>
+                                                            <Insets top="15.0" />
+                                                         </VBox.margin>
+                                                      </Label>
+                                                   </children>
+                                                </VBox>
+                                             </graphic>
+                                          </Button>
+                                          
+                                          <!-- 2. Tarjeta: Actualizar Precio -->
+                                          <Button fx:id="btnActualizarPrecio" maxWidth="1.7976931348623157E308" minHeight="250.0" mnemonicParsing="false" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" textFill="#212121" GridPane.columnIndex="2">
+                                             <graphic>
+                                                <VBox alignment="CENTER" spacing="15.0">
+                                                   <children>
+                                                      <Label text="🏷️" textFill="#0D47A1">
+                                                         <font>
+                                                            <Font size="48.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label text="Actualizar Precio" textFill="#212121">
+                                                         <font>
+                                                            <Font name="System Bold" size="18.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                </VBox>
+                                             </graphic>
+                                          </Button>
+                                          
+                                          <!-- 3. Tarjeta: Devoluciones -->
+                                          <Button fx:id="btnDevoluciones" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" minHeight="250.0" mnemonicParsing="false" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" textFill="#212121" GridPane.columnIndex="3">
+                                             <graphic>
+                                                <VBox alignment="CENTER" spacing="15.0">
+                                                   <children>
+                                                      <Label text="↩️" textFill="#0D47A1">
+                                                         <font>
+                                                            <Font size="48.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label text="Devoluciones (Daños)" textFill="#212121">
+                                                         <font>
+                                                            <Font name="System Bold" size="18.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                </VBox>
+                                             </graphic>
+                                          </Button>
+                                          
+                                          <!-- 4. Fila 2, Tarjeta 1: Entrada Mercancía (Más pequeña) -->
+                                          <Button fx:id="btnEntradaMercancia" maxWidth="1.7976931348623157E308" minHeight="130.0" mnemonicParsing="false" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" textFill="#212121" GridPane.rowIndex="1">
+                                             <graphic>
+                                                <VBox alignment="CENTER" spacing="10.0">
+                                                   <children>
+                                                      <Label text="🚚" textFill="#0D47A1">
+                                                         <font>
+                                                            <Font size="24.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label text="Entrada Mercancía" textFill="#212121" wrapText="true">
+                                                         <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                </VBox>
+                                             </graphic>
+                                          </Button>
+                                          
+                                          <!-- 5. Fila 2, Tarjeta 2: Consultar Carrito -->
+                                          <Button fx:id="btnConsultarCarrito" layoutX="10.0" layoutY="280.0" maxWidth="1.7976931348623157E308" minHeight="130.0" mnemonicParsing="false" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" textFill="#212121" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                             <graphic>
+                                                <VBox alignment="CENTER" spacing="10.0">
+                                                   <children>
+                                                      <Label text="🛒" textFill="#0D47A1">
+                                                         <font>
+                                                            <Font size="24.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label text="Consultar Carrito" textFill="#212121">
+                                                         <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                </VBox>
+                                             </graphic>
+                                          </Button>
+                                          
+                                          <!-- 6. Fila 2, Tarjeta 3: Consultar Inventario (Rectángulo horizontal) -->
+                                          <Button fx:id="btnConsultarInventario" layoutX="145.0" layoutY="280.0" maxWidth="1.7976931348623157E308" minHeight="130.0" mnemonicParsing="false" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" textFill="#212121" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                                             <graphic>
+                                                <HBox alignment="CENTER" spacing="15.0">
+                                                   <children>
+                                                      <Label text="📋" textFill="#0D47A1">
+                                                         <font>
+                                                            <Font size="36.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <VBox alignment="CENTER_LEFT" spacing="5.0">
+                                                         <children>
+                                                            <Label text="Consultar Inventario" textFill="#212121">
+                                                               <font>
+                                                                  <Font name="System Bold" size="18.0" />
+                                                               </font>
+                                                            </Label>
+                                                            <Label text="Búsqueda global de existencias." textFill="#757575">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </Label>
+                                                         </children>
+                                                      </VBox>
+                                                   </children>
+                                                </HBox>
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </GridPane>
+                                    
+                                    <!-- SECCIÓN INFERIOR: ADMINISTRACIÓN RÁPIDA Y ESCANEO -->
+                                    <HBox spacing="20.0" VBox.vgrow="ALWAYS">
+                                       <children>
+                                          <!-- Panel de Administración Rápida -->
+                                          <VBox spacing="15.0" style="-fx-background-color: #EBF0F9; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" HBox.hgrow="ALWAYS">
+                                             <padding>
+                                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                             </padding>
+                                             <children>
+                                                <Label text="ADMINISTRACIÓN RÁPIDA" textFill="#0D47A1">
+                                                   <font>
+                                                      <Font name="System Bold" size="12.0" />
+                                                   </font>
+                                                </Label>
+                                                <GridPane hgap="15.0" vgap="15.0">
+                                                  <columnConstraints>
+                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                                  </columnConstraints>
+                                                  <rowConstraints>
+                                                    <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                                    <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                                  </rowConstraints>
+                                                   <children>
+                                                      <Button fx:id="btnRegistrarMercancia" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" style="-fx-background-color: transparent;" text="Registrar Mercancía" textFill="#0D47A1">
+                                                         <graphic>
+                                                            <Label text="➕" />
+                                                         </graphic>
+                                                      </Button>
+                                                      <Button fx:id="btnRegistrarExistencia" alignment="BASELINE_LEFT" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" style="-fx-background-color: transparent;" text="Registrar Existencia" textFill="#0D47A1" GridPane.columnIndex="1">
+                                                         <graphic>
+                                                            <Label text="📊" />
+                                                         </graphic>
+                                                      </Button>
+                                                      <Button fx:id="btnAgregarProductos" alignment="BASELINE_LEFT" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" style="-fx-background-color: transparent;" text="Agregar Productos" textFill="#0D47A1" GridPane.rowIndex="1">
+                                                         <graphic>
+                                                            <Label text="🏷️" />
+                                                         </graphic>
+                                                      </Button>
+                                                   </children>
+                                                </GridPane>
+                                             </children>
+                                          </VBox>
+                                          
+                                          <!-- Botón de Escaneo Rápido (Cuadrado punteado) -->
+                                          <Button fx:id="btnEscaneoRapido" minHeight="150.0" minWidth="150.0" mnemonicParsing="false" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1; -fx-border-style: dashed; -fx-border-radius: 12;">
+                                             <graphic>
+                                                <VBox alignment="CENTER" spacing="10.0">
+                                                   <children>
+                                                      <Label text="📱" textFill="#0D47A1">
+                                                         <font>
+                                                            <Font size="36.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label text="Escaneo Rápido" textFill="#212121">
+                                                         <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                </VBox>
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </content>
+                        </ScrollPane>
+                        
+                        <!-- PANEL DE ACTIVIDAD RECIENTE (COLUMNA DERECHA) -->
+                        <VBox maxWidth="350.0" minWidth="350.0" spacing="15.0" style="-fx-background-color: #EBF0F9; -fx-border-color: #EEEEEE; -fx-border-width: 0 0 0 1;">
+                           <padding>
+                              <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                           </padding>
+                           <children>
+                              <HBox alignment="CENTER_LEFT">
+                                 <children>
+                                    <Label text="ACTIVIDAD RECIENTE" textFill="#0D47A1">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <HBox HBox.hgrow="ALWAYS" />
+                                    <Label text="🔄" textFill="#757575" />
+                                 </children>
+                              </HBox>
+                              
+                              <!-- Items de Actividad (Marcadores de posición) -->
+                              <VBox spacing="10.0" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <!-- Venta Completada -->
+                                    <HBox spacing="10.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-padding: 10;">
+                                       <children>
+                                          <Label text="💳" textFill="#4CAF50">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </Label>
+                                          <VBox>
+                                             <children>
+                                                <Label text="Venta #8492 completada" textFill="#212121" />
+                                                <Label text="Hace 2 mins • $1,240.00" textFill="#757575" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                                    <!-- Stock Crítico -->
+                                    <HBox layoutX="10.0" layoutY="10.0" spacing="10.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-padding: 10;">
+                                       <children>
+                                          <Label text="⚠️" textFill="#EF5350">
+                                             <font>
+                                                <Font size="16.0" />
+                                             </font>
+                                          </Label>
+                                          <VBox>
+                                             <children>
+                                                <Label text="Stock Crítico: Martillo Pro" textFill="#212121" />
+                                                <Label text="Hace 15 mins • SKU: HW-002" textFill="#757575" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                              
+                              <Button fx:id="btnVerHistorialCompleto" maxWidth="1.7976931348623157E308" mnemonicParsing="false" style="-fx-background-color: transparent;" text="VER HISTORIAL COMPLETO" textFill="#0D47A1">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </Button>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+                  
+                  <!-- BARRA DE ESTADO (FOOTER) -->
+                  <HBox alignment="CENTER_LEFT" minHeight="40.0" spacing="20.0" style="-fx-background-color: #FFFFFF; -fx-border-color: #EEEEEE; -fx-border-width: 1 0 0 0;">
+                     <padding>
+                        <Insets left="20.0" right="20.0" />
+                     </padding>
+                     <children>
+                        <Label text="🟢 SERVIDOR CONECTADO" textFill="#4CAF50" />
+                        <Label text="DB Version: 2.4.0-pro" textFill="#757575" />
+                        <HBox HBox.hgrow="ALWAYS" />
+                        <Label text="20:55:45" textFill="#757575" />
+                        <Label text="|" textFill="#EEEEEE" />
+                        <Label text="Usuario: Admin_Terminal_01" textFill="#757575">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+</AnchorPane>
