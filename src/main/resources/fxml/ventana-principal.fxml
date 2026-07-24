@@ -287,44 +287,27 @@
                                              </graphic>
                                           </Button>
                                           
-                                          <!-- 2. Tarjeta: Actualizar Precio -->
-                                          <Button fx:id="btnActualizarPrecio" maxWidth="1.7976931348623157E308" minHeight="250.0" mnemonicParsing="false" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" textFill="#212121" GridPane.columnIndex="2">
-                                             <graphic>
-                                                <VBox alignment="CENTER" spacing="15.0">
-                                                   <children>
-                                                      <Label text="🏷️" textFill="#0D47A1">
-                                                         <font>
-                                                            <Font size="48.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label text="Actualizar Precio" textFill="#212121">
-                                                         <font>
-                                                            <Font name="System Bold" size="18.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </VBox>
-                                             </graphic>
+                                          <!-- Botón: Actualizar Precio -->
+                                          <Button fx:id="btnActualizarPrecio" 
+                                                onAction="#abrirVentanaActualizarPrecio"
+                                                maxWidth="1.7976931348623157E308" minHeight="250.0" 
+                                                mnemonicParsing="false" 
+                                                style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" 
+                                                textFill="#212121" 
+                                                GridPane.columnIndex="2">
+                                             <!-- Resto del contenido de la gráfica/VBox... -->
                                           </Button>
-                                          
-                                          <!-- 3. Tarjeta: Devoluciones -->
-                                          <Button fx:id="btnDevoluciones" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" minHeight="250.0" mnemonicParsing="false" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" textFill="#212121" GridPane.columnIndex="3">
-                                             <graphic>
-                                                <VBox alignment="CENTER" spacing="15.0">
-                                                   <children>
-                                                      <Label text="↩️" textFill="#0D47A1">
-                                                         <font>
-                                                            <Font size="48.0" />
-                                                         </font>
-                                                      </Label>
-                                                      <Label prefHeight="81.0" prefWidth="136.0" text="Devoluciones &#10;por daños de &#10;fábrica" textAlignment="CENTER" textFill="#212121">
-                                                         <font>
-                                                            <Font name="System Bold" size="18.0" />
-                                                         </font>
-                                                      </Label>
-                                                   </children>
-                                                </VBox>
-                                             </graphic>
+
+                                          <!-- Botón: Devoluciones -->
+                                          <Button fx:id="btnDevoluciones" 
+                                                onAction="#abrirVentanaDevoluciones"
+                                                layoutX="10.0" layoutY="10.0" 
+                                                maxWidth="1.7976931348623157E308" minHeight="250.0" 
+                                                mnemonicParsing="false" 
+                                                style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" 
+                                                textFill="#212121" 
+                                                GridPane.columnIndex="3">
+                                             <!-- Resto del contenido de la gráfica/VBox... -->
                                           </Button>
                                           
                                           <!-- 4. Fila 2, Tarjeta 1: Entrada Mercancía (Más pequeña) -->
