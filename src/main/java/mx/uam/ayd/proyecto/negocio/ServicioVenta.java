@@ -7,10 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import mx.uam.ayd.proyecto.datos.InventarioRepository;
 import mx.uam.ayd.proyecto.datos.MovimientoInventarioRepository;
 import mx.uam.ayd.proyecto.datos.ProductoRepository;
 import mx.uam.ayd.proyecto.datos.VentaRepository;
 import mx.uam.ayd.proyecto.negocio.modelo.DescripcionVenta;
+import mx.uam.ayd.proyecto.negocio.modelo.Inventario;
 import mx.uam.ayd.proyecto.negocio.modelo.MovimientoInventario;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 import mx.uam.ayd.proyecto.negocio.modelo.Venta;
@@ -25,25 +27,22 @@ public class ServicioVenta {
     private ProductoRepository productoRepository;
 
     @Autowired
+    private InventarioRepository inventarioRepository;
+
+    @Autowired
     private MovimientoInventarioRepository movimientoRepository;
 
     /**
-     * Registra una nueva venta, calcula el cambio, actualiza el stock
-     * y genera el movimiento de salida en el historial de inventario.
-     *
-     * @param detalles Lista de productos y cantidades procesadas en la HU-05.
-     * @param montoRecibido Cantidad con la que pagó el cliente.
-     * @return El objeto Venta persistido.
+     * Registra una nueva venta, actualiza el stock en Producto e Inventario,
+     * guarda el historial de movimiento y calcula el cambio.
      */
-    @Transactional // Asegura que si algo falla, se reviertan los cambios
+    @Transactional
     public Venta registrarVenta(List<DescripcionVenta> detalles, double montoRecibido) {
         
-        // 1. Instanciar la nueva venta
         Venta nuevaVenta = new Venta();
         nuevaVenta.setFecha(LocalDateTime.now());
         nuevaVenta.setPago(montoRecibido);
 
-        // 2. Procesar cada detalle
         if (detalles != null) {
             for (DescripcionVenta detalle : detalles) {
                 Producto productoBD = detalle.getProducto();
@@ -53,11 +52,18 @@ public class ServicioVenta {
                     int cantidadVendida = detalle.getCantidad();
                     int nuevaExistencia = existenciaAnterior - cantidadVendida;
                     
-                    // Actualizar el stock del producto
+                    // 1. Actualizar el stock en Producto
                     productoBD.setExistenciaActual(nuevaExistencia);
                     productoRepository.save(productoBD);
+
+                    // 2. 🚨 ACTUALIZAR EN INVENTARIO (Para que se dispare la Alerta de Stock)
+                    Inventario inventario = inventarioRepository.findById(productoBD.getIdProducto()).orElse(null);
+                    if (inventario != null) {
+                        inventario.setExistenciaActual(nuevaExistencia);
+                        inventarioRepository.save(inventario);
+                    }
                     
-                    // 📝 CREAR Y GUARDAR EL MOVIMIENTO EN EL HISTORIAL
+                    // 3. Registrar salida en Historial de Movimientos
                     MovimientoInventario movimiento = new MovimientoInventario();
                     movimiento.setFecha(LocalDateTime.now());
                     movimiento.setTipoMovimiento("SALIDA");
@@ -69,48 +75,34 @@ public class ServicioVenta {
 
                     movimientoRepository.save(movimiento);
                     
-                    // Agregar el producto a la venta de forma limpia
+                    // 4. Agregar a la venta
                     nuevaVenta.agregaProducto(productoBD, cantidadVendida);
                 }
             }
         }
 
-        // 3. Asignar cambio basándose en el total calculado automáticamente por Venta
         double totalCalculado = nuevaVenta.getTotal() != null ? nuevaVenta.getTotal() : 0.0;
         nuevaVenta.setCambio(montoRecibido - totalCalculado);
 
-        // 4. Persistir la venta
         return ventaRepository.save(nuevaVenta);
     }
 
-    /**
-     * Inicia una nueva instancia de Venta en memoria.
-     */
     public Venta iniciarVenta() {
         return new Venta();
     }
 
-    /**
-     * Agrega un producto a la venta recibida.
-     */
     public Venta agregarProducto(Producto producto, int cantidad, Venta venta) {
         if (venta == null) {
             venta = iniciarVenta();
         }
-
         venta.agregaProducto(producto, cantidad);
-
         return venta;
     }
 
-    /**
-     * Actualiza venta en la base de datos.
-     */
     public boolean actualizarVenta(Venta venta) {
         if (venta == null) {
             return false;
         }
-
         ventaRepository.save(venta);
         return true;
     }
