@@ -89,6 +89,8 @@ public class ControlAgregarProductos {
         // Ocultar tu vista
         vistaAgregarProductos.setVisible(false);
 
+        //controlRegistroVenta.iniciaConVenta(this.ventaActual);
+
         // Enviar el objeto VENTA completo a tu compañero
         Platform.runLater(() -> {
             controlRegistroVenta.iniciaConVenta(this.ventaActual);
