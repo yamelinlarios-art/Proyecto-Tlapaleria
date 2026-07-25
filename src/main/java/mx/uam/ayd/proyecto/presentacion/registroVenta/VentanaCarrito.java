@@ -21,6 +21,7 @@ import javafx.stage.Stage;
 import mx.uam.ayd.proyecto.negocio.modelo.DescripcionVenta;
 
 
+
 @Component
 public class VentanaCarrito {
 
