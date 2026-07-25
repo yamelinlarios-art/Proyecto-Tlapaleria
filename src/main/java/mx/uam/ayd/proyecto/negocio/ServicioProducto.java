@@ -5,10 +5,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
+
 import mx.uam.ayd.proyecto.datos.ProductoRepository;
+import mx.uam.ayd.proyecto.datos.MovimientoInventarioRepository;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
+import mx.uam.ayd.proyecto.negocio.modelo.MovimientoInventario;
 
 /**
  * Servicio encargado de la lógica de negocio de los productos.
@@ -24,11 +26,17 @@ public class ServicioProducto {
     // Repositorios y Servicios
     private final ProductoRepository productoRepository;
     private final ServicioBitacora servicioBitacora;
+    private final MovimientoInventarioRepository movimientoInventarioRepository;
 
     @Autowired
-    public ServicioProducto(ProductoRepository productoRepository, ServicioBitacora servicioBitacora) {
+    public ServicioProducto(
+            ProductoRepository productoRepository, 
+            ServicioBitacora servicioBitacora,
+            MovimientoInventarioRepository movimientoInventarioRepository) {
+        
         this.productoRepository = productoRepository;
         this.servicioBitacora = servicioBitacora;
+        this.movimientoInventarioRepository = movimientoInventarioRepository;
     }
 
     /**
@@ -50,13 +58,11 @@ public class ServicioProducto {
         if (nombre == null || nombre.trim().isEmpty()) {
             return null;
         }
-        // Invoca el nuevo método IgnoreCase
         return productoRepository.findByNombreIgnoreCase(nombre.trim());
     }
 
     /**
      * Verifica si hay suficiente stock disponible para la venta.
-     * Corresponde a la llamada verificaDisponibilidad(producto, cantidad)
      * 
      * @param producto El producto a verificar.
      * @param cantidad La cantidad solicitada por el cliente.
@@ -71,7 +77,6 @@ public class ServicioProducto {
             return false;
         }
 
-        // Verifica si el stock existente cubre la cantidad deseada
         boolean disponible = producto.getExistenciaActual() >= cantidad;
         
         if (!disponible) {
@@ -133,7 +138,8 @@ public class ServicioProducto {
     }
 
     /**
-     * Actualiza el precio de un producto y registra el movimiento en la Bitácora (HU09).
+     * Actualiza el precio de un producto, guarda el movimiento en la Bitácora y en
+     * el Historial de Movimientos de Inventario (HU09).
      * 
      * @param idProducto Identificador del producto a modificar.
      * @param nuevoPrecio El nuevo precio a asignar.
@@ -167,12 +173,25 @@ public class ServicioProducto {
         log.info("Precio del producto {} (ID: {}) actualizado exitosamente de ${} a ${}", 
                  productoGuardado.getNombre(), idProducto, precioAnterior, nuevoPrecio);
 
-        // Registramos el cambio en la bitácora de historial de forma protegida
+        // 1. Registro en la Bitácora (HU09)
         try {
             servicioBitacora.registrarCambioPrecio(idProducto, precioAnterior, nuevoPrecio);
             log.info("Cambio de precio registrado exitosamente en la Bitácora para el producto ID: {}", idProducto);
         } catch (Exception e) {
             log.error("Error al registrar el cambio de precio en la Bitácora: ", e);
+        }
+
+        // 2. Registro en MovimientoInventario para reflejarse en la pantalla de Historial
+        try {
+            MovimientoInventario movimiento = new MovimientoInventario();
+            movimiento.setProducto(productoGuardado);
+            movimiento.setTipoMovimiento("CAMBIO_PRECIO");
+            movimiento.setFecha(LocalDateTime.now());
+            
+            movimientoInventarioRepository.save(movimiento);
+            log.info("Movimiento de inventario guardado para el Historial del producto ID: {}", idProducto);
+        } catch (Exception e) {
+            log.error("Error al guardar el registro en MovimientoInventarioRepository: ", e);
         }
 
         return productoGuardado;
