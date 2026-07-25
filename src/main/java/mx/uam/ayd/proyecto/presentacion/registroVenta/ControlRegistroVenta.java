@@ -96,3 +96,6 @@ public class ControlRegistroVenta {
         ventanaCarrito.setVisible(false);
     }
 }
+
+
+
