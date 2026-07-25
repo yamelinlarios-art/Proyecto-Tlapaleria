@@ -4,8 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="300.0" prefWidth="450.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uam.ayd.proyecto.presentacion.ControlRegistroVenta">
-   <children>
+<AnchorPane prefHeight="300.0" prefWidth="450.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mx.uam.ayd.proyecto.presentacion.registroVenta.VentanaCobro">   <children>
        <!-- CORREGIDO: Fuente limpia -->
        <Label layoutX="140.0" layoutY="20.0" text="Proceso de Cobro" textFill="#2980b9">
            <font>

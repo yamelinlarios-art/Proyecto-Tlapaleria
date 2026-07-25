@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import mx.uam.ayd.proyecto.datos.DevolucionRepository;
+import mx.uam.ayd.proyecto.datos.MovimientoInventarioRepository; // 1. IMPORTAR REPOSITORIO DE MOVIMIENTO
 import mx.uam.ayd.proyecto.datos.ProductoRepository;
 import mx.uam.ayd.proyecto.negocio.modelo.Devolucion;
+import mx.uam.ayd.proyecto.negocio.modelo.MovimientoInventario; // 2. IMPORTAR MODELO DE MOVIMIENTO
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 
 /**
@@ -25,11 +27,15 @@ public class ServicioDevolucion {
 
     private final DevolucionRepository devolucionRepository;
     private final ProductoRepository productoRepository;
+    private final MovimientoInventarioRepository movimientoInventarioRepository; // 3. DECLARAR REPOSITORIO
 
     @Autowired
-    public ServicioDevolucion(DevolucionRepository devolucionRepository, ProductoRepository productoRepository) {
+    public ServicioDevolucion(DevolucionRepository devolucionRepository, 
+                              ProductoRepository productoRepository,
+                              MovimientoInventarioRepository movimientoInventarioRepository) { // 4. INYECTAR
         this.devolucionRepository = devolucionRepository;
         this.productoRepository = productoRepository;
+        this.movimientoInventarioRepository = movimientoInventarioRepository;
     }
 
     /**
@@ -75,11 +81,7 @@ public class ServicioDevolucion {
 
         // 2. Crear y guardar el registro de devolución
         Devolucion devolucion = new Devolucion();
-        
-        // LÍNEA 78: Se pasa la instancia 'producto' recuperada arriba
-
         devolucion.setProducto(producto); 
-        
         devolucion.setCantidad(cantidad);
         devolucion.setMotivo(motivo);
         devolucion.setTipoDevolucion("DAÑADO");
@@ -88,6 +90,21 @@ public class ServicioDevolucion {
         Devolucion devolucionGuardada = devolucionRepository.save(devolucion);
         log.info("Devolución registrada exitosamente con ID: {} para el producto {}", 
                 devolucionGuardada.getIdDevolucion(), producto.getNombre());
+
+        // 3. REGISTRAR EL MOVIMIENTO EN EL HISTORIAL
+        try {
+            MovimientoInventario movimiento = new MovimientoInventario();
+            movimiento.setProducto(producto);
+            movimiento.setTipoMovimiento("DEVOLUCION_PROVEEDOR");
+            movimiento.setCantidad(cantidad);
+            movimiento.setFecha(LocalDateTime.now());
+            
+            // Guardar directamente en la tabla de movimientos
+            movimientoInventarioRepository.save(movimiento);
+            log.info("Movimiento de inventario guardado exitosamente en la BD.");
+        } catch (Exception e) {
+            log.error("Error al registrar el movimiento de inventario: ", e);
+        }
 
         return devolucionGuardada;
     }

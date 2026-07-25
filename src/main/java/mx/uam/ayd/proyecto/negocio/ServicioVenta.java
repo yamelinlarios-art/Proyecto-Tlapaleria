@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import mx.uam.ayd.proyecto.datos.MovimientoInventarioRepository;
 import mx.uam.ayd.proyecto.datos.ProductoRepository;
 import mx.uam.ayd.proyecto.datos.VentaRepository;
 import mx.uam.ayd.proyecto.negocio.modelo.DescripcionVenta;
+import mx.uam.ayd.proyecto.negocio.modelo.MovimientoInventario;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 import mx.uam.ayd.proyecto.negocio.modelo.Venta;
 
@@ -22,51 +24,67 @@ public class ServicioVenta {
     @Autowired
     private ProductoRepository productoRepository;
 
+    @Autowired
+    private MovimientoInventarioRepository movimientoRepository;
+
     /**
-     * Registra una nueva venta, calcula el cambio y actualiza el stock
+     * Registra una nueva venta, calcula el cambio, actualiza el stock
+     * y genera el movimiento de salida en el historial de inventario.
      *
      * @param detalles Lista de productos y cantidades procesadas en la HU-05.
-     * @param montoRecibido Cantidad con la que pagó el cliente
+     * @param montoRecibido Cantidad con la que pagó el cliente.
      * @return El objeto Venta persistido.
      */
-    @Transactional // Asegura que si algo falla, no se descuente el stock ni se guarde la venta
+    @Transactional // Asegura que si algo falla, se reviertan los cambios
     public Venta registrarVenta(List<DescripcionVenta> detalles, double montoRecibido) {
         
-        double totalVenta = 0;
-
-        //Procesar cada detalle para actualizar el inventario
-        for (DescripcionVenta detalle : detalles) {
-            Producto producto = detalle.getProducto();
-            
-            // Recuperación y actualización técnica según la Guía
-            int nuevaExistencia = producto.getExistenciaActual() - detalle.getCantidad();
-            producto.setExistenciaActual(nuevaExistencia);
-            
-            // Persistir el cambio en el stock del producto
-            productoRepository.save(producto);
-            
-            totalVenta += (detalle.getPrecioUnitario() * detalle.getCantidad());
-        }
-
-        //Instanciar y llenar el objeto Venta
+        // 1. Instanciar la nueva venta
         Venta nuevaVenta = new Venta();
         nuevaVenta.setFecha(LocalDateTime.now());
-        nuevaVenta.setTotal(totalVenta);
         nuevaVenta.setPago(montoRecibido);
-        nuevaVenta.setCambio(montoRecibido - totalVenta);
-        
-        // Vincular los detalles a la venta
-        for (DescripcionVenta detalle : detalles) {
-            nuevaVenta.addDetalle(detalle);
+
+        // 2. Procesar cada detalle
+        if (detalles != null) {
+            for (DescripcionVenta detalle : detalles) {
+                Producto productoBD = detalle.getProducto();
+                
+                if (productoBD != null) {
+                    int existenciaAnterior = productoBD.getExistenciaActual();
+                    int cantidadVendida = detalle.getCantidad();
+                    int nuevaExistencia = existenciaAnterior - cantidadVendida;
+                    
+                    // Actualizar el stock del producto
+                    productoBD.setExistenciaActual(nuevaExistencia);
+                    productoRepository.save(productoBD);
+                    
+                    // 📝 CREAR Y GUARDAR EL MOVIMIENTO EN EL HISTORIAL
+                    MovimientoInventario movimiento = new MovimientoInventario();
+                    movimiento.setFecha(LocalDateTime.now());
+                    movimiento.setTipoMovimiento("SALIDA");
+                    movimiento.setCantidad(cantidadVendida);
+                    movimiento.setExistenciaAnterior(existenciaAnterior);
+                    movimiento.setExistenciaActual(nuevaExistencia);
+                    movimiento.setObservacion("Venta realizada");
+                    movimiento.setProducto(productoBD);
+
+                    movimientoRepository.save(movimiento);
+                    
+                    // Agregar el producto a la venta de forma limpia
+                    nuevaVenta.agregaProducto(productoBD, cantidadVendida);
+                }
+            }
         }
 
-        //Persistir la venta en el repositorio
+        // 3. Asignar cambio basándose en el total calculado automáticamente por Venta
+        double totalCalculado = nuevaVenta.getTotal() != null ? nuevaVenta.getTotal() : 0.0;
+        nuevaVenta.setCambio(montoRecibido - totalCalculado);
+
+        // 4. Persistir la venta
         return ventaRepository.save(nuevaVenta);
     }
 
     /**
      * Inicia una nueva instancia de Venta en memoria.
-     * Corresponde a iniciarVenta() .
      */
     public Venta iniciarVenta() {
         return new Venta();
@@ -74,7 +92,6 @@ public class ServicioVenta {
 
     /**
      * Agrega un producto a la venta recibida.
-     * Corresponde a agregarProducto(producto, cantidad, venta)
      */
     public Venta agregarProducto(Producto producto, int cantidad, Venta venta) {
         if (venta == null) {
@@ -88,7 +105,6 @@ public class ServicioVenta {
 
     /**
      * Actualiza venta en la base de datos.
-     * Corresponde a actualizarVenta(venta) en el diagrama de secuencia.
      */
     public boolean actualizarVenta(Venta venta) {
         if (venta == null) {
