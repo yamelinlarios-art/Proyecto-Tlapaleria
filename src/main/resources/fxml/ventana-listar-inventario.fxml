@@ -1,36 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
 
 <BorderPane xmlns="http://javafx.com/javafx/11.0.1"
-            xmlns:fx="http://javafx.com/fxml/1">
+            xmlns:fx="http://javafx.com/fxml/1"
+            style="-fx-background-color:#F5F7FA;">
 
+    <!-- ENCABEZADO -->
     <top>
-        <VBox spacing="10" style="-fx-padding: 10px;">
-            <Label text="Productos con Bajo Stock"
-                   style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+        <VBox spacing="8"
+              style="-fx-background-color:white;
+                     -fx-padding:20;
+                     -fx-border-color:#E0E0E0;
+                     -fx-border-width:0 0 1 0;">
+
+            <Label text="📦 Productos con Bajo Stock"
+                   style="-fx-font-size:24px;
+                          -fx-font-weight:bold;
+                          -fx-text-fill:#1565C0;"/>
+
+            <Label text="Consulta los productos que requieren reabastecimiento."
+                   style="-fx-font-size:13px;
+                          -fx-text-fill:#757575;"/>
+
         </VBox>
     </top>
 
+    <!-- TABLA -->
     <center>
-        <TableView fx:id="tableInventario" VBox.vgrow="ALWAYS">
-            <columns>
-                <TableColumn text="ID Producto" fx:id="idColumn"/>
-                <TableColumn text="Existencia Actual" fx:id="existenciaActualColumn"/>
-                <TableColumn text="Existencia Disponible" fx:id="existenciaDisponibleColumn"/>
-                <TableColumn text="Stock Mínimo" fx:id="stockMinimoColumn"/>
-            </columns>
-        </TableView>
+
+        <VBox style="-fx-padding:20;">
+
+            <TableView fx:id="tableInventario"
+                       VBox.vgrow="ALWAYS"
+                       style="-fx-background-radius:12;
+                              -fx-border-radius:12;
+                              -fx-background-color:white;
+                              -fx-border-color:#E0E0E0;">
+
+                <columns>
+
+                    <TableColumn fx:id="idColumn"
+                                 text="ID Producto"
+                                 prefWidth="120"/>
+
+                    <TableColumn fx:id="existenciaActualColumn"
+                                 text="Existencia Actual"
+                                 prefWidth="170"/>
+
+                    <TableColumn fx:id="existenciaDisponibleColumn"
+                                 text="Existencia Disponible"
+                                 prefWidth="190"/>
+
+                    <TableColumn fx:id="stockMinimoColumn"
+                                 text="Stock Mínimo"
+                                 prefWidth="150"/>
+
+                </columns>
+
+            </TableView>
+
+        </VBox>
+
     </center>
 
+    <!-- BOTÓN -->
     <bottom>
-        <VBox spacing="10" style="-fx-padding: 10px;">
-            <Button text="Cerrar"
+
+        <HBox alignment="CENTER_RIGHT"
+              spacing="10"
+              style="-fx-padding:20;">
+
+            <Button text="✖ Cerrar"
                     onAction="#handleCerrar"
-                    style="-fx-min-width: 80px; -fx-min-height: 25px;"/>
-        </VBox>
+                    style="-fx-background-color:#E53935;
+                           -fx-text-fill:white;
+                           -fx-font-weight:bold;
+                           -fx-background-radius:8;
+                           -fx-padding:8 20;"/>
+
+        </HBox>
+
     </bottom>
 
 </BorderPane>
