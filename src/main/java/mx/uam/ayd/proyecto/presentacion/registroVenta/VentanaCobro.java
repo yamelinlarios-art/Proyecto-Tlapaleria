@@ -41,30 +41,33 @@ public class VentanaCobro {
         this.control = control;
     }
 
-    private void initializeUI() {
-        if (initialized) return;
-        
-        if (!Platform.isFxApplicationThread()) {
-            Platform.runLater(this::initializeUI);
-            return;
-        }
-
-        try {
-            // Carga del archivo FXML de la pantalla de cobro
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-cobro.fxml"));
-            loader.setController(this);
-            Parent root = loader.load();
-            
-            stage = new Stage();
-            stage.setTitle("Proceso de Cobro");
-            stage.setScene(new Scene(root));
-            stage.initModality(Modality.APPLICATION_MODAL); // Bloquea la ventana principal
-
-            initialized = true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+private void initializeUI() {
+    if (initialized) return;
+    
+    if (!Platform.isFxApplicationThread()) {
+        Platform.runLater(this::initializeUI);
+        return;
     }
+
+    try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-cobro.fxml"));
+        
+        // 🔧 Usar la fábrica para usar la misma instancia inyectada por Spring
+        loader.setControllerFactory(clazz -> this);
+
+        Parent root = loader.load();
+        
+        stage = new Stage();
+        stage.setTitle("Proceso de Cobro");
+        stage.setScene(new Scene(root));
+        stage.initModality(Modality.APPLICATION_MODAL); // Bloquea la ventana de fondo mientras cobras
+
+        initialized = true;
+    } catch (IOException e) {
+        System.err.println("❌ Error al cargar la interfaz FXML de VentanaCobro:");
+        e.printStackTrace();
+    }
+}
 
     /**
      * Muestra la ventana y prepara los campos para el cobro
