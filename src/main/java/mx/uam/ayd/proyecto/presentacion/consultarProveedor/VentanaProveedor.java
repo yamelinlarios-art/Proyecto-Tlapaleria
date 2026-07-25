@@ -28,7 +28,7 @@ public class VentanaProveedor {
      */
     public void muestra(ControlProveedor control) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/presentacion/consultarProveedor/ventanaProveedor.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/presentacion/consultarProveedor/ventana-proveedor.fxml"));
             
             // Le indicamos a JavaFX que use el contenedor de Spring para instanciar el controlador
             loader.setControllerFactory(context::getBean);
