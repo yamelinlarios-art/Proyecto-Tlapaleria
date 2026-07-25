@@ -33,7 +33,7 @@ public class VentanaActualizarPrecio {
     
     private boolean initialized = false;
 
-    /** Constructor sin inicialización directa de la UI para compatibilidad con Spring/JavaFX. */
+    /** Constructor básico. */
     public VentanaActualizarPrecio() {}
     
     /** Inicializa los componentes de la interfaz de usuario en el hilo de JavaFX. */
@@ -48,7 +48,9 @@ public class VentanaActualizarPrecio {
             stage.setTitle("Actualizar Precio de Producto");
             
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-actualizar-precio.fxml"));
-            loader.setController(this);
+            // Se le asigna este bean como controller de la vista
+            loader.setControllerFactory(param -> this);
+            
             stage.setScene(new Scene(loader.load()));
             initialized = true;
         } catch (IOException e) {
@@ -139,7 +141,10 @@ public class VentanaActualizarPrecio {
                 muestraDialogoConMensaje("El precio debe ser un número mayor a cero.");
                 return;
             }
+            
+            // Delegamos al control la actualización e inserción en el historial
             Producto productoActualizado = control.actualizarPrecio(idProducto, nuevoPrecio);
+            
             if (productoActualizado != null) {
                 muestraDialogoConMensaje("El precio del producto '" + productoActualizado.getNombre() + "' fue actualizado exitosamente.");
                 lblPrecioActual.setText(String.valueOf(productoActualizado.getPrecio()));
