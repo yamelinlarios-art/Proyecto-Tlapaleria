@@ -1,7 +1,7 @@
 package mx.uam.ayd.proyecto.presentacion.registroVenta;
 
 import java.io.IOException;
-import java.util.List;
+import java.net.URL;
 
 import org.springframework.stereotype.Component;
 
@@ -18,109 +18,142 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import mx.uam.ayd.proyecto.negocio.modelo.DescripcionVenta;
 
+import mx.uam.ayd.proyecto.negocio.modelo.DescripcionVenta;
+import mx.uam.ayd.proyecto.negocio.modelo.Venta;
 
 @Component
 public class VentanaCarrito {
 
-	private Stage stage;
-	private ControlRegistroVenta control;
-	private boolean initialized = false;
+    private Stage stage;
+    private ControlRegistroVenta control;
+    private boolean initialized = false;
 
-	// Elementos FXML
-	@FXML private TableView<DescripcionVenta> tablaCarrito;
-	@FXML private TableColumn<DescripcionVenta, String> colNombre;
-	@FXML private TableColumn<DescripcionVenta, Double> colPrecio;
-	@FXML private TableColumn<DescripcionVenta, Integer> colCantidad;
-	@FXML private TableColumn<DescripcionVenta, Double> colSubtotal;
-	@FXML private Label lblTotal;
+    // Elementos FXML
+    @FXML private TableView<DescripcionVenta> tablaCarrito;
+    @FXML private TableColumn<DescripcionVenta, String> colNombre;
+    @FXML private TableColumn<DescripcionVenta, Double> colPrecio;
+    @FXML private TableColumn<DescripcionVenta, Integer> colCantidad;
+    @FXML private TableColumn<DescripcionVenta, Double> colSubtotal;
+    @FXML private Label lblTotal;
 
-	public VentanaCarrito() {
-	}
+    public VentanaCarrito() {
+    }
 
-	public void setControl(ControlRegistroVenta control) {
-		this.control = control;
-	}
+    public void setControl(ControlRegistroVenta control) {
+        this.control = control;
+    }
 
-	private void initializeUI() {
-		if (initialized) return;
-		
-		if (!Platform.isFxApplicationThread()) {
-			Platform.runLater(this::initializeUI);
-			return;
-		}
+    private void initializeUI() {
+        if (initialized) return;
+        
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(this::initializeUI);
+            return;
+        }
 
-		try {
-			// Carga el FXMl
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-carrito.fxml"));
-			loader.setController(this);
-			Parent root = loader.load();
-			
-			stage = new Stage();
-			stage.setTitle("Confirmación de Venta - Resumen");
-			stage.setScene(new Scene(root));
-			
-			// Configuración de columnas
-			colNombre.setCellValueFactory(new PropertyValueFactory<>("productoNombre")); 
-			colPrecio.setCellValueFactory(new PropertyValueFactory<>("precioUnitario"));
-			colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
-			colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
+        // Validación preventiva de la existencia del FXML
+        URL fxmlUrl = getClass().getResource("/fxml/ventana-carrito.fxml");
+        if (fxmlUrl == null) {
+            System.err.println("❌ Error: No se encontró el FXML '/fxml/ventana-carrito.fxml'");
+            return;
+        }
 
-			initialized = true;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+        try {
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
+            
+            // Si el FXML NO tiene definida la etiqueta fx:controller, asignamos este controlador.
+            // Si ya la tiene en el FXML, loader.load() la vinculará automáticamente.
+            if (loader.getController() == null) {
+                loader.setController(this);
+            }
 
-	//recibe directamente el carrito lleno y el total calculado.
+            Parent root = loader.load();
+            
+            stage = new Stage();
+            stage.setTitle("Confirmación de Venta - Resumen");
+            stage.setScene(new Scene(root));
+            
+            // Configuración segura de columnas de la tabla (evita NullPointerException)
+            if (colNombre != null) colNombre.setCellValueFactory(new PropertyValueFactory<>("productoNombre")); 
+            if (colPrecio != null) colPrecio.setCellValueFactory(new PropertyValueFactory<>("precioUnitario"));
+            if (colCantidad != null) colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
+            if (colSubtotal != null) colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
 
-	public void muestra(List<DescripcionVenta> detalles, double total) {
-		if (!Platform.isFxApplicationThread()) {
-			Platform.runLater(() -> this.muestra(detalles, total));
-			return;
-		}
+            initialized = true;
+        } catch (IOException e) {
+            System.err.println("❌ Error al cargar la interfaz FXML de VentanaCarrito:");
+            e.printStackTrace();
+        }
+    }
 
-		initializeUI();
-		
-		// Llena la tabla con los productos que el propietario agregó en la HU-05 [5]
-		tablaCarrito.setItems(FXCollections.observableArrayList(detalles));
-		lblTotal.setText(String.format("$%.2f", total));
-		
-		stage.show();
-	}
+    /**
+     * Despliega la ventana recibiendo el objeto Venta completo.
+     * @param venta Objeto Venta que contiene la lista de productos y el total acumulado.
+     */
+    public void muestra(Venta venta) {
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> this.muestra(venta));
+            return;
+        }
 
-	public void muestraDialogoConMensaje(String mensaje) {
-		if (!Platform.isFxApplicationThread()) {
-			Platform.runLater(() -> this.muestraDialogoConMensaje(mensaje));
-			return;
-		}
-		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setTitle("Validación");
-		alert.setHeaderText(null);
-		alert.setContentText(mensaje);
-		alert.showAndWait();
-	}
+        if (venta == null) return;
 
-	public void setVisible(boolean visible) {
-		if (!Platform.isFxApplicationThread()) {
-			Platform.runLater(() -> this.setVisible(visible));
-			return;
-		}
-		if (visible) stage.show();
-		else stage.hide();
-	}
+        initializeUI();
+        
+        // Carga la tabla directamente leyendo de la Venta de forma segura
+        if (tablaCarrito != null && venta.getProductos() != null) {
+            tablaCarrito.setItems(FXCollections.observableArrayList(venta.getProductos()));
+        }
+        
+        if (lblTotal != null) {
+            lblTotal.setText(String.format("$%.2f", venta.getTotal()));
+        }
+        
+        if (stage != null) {
+            stage.show();
+        }
+    }
 
+    public void muestraDialogoConMensaje(String mensaje) {
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> this.muestraDialogoConMensaje(mensaje));
+            return;
+        }
+        
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Validación");
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje != null ? mensaje : "");
+        alert.showAndWait();
+    }
 
-	@FXML
-	private void onConfirmarVenta() {
-		// Avisa al control que el propietario verificó el total y desea cobrar
-		control.procesarConfirmacionVenta();
-	}
+    public void setVisible(boolean visible) {
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> this.setVisible(visible));
+            return;
+        }
+        
+        if (stage != null) {
+            if (visible) {
+                stage.show();
+            } else {
+                stage.hide();
+            }
+        }
+    }
 
-	@FXML
-	private void onCancelarVenta() {
-		// Limpia la interfaz sin alterar el sistema
-		control.termina();
-	}
+    @FXML
+    private void onConfirmarVenta() {
+        if (control != null) {
+            control.procesarConfirmacionVenta();
+        }
+    }
+
+    @FXML
+    private void onCancelarVenta() {
+        if (control != null) {
+            control.termina();
+        }
+    }
 }

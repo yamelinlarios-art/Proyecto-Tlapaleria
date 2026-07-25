@@ -42,7 +42,7 @@ public class ControlRegistroVenta {
         
         // Ya no necesitamos calcular nada; la Venta ya tiene sus productos y su total
         if (ventanaCarrito != null) {
-            ventanaCarrito.muestra(this.ventaActual.getProductos(), this.ventaActual.getTotal());
+            ventanaCarrito.muestra(this.ventaActual);
         }
     }
 
