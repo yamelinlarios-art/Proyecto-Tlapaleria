@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+import javafx.application.Platform;
 import mx.uam.ayd.proyecto.negocio.ServicioProducto;
 import mx.uam.ayd.proyecto.negocio.ServicioVenta;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
@@ -76,8 +77,7 @@ public class ControlAgregarProductos {
     /**
      * Pasa el control a la HU de Registro/Confirmación de Venta al presionar "Siguiente".
      */
-    public void continuarRegistroVenta() {
-        // Validamos que el carrito no esté vacío
+   public void continuarRegistroVenta() {
         if (this.ventaActual == null || 
             this.ventaActual.getProductos() == null || 
             this.ventaActual.getProductos().isEmpty()) {
@@ -86,10 +86,12 @@ public class ControlAgregarProductos {
             return;
         }
 
-        // 1. Ocultamos la vista actual de selección de productos
-        vistaAgregarProductos.setVisible(false); // O vistaAgregarProductos.oculta(); según tu método de ocultar
+        // Ocultar tu vista
+        vistaAgregarProductos.setVisible(false);
 
-        // 2. Le enviamos la lista de detalles (carrito) a la HU de tu compañero
-        controlRegistroVenta.iniciaConCarrito(this.ventaActual.getProductos());
+        // Enviar el objeto VENTA completo a tu compañero
+        Platform.runLater(() -> {
+            controlRegistroVenta.iniciaConVenta(this.ventaActual);
+        });
     }
 }

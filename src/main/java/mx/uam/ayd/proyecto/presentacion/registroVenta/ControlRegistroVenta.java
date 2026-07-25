@@ -1,12 +1,12 @@
 package mx.uam.ayd.proyecto.presentacion.registroVenta;
 
-import java.util.List;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import mx.uam.ayd.proyecto.negocio.ServicioVenta;
 import mx.uam.ayd.proyecto.negocio.modelo.DescripcionVenta;
+import mx.uam.ayd.proyecto.negocio.modelo.Venta;
 
 @Component
 public class ControlRegistroVenta {
@@ -16,9 +16,8 @@ public class ControlRegistroVenta {
     private final VentanaCarrito ventanaCarrito;
     private final VentanaCobro ventanaCobro;
 
-    // Estado del proceso de venta recibido de HU-05
-    private List<DescripcionVenta> carritoRecibido;
-    private double totalVenta;
+    // Estado del proceso: Guardamos directamente la Venta
+    private Venta ventaActual;
 
     @Autowired
     public ControlRegistroVenta(ServicioVenta servicioVenta, VentanaCarrito v1, VentanaCobro v2) {
@@ -29,43 +28,59 @@ public class ControlRegistroVenta {
 
     @PostConstruct
     public void init() {
-        ventanaCarrito.setControl(this);
-        ventanaCobro.setControl(this);
+        if (ventanaCarrito != null) ventanaCarrito.setControl(this);
+        if (ventanaCobro != null) ventanaCobro.setControl(this);
     }
 
-    public void iniciaConCarrito(List<DescripcionVenta> carrito) {
-        this.carritoRecibido = carrito;
-        this.totalVenta = calcularTotal(carrito);
+    /**
+     * Recibe la venta completa creada en la HU de selección de productos.
+     */
+    public void iniciaConVenta(Venta venta) {
+        if (venta == null) return;
+
+        this.ventaActual = venta;
         
-        // Muestra la ventana de confirmación con los datos ya cargados
-        ventanaCarrito.muestra(carritoRecibido, totalVenta);
-    }
-
-    private double calcularTotal(List<DescripcionVenta> detalles) {
-        return detalles.stream()
-                .mapToDouble(d -> d.getPrecioUnitario() * d.getCantidad())
-                .sum();
+        // Ya no necesitamos calcular nada; la Venta ya tiene sus productos y su total
+        if (ventanaCarrito != null) {
+            ventanaCarrito.muestra(this.ventaActual.getProductos(), this.ventaActual.getTotal());
+        }
     }
 
     /**
      * Valida reglas de negocio antes de permitir el cobro.
      */
     public void procesarConfirmacionVenta() {
+        if (ventaActual == null || ventaActual.getProductos() == null || ventaActual.getProductos().isEmpty()) {
+            if (ventanaCarrito != null) {
+                ventanaCarrito.muestraDialogoConMensaje("El carrito de compras está vacío.");
+            }
+            return;
+        }
+
         // RN-04: Validar precios antes de habilitar pantalla de cobro
-        for (DescripcionVenta d : carritoRecibido) {
-            if (d.getPrecioUnitario() <= 0) {
-                ventanaCarrito.muestraDialogoConMensaje("RN-04: Todo precio asignado debe ser estrictamente mayor a cero.");
+        for (DescripcionVenta d : ventaActual.getProductos()) {
+            if (d != null && d.getPrecioUnitario() <= 0) {
+                if (ventanaCarrito != null) {
+                    ventanaCarrito.muestraDialogoConMensaje("RN-04: Todo precio asignado debe ser estrictamente mayor a cero.");
+                }
                 return;
             }
         }
-        // Habilita la pantalla de cobro si los precios son válidos
-        ventanaCobro.muestra(totalVenta);
+
+        // Habilita la pantalla de cobro enviando el total directo de la Venta
+        if (ventanaCobro != null) {
+            ventanaCobro.muestra(ventaActual.getTotal());
+        }
     }
 
     /**
-     * Calcula el cambio
+     * Calcula el cambio basándose en el total de la Venta activa
      */
     public void calcularCambio(double efectivoRecibido) {
+        if (ventanaCobro == null || ventaActual == null) return;
+
+        double totalVenta = ventaActual.getTotal();
+
         if (efectivoRecibido < totalVenta) {
             ventanaCobro.actualizaCambio(0, "Efectivo insuficiente");
         } else {
@@ -75,27 +90,26 @@ public class ControlRegistroVenta {
     }
 
     /**
-     * Finaliza la compra
+     * Finaliza la compra pasando la Venta al servicio
      */
     public void finalizarCompra(double efectivoRecibido) {
+        if (servicioVenta == null || ventanaCobro == null || ventaActual == null) return;
+
         try {
-            // El servicio registra la venta y descuenta stock automáticamente (RN-10)
-            servicioVenta.registrarVenta(carritoRecibido, efectivoRecibido);
+            // Pasamos la venta o sus detalles según tu ServicioVenta
+            servicioVenta.registrarVenta(ventaActual.getProductos(), efectivoRecibido);
             
-            // Mensaje de éxito obligatori
             ventanaCobro.muestraDialogoConMensaje("La venta ha sido exitosa.");
             termina();
             
         } catch (Exception ex) {
-            ventanaCobro.muestraDialogoConMensaje("Error al registrar: " + ex.getMessage());
+            String mensajeError = (ex.getMessage() != null) ? ex.getMessage() : "Error en el registro de venta.";
+            ventanaCobro.muestraDialogoConMensaje("Error al registrar: " + mensajeError);
         }
     }
 
     public void termina() {
-        ventanaCobro.setVisible(false);
-        ventanaCarrito.setVisible(false);
+        if (ventanaCobro != null) ventanaCobro.setVisible(false);
+        if (ventanaCarrito != null) ventanaCarrito.setVisible(false);
     }
 }
-
-
-
