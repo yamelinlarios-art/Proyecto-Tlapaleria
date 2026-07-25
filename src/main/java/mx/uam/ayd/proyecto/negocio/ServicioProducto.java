@@ -40,19 +40,20 @@ public class ServicioProducto {
         return productoRepository.findAll();
     }
 
-   /**
- * Busca un producto por su nombre ignorando mayúsculas/minúsculas.
- * 
- * @param nombre El nombre del producto
- * @return El producto encontrado o null si no existe
- */
-public Producto buscaProducto(String nombre) {
-    if (nombre == null || nombre.trim().isEmpty()) {
-        return null;
+    /**
+     * Busca un producto por su nombre ignorando mayúsculas/minúsculas.
+     * 
+     * @param nombre El nombre del producto
+     * @return El producto encontrado o null si no existe
+     */
+    public Producto buscaProducto(String nombre) {
+        if (nombre == null || nombre.trim().isEmpty()) {
+            return null;
+        }
+        // Invoca el nuevo método IgnoreCase
+        return productoRepository.findByNombreIgnoreCase(nombre.trim());
     }
-    // Invoca el nuevo método IgnoreCase
-    return productoRepository.findByNombreIgnoreCase(nombre.trim());
-}
+
     /**
      * Verifica si hay suficiente stock disponible para la venta.
      * Corresponde a la llamada verificaDisponibilidad(producto, cantidad)
@@ -155,19 +156,24 @@ public Producto buscaProducto(String nombre) {
             throw new IllegalArgumentException("No se encontró ningún producto con el ID: " + idProducto);
         }
 
-        // Guardamos el precio anterior para el historial
-        double precioAnterior = producto.getPrecio() != null ? producto.getPrecio() : 0.0;
+        // Guardamos el precio anterior antes de hacer la modificación
+        double precioAnterior = producto.getPrecio();
 
-        // Asignamos el nuevo precio
+        // Asignamos el nuevo precio al producto
         producto.setPrecio(nuevoPrecio);
-
-        // Registramos el cambio en la bitácora usando únicamente el idProducto (long)
-        servicioBitacora.registrarCambioPrecio(idProducto, precioAnterior, nuevoPrecio);
 
         // Guardamos el producto actualizado en el repositorio
         Producto productoGuardado = productoRepository.save(producto);
         log.info("Precio del producto {} (ID: {}) actualizado exitosamente de ${} a ${}", 
                  productoGuardado.getNombre(), idProducto, precioAnterior, nuevoPrecio);
+
+        // Registramos el cambio en la bitácora de historial de forma protegida
+        try {
+            servicioBitacora.registrarCambioPrecio(idProducto, precioAnterior, nuevoPrecio);
+            log.info("Cambio de precio registrado exitosamente en la Bitácora para el producto ID: {}", idProducto);
+        } catch (Exception e) {
+            log.error("Error al registrar el cambio de precio en la Bitácora: ", e);
+        }
 
         return productoGuardado;
     }

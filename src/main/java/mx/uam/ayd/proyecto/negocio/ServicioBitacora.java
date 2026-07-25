@@ -12,8 +12,6 @@ import mx.uam.ayd.proyecto.negocio.modelo.Bitacora;
 /**
  * Servicio para gestionar la lógica de negocio de la Bitácora.
  *
- * Se encarga de registrar y persistir los eventos del sistema.
- *
  * @author Yamelin Larios Nepomuseno
  */
 @Service
@@ -33,14 +31,15 @@ public class ServicioBitacora {
     @Transactional
     public Bitacora registrarCambioPrecio(long idProducto, double precioAnterior, double precioNuevo) {
         
-        // Instanciar y llenar el objeto Bitacora
         Bitacora bitacora = new Bitacora();
-        bitacora.setIdProducto(idProducto); // <--- Se asigna directamente como long
+        bitacora.setIdProducto(idProducto);
         bitacora.setPrecioAnterior(precioAnterior);
         bitacora.setPrecioNuevo(precioNuevo);
         bitacora.setFechaHora(LocalDateTime.now());
+        
+        // 👈 AGREGAR ESTA LÍNEA: Texto descriptivo del movimiento
+        bitacora.setDescripcion("Actualización de precio (HU-09): Anterior $" + precioAnterior + " -> Nuevo $" + precioNuevo);
 
-        // Persistir el registro en el repositorio
         return bitacoraRepository.save(bitacora);
     }
 }
