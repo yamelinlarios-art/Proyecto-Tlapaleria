@@ -39,7 +39,7 @@
           <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
           <RowConstraints minHeight="10.0" prefHeight="35.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="80.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="80.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
             <Label text="ID Producto:" GridPane.rowIndex="0">
