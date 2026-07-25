@@ -20,11 +20,10 @@
       <TableView fx:id="tablaProveedores" VBox.vgrow="ALWAYS">
         <columns>
           <TableColumn fx:id="colId" text="ID" prefWidth="50.0" />
-          <TableColumn fx:id="colNombre" text="Proveedor / Corporativo" prefWidth="220.0" />
-          <TableColumn fx:id="colTelefono" text="Teléfono" prefWidth="120.0" />
-          <TableColumn fx:id="colTipo" text="Tipo" prefWidth="120.0" />
-          <TableColumn fx:id="colSaldo" text="Saldo Pendiente" prefWidth="120.0" />
-          <TableColumn fx:id="colEstado" text="Estado" prefWidth="120.0" />
+          <TableColumn fx:id="colProveedor" text="Proveedor" prefWidth="200.0" />
+          <TableColumn fx:id="colContactoPersonal" text="Contacto Personal" prefWidth="150.0" />
+          <TableColumn fx:id="colCategoria" text="Categoría" prefWidth="130.0" />
+          <TableColumn fx:id="colSaldo" text="Saldo" prefWidth="120.0" />
         </columns>
       </TableView>
    </children>

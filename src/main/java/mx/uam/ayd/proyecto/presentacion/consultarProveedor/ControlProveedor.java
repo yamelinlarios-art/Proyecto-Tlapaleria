@@ -1,8 +1,10 @@
 package mx.uam.ayd.proyecto.presentacion.consultarProveedor;
 
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -14,7 +16,7 @@ import mx.uam.ayd.proyecto.negocio.ServicioProveedor;
 import mx.uam.ayd.proyecto.negocio.modelo.Proveedor;
 
 /**
- * Controlador FXML para la HU-06: Consultar saldos pendientes de proveedores.
+ * Controlador FXML para la HU-06: Directorio de Proveedores y saldos pendientes.
  * 
  * @author JAVITOS, Yamelin, Guillermo, Dydier, Yael, Sheyla
  */
@@ -23,6 +25,9 @@ public class ControlProveedor {
 
     private final ServicioProveedor servicioProveedor;
 
+    @Autowired
+    private VentanaProveedor ventanaProveedor;
+
     @FXML
     private TableView<Proveedor> tablaProveedores;
 
@@ -30,13 +35,16 @@ public class ControlProveedor {
     private TableColumn<Proveedor, Long> colId;
 
     @FXML
-    private TableColumn<Proveedor, String> colNombre;
+    private TableColumn<Proveedor, String> colProveedor;
 
     @FXML
-    private TableColumn<Proveedor, String> colTelefono;
+    private TableColumn<Proveedor, String> colContactoPersonal;
 
     @FXML
-    private TableColumn<Proveedor, String> colTipo;
+    private TableColumn<Proveedor, String> colCategoria;
+
+    @FXML
+    private TableColumn<Proveedor, String> colSaldo;
 
     @FXML
     private Label lblSaldoTotalGeneral;
@@ -45,28 +53,42 @@ public class ControlProveedor {
         this.servicioProveedor = servicioProveedor;
     }
 
+    /**
+     * Método de entrada principal invocado desde la navegación del sistema.
+     */
+    public void inicia() {
+        ventanaProveedor.muestra(this);
+    }
+
     @FXML
     public void initialize() {
-        // Configuración de las columnas de la tabla FXML
+        // Mapeo de propiedades simples de la entidad Proveedor
         colId.setCellValueFactory(new PropertyValueFactory<>("idProveedor"));
-        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombreCompleto"));
-        colTelefono.setCellValueFactory(new PropertyValueFactory<>("telefono"));
-        colTipo.setCellValueFactory(new PropertyValueFactory<>("tipoProveedor"));
+        colProveedor.setCellValueFactory(new PropertyValueFactory<>("nombreCompleto"));
+        colContactoPersonal.setCellValueFactory(new PropertyValueFactory<>("telefono"));
+        colCategoria.setCellValueFactory(new PropertyValueFactory<>("tipoProveedor"));
+
+        // Mapeo dinámico para el cálculo del Saldo de cada proveedor en la tabla
+        colSaldo.setCellValueFactory(cellData -> {
+            Proveedor p = cellData.getValue();
+            double saldo = servicioProveedor.calcularSaldoPendienteProveedor((int) p.getIdProveedor());
+            return new SimpleStringProperty(String.format("$%.2f", saldo));
+        });
     }
 
     /**
-     * Muestra e inicializa el directorio de proveedores en la vista FXML.
+     * Carga los proveedores registrados y refresca el saldo general.
      */
     public void muestra() {
         List<Proveedor> lista = servicioProveedor.recuperarProveedores();
         ObservableList<Proveedor> proveedoresObservable = FXCollections.observableArrayList(lista);
         tablaProveedores.setItems(proveedoresObservable);
 
-        // Calcular saldo total
-        double total = 0.0;
+        // Calcular la suma del saldo total pendiente
+        double totalGeneral = 0.0;
         for (Proveedor p : lista) {
-            total += servicioProveedor.calcularSaldoPendienteProveedor((int) p.getIdProveedor());
+            totalGeneral += servicioProveedor.calcularSaldoPendienteProveedor((int) p.getIdProveedor());
         }
-        lblSaldoTotalGeneral.setText(String.format("SALDO TOTAL PENDIENTE: $%.2f", total));
+        lblSaldoTotalGeneral.setText(String.format("SALDO TOTAL PENDIENTE: $%.2f", totalGeneral));
     }
 }
