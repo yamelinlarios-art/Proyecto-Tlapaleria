@@ -32,41 +32,39 @@ public class ServicioVenta {
     @Transactional // Asegura que si algo falla, no se descuente el stock ni se guarde la venta
     public Venta registrarVenta(List<DescripcionVenta> detalles, double montoRecibido) {
         
-        double totalVenta = 0;
-
-        //Procesar cada detalle para actualizar el inventario
-        for (DescripcionVenta detalle : detalles) {
-            Producto producto = detalle.getProducto();
-            
-            // Recuperación y actualización técnica según la Guía
-            int nuevaExistencia = producto.getExistenciaActual() - detalle.getCantidad();
-            producto.setExistenciaActual(nuevaExistencia);
-            
-            // Persistir el cambio en el stock del producto
-            productoRepository.save(producto);
-            
-            totalVenta += (detalle.getPrecioUnitario() * detalle.getCantidad());
-        }
-
-        //Instanciar y llenar el objeto Venta
+        // 1. Instanciar la nueva venta
         Venta nuevaVenta = new Venta();
         nuevaVenta.setFecha(LocalDateTime.now());
-        nuevaVenta.setTotal(totalVenta);
         nuevaVenta.setPago(montoRecibido);
-        nuevaVenta.setCambio(montoRecibido - totalVenta);
-        
-        // Vincular los detalles a la venta
-        for (DescripcionVenta detalle : detalles) {
-            nuevaVenta.addDetalle(detalle);
+
+        // 2. Procesar cada detalle
+        if (detalles != null) {
+            for (DescripcionVenta detalle : detalles) {
+                Producto productoBD = detalle.getProducto();
+                
+                if (productoBD != null) {
+                    // Actualizar el stock del producto
+                    int nuevaExistencia = productoBD.getExistenciaActual() - detalle.getCantidad();
+                    productoBD.setExistenciaActual(nuevaExistencia);
+                    productoRepository.save(productoBD);
+                    
+                    // Agregar el producto a la venta usando su método nativo
+                    nuevaVenta.agregaProducto(productoBD, detalle.getCantidad());
+                }
+            }
         }
 
-        //Persistir la venta en el repositorio
+        // 3. Asignar cambio basándose en el total calculado automáticamente por Venta
+        double totalCalculado = nuevaVenta.getTotal() != null ? nuevaVenta.getTotal() : 0.0;
+        nuevaVenta.setCambio(montoRecibido - totalCalculado);
+
+        // 4. Persistir la venta
         return ventaRepository.save(nuevaVenta);
     }
 
     /**
      * Inicia una nueva instancia de Venta en memoria.
-     * Corresponde a iniciarVenta() .
+     * Corresponde a iniciarVenta().
      */
     public Venta iniciarVenta() {
         return new Venta();

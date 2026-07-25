@@ -22,8 +22,8 @@ public class DescripcionVenta {
     private Double precioUnitario;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////77
-    @ManyToOne
-    private Producto producto;
+@ManyToOne(cascade = jakarta.persistence.CascadeType.MERGE)
+private Producto producto;
 
 
     public DescripcionVenta() {
