@@ -15,7 +15,7 @@ import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 
 /**
  * Servicio encargado de la lógica de negocio para la devolución de productos dañados a proveedores (HU10).
- *
+ *jska
  * @author Yamelin Larios Nepomuseno
  */
 @Service
