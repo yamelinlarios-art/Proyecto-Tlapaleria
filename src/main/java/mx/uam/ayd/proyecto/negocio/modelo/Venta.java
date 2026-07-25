@@ -5,14 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import mx.uam.ayd.proyecto.presentacion.historialMovimientos.ControlHistorialMovimientos;
 
@@ -31,25 +28,10 @@ public class Venta {
     private LocalDateTime date;
 
     /*
-     * Se conserva el identificador original para evitar
-     * afectar servicios, controladores o pruebas existentes.
+     * Se conserva como atributo normal para no afectar
+     * servicios, controladores o pruebas existentes.
      */
-    @Column(name = "id_vendedor")
     private int idVendedor;
-
-    /*
-     * Muchas ventas pueden ser registradas por un vendedor.
-     *
-     * Se utiliza la misma columna de idVendedor, pero la relación
-     * no escribe directamente la columna para evitar que JPA
-     * intente mapearla dos veces.
-     */
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(
-            name = "id_vendedor",
-            insertable = false,
-            updatable = false)
-    private Vendedor vendedor;
 
     private double montoRecibido;
 
@@ -73,13 +55,10 @@ public class Venta {
 
     /**
      * Agrega un producto y su cantidad a la venta actual.
-     * Crea un nuevo objeto DescripcionVenta, lo asocia al producto
-     * y actualiza el total de la venta.
      *
-     * @param producto El objeto Producto que se va a agregar.
-     * @param cantidad La cantidad de unidades del producto.
-     * @return true si el producto se agregó correctamente;
-     *         false si el producto es nulo o la cantidad no es válida.
+     * @param producto producto que se agregará
+     * @param cantidad cantidad de unidades
+     * @return true si se agregó correctamente
      */
     public boolean agregaProducto(
             Producto producto,
@@ -89,16 +68,11 @@ public class Venta {
             return false;
         }
 
-        /*
-         * El constructor parametrizado asigna el producto,
-         * la cantidad y el precio unitario.
-         */
         DescripcionVenta detalle =
                 new DescripcionVenta(producto, cantidad);
 
         /*
          * Se establece el lado propietario de la relación.
-         * DescripcionVenta contiene la llave foránea id_venta.
          */
         detalle.setVenta(this);
 
@@ -123,7 +97,6 @@ public class Venta {
             }
         }
 
-        // Asigna el valor final a total
         this.total = acumulado;
     }
 
@@ -134,8 +107,6 @@ public class Venta {
             this.productos.add(detalle);
         }
     }
-
-    // Métodos que se ocupan en el servicio Venta
 
     public void addDetalle(DescripcionVenta detalle) {
         this.agregarDetalle(detalle);
@@ -181,24 +152,6 @@ public class Venta {
         this.idVendedor = idVendedor;
     }
 
-    public Vendedor getVendedor() {
-        return vendedor;
-    }
-
-    /*
-     * Además de asignar el objeto Vendedor, se sincroniza
-     * idVendedor para conservar el comportamiento anterior.
-     */
-    public void setVendedor(Vendedor vendedor) {
-
-        this.vendedor = vendedor;
-
-        if (vendedor != null) {
-            this.idVendedor =
-                    (int) vendedor.getIdEmpleado();
-        }
-    }
-
     public double getMontoRecibido() {
         return montoRecibido;
     }
@@ -219,10 +172,6 @@ public class Venta {
         return productos;
     }
 
-    /*
-     * Se mantiene la relación bidireccional al reemplazar
-     * la lista completa de detalles.
-     */
     public void setProductos(
             List<DescripcionVenta> productos) {
 
@@ -278,14 +227,12 @@ public class Venta {
     public static void muestraMovimientos(
             List<MovimientoInventario> movimientos) {
 
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException(
                 "Unimplemented method 'muestraMovimientos'");
     }
 
     public static void muestra() {
 
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException(
                 "Unimplemented method 'muestra'");
     }
@@ -294,7 +241,6 @@ public class Venta {
             ControlHistorialMovimientos
                     controlHistorialMovimientos) {
 
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException(
                 "Unimplemented method 'setControl'");
     }

@@ -14,11 +14,11 @@ import jakarta.persistence.OneToMany;
  *
  * @author javitos
  */
-@Entity // Le dice a Spring que esta es una entidad persistente para la BD
+@Entity
 public class Vendedor {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Autoincrementable
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idEmpleado;
 
     private String nombreCompleto;
@@ -34,157 +34,89 @@ public class Vendedor {
     private String numeroEmpleado;
 
     /*
-     * Un vendedor puede registrar muchas ventas.
-     *
-     * mappedBy = "vendedor" hace referencia al atributo
-     * vendedor que se agregará dentro de Venta.
-     */
-    @OneToMany(mappedBy = "vendedor")
-    private List<Venta> ventas = new ArrayList<>();
-
-    /*
      * Un vendedor puede registrar muchas devoluciones.
      *
      * mappedBy = "vendedor" hace referencia al atributo
-     * vendedor que se agregará dentro de Devolucion.
+     * vendedor existente dentro de Devolucion.
      */
     @OneToMany(mappedBy = "vendedor")
     private List<Devolucion> devoluciones = new ArrayList<>();
 
     /**
-     * Constructor vacío requerido por JPA
+     * Constructor vacío requerido por JPA.
      */
     public Vendedor() {
     }
 
-    /**
-     * @return the idEmpleado
-     */
     public long getIdEmpleado() {
         return idEmpleado;
     }
 
-    /**
-     * @param idEmpleado the idEmpleado to set
-     */
     public void setIdEmpleado(long idEmpleado) {
         this.idEmpleado = idEmpleado;
     }
 
-    /**
-     * @return the nombreCompleto
-     */
     public String getNombreCompleto() {
         return nombreCompleto;
     }
 
-    /**
-     * @param nombreCompleto the nombreCompleto to set
-     */
     public void setNombreCompleto(String nombreCompleto) {
         this.nombreCompleto = nombreCompleto;
     }
 
-    /**
-     * @return the edad
-     */
     public int getEdad() {
         return age;
     }
 
-    /**
-     * @param edad the edad to set
-     */
     public void setEdad(int edad) {
         this.age = edad;
     }
 
-    /**
-     * @return the tipoVendedor
-     */
     public String getTipoVendedor() {
         return tipoVendedor;
     }
 
-    /**
-     * @param tipoVendedor the tipoVendedor to set
-     */
     public void setTipoVendedor(String tipoVendedor) {
         this.tipoVendedor = tipoVendedor;
     }
 
-    /**
-     * @return the telefono
-     */
     public String getTelefono() {
         return telefono;
     }
 
-    /**
-     * @param telefono the telefono to set
-     */
     public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
 
-    /**
-     * @return the salario
-     */
     public double getSalario() {
         return salario;
     }
 
-    /**
-     * @param salario the salario to set
-     */
     public void setSalario(double salario) {
         this.salario = salario;
     }
 
-    /**
-     * @return the numeroEmpleado
-     */
     public String getNumeroEmpleado() {
         return numeroEmpleado;
     }
 
-    /**
-     * @param numeroEmpleado the numeroEmpleado to set
-     */
     public void setNumeroEmpleado(String numeroEmpleado) {
         this.numeroEmpleado = numeroEmpleado;
     }
 
-    /**
-     * @return ventas registradas por el vendedor
-     */
-    public List<Venta> getVentas() {
-        return ventas;
-    }
-
-    /**
-     * @param ventas ventas registradas por el vendedor
-     */
-    public void setVentas(List<Venta> ventas) {
-        this.ventas = ventas;
-    }
-
-    /**
-     * @return devoluciones registradas por el vendedor
-     */
     public List<Devolucion> getDevoluciones() {
         return devoluciones;
     }
 
-    /**
-     * @param devoluciones devoluciones registradas por el vendedor
-     */
-    public void setDevoluciones(List<Devolucion> devoluciones) {
+    public void setDevoluciones(
+            List<Devolucion> devoluciones) {
+
         this.devoluciones = devoluciones;
     }
 
     @Override
     public boolean equals(Object obj) {
+
         if (this == obj) {
             return true;
         }
