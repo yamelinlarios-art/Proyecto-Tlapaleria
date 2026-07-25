@@ -31,12 +31,12 @@ public class Bitacora {
     // Atributos para la HU-10
 
     /*
-     * Se conserva el identificador original para evitar afectar
-     * los servicios y controladores que trabajan directamente
-     * con idDevolucion.
+     * Se cambió de long (primitivo) a Long (objeto wrapper) 
+     * para permitir valores NULL cuando un registro de bitácora
+     * no pertenece a una devolución (ej. actualización de precio HU-09).
      */
-    @Column(name = "id_devolucion")
-    private long idDevolucion;
+    @Column(name = "id_devolucion", nullable = true)
+    private Long idDevolucion;
 
     /*
      * Muchas entradas de la bitácora pueden pertenecer
@@ -46,11 +46,12 @@ public class Bitacora {
      * JPA intente administrar dos veces la misma columna,
      * porque idDevolucion ya utiliza id_devolucion.
      */
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
     @JoinColumn(
             name = "id_devolucion",
             insertable = false,
-            updatable = false)
+            updatable = false,
+            nullable = true)
     private Devolucion devolucion;
 
     private int cantidad;
@@ -96,11 +97,17 @@ public class Bitacora {
         this.precioNuevo = precioNuevo;
     }
 
-    public long getIdDevolucion() {
+    /*
+     * Retorna Long para permitir nulos
+     */
+    public Long getIdDevolucion() {
         return idDevolucion;
     }
 
-    public void setIdDevolucion(long idDevolucion) {
+    /*
+     * Acepta Long para poder recibir null
+     */
+    public void setIdDevolucion(Long idDevolucion) {
         this.idDevolucion = idDevolucion;
     }
 
@@ -109,8 +116,7 @@ public class Bitacora {
     }
 
     /*
-     * Se sincroniza también idDevolucion para conservar
-     * el comportamiento del programa original.
+     * Si devolucion es null, asigna null a idDevolucion en lugar de 0
      */
     public void setDevolucion(Devolucion devolucion) {
         this.devolucion = devolucion;
@@ -118,7 +124,7 @@ public class Bitacora {
         if (devolucion != null) {
             this.idDevolucion = devolucion.getIdDevolucion();
         } else {
-            this.idDevolucion = 0;
+            this.idDevolucion = null; // 👈 CORREGIDO: Ahora asigna null
         }
     }
 
