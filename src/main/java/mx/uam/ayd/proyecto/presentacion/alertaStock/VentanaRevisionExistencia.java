@@ -28,142 +28,132 @@ import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 @Component
 public class VentanaRevisionExistencia {
 
-	private Stage stage;
-	private ControlRevisarExistencia control;
-	private ObservableList<Producto> productosData;
-	
-	@FXML
-	private TableView<Producto> tablaAlertas;
-	
-	@FXML
-	private TableColumn<Producto, String> colClave;
-	
-	@FXML
-	private TableColumn<Producto, String> colNombre;
-	
-	@FXML
-	private TableColumn<Producto, Integer> colStock;
+    private Stage stage;
+    private ControlRevisarExistencia control;
+    private ObservableList<Producto> productosData;
+    
+    @FXML
+    private TableView<Producto> tablaAlertas;
+    
+    @FXML
+    private TableColumn<Producto, String> colClave;
+    
+    @FXML
+    private TableColumn<Producto, String> colNombre;
+    
+    @FXML
+    private TableColumn<Producto, Integer> colStock;
     
     @FXML
     private TextField txtBusqueda;
-	
-	private boolean initialized = false;
+    
+    private boolean initialized = false;
 
-/////////////////////////////////////////////////////////////////////////// CONSTRUCTOR
-	public VentanaRevisionExistencia() {
-		productosData = FXCollections.observableArrayList();
-	}
-	
-	/**
-	 * Inicializa los componentes de la interfaz en el hilo de JavaFX
-	 */
-private void initializeUI() {
-    if (initialized) {
-        return;
+    public VentanaRevisionExistencia() {
+        productosData = FXCollections.observableArrayList();
     }
     
-    if (!Platform.isFxApplicationThread()) {
-        Platform.runLater(this::initializeUI);
-        return;
-    }
-    
-    try {
-        stage = new Stage();
-        stage.setTitle("Alertas de Inventario - Revisión de Existencias");
+    private void initializeUI() {
+        if (initialized) {
+            return;
+        }
         
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-revision-existencia.fxml"));
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(this::initializeUI);
+            return;
+        }
         
-        // 🚨 CAMBIO AQUÍ: Usar setControllerFactory en lugar de setController
-        loader.setControllerFactory(clazz -> this);
-        
-        Scene scene = new Scene(loader.load(), 700, 500);
-        stage.setScene(scene);
-        
-        // Configuración de columnas (RN-08: Clave Única)
-        colClave.setCellValueFactory(new PropertyValueFactory<>("clave"));
-        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-        colStock.setCellValueFactory(new PropertyValueFactory<>("existenciaActual"));
-        
-        // Implementación de la RN-14: Resaltado visual automático en rojo
-        tablaAlertas.setRowFactory(tv -> new TableRow<Producto>() {
-            @Override
-            protected void updateItem(Producto item, boolean empty) {
-                super.updateItem(item, empty);
-                if (item == null || empty) {
-                    setStyle("");
-                } else {
-                    setStyle("-fx-background-color: #ffcdd2; -fx-text-fill: #b71c1c;");
+        try {
+            stage = new Stage();
+            stage.setTitle("Alertas de Inventario - Revisión de Existencias");
+            
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-revision-existencia.fxml"));
+            loader.setControllerFactory(clazz -> this);
+            
+            Scene scene = new Scene(loader.load(), 700, 500);
+            stage.setScene(scene);
+            
+            // Configuración de columnas
+            colClave.setCellValueFactory(new PropertyValueFactory<>("clave"));
+            colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+            colStock.setCellValueFactory(new PropertyValueFactory<>("existenciaActual"));
+            
+            // 🚨 CORRECCIÓN AQUÍ: Resaltado en rojo respetando la selección de JavaFX
+            tablaAlertas.setRowFactory(tv -> new TableRow<Producto>() {
+                @Override
+                protected void updateItem(Producto item, boolean empty) {
+                    super.updateItem(item, empty);
+                    
+                    if (item == null || empty) {
+                        setStyle("");
+                    } else if (isSelected()) {
+                        // Si el usuario hace clic, aplicamos un azul de selección claro con texto oscuro visible
+                        setStyle("-fx-background-color: #0078d7; -fx-text-fill: white;");
+                    } else {
+                        // Fila normal en alerta (rojo claro con texto oscuro bien legible)
+                        setStyle("-fx-background-color: #ffcdd2; -fx-text-fill: #333333;");
+                    }
                 }
-            }
-        });
+            });
 
-        tablaAlertas.setItems(productosData);
-        initialized = true;
-        
-    } catch (IOException e) {
-        System.err.println("Error al cargar la ventana de alertas:");
-        e.printStackTrace(); // Revisa la consola si ocurre algún otro problema de renderizado
+            tablaAlertas.setItems(productosData);
+            initialized = true;
+            
+        } catch (IOException e) {
+            System.err.println("Error al cargar la ventana de alertas:");
+            e.printStackTrace();
+        }
     }
-}
-	
-	/**
-	 * Establece la conexión bidireccional con el controlador
-	 */
-	public void muestra(ControlRevisarExistencia control) {
-		this.control = control;
-		if (!Platform.isFxApplicationThread()) {
-			Platform.runLater(() -> this.muestra(control));
-			return;
-		}
-		
-		initializeUI();
-		stage.show();
-	}
     
-    /**
-     * Carga y muestra la lista de productos con alerta
-     */
+    public void muestra(ControlRevisarExistencia control) {
+        this.control = control;
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> this.muestra(control));
+            return;
+        }
+        
+        initializeUI();
+        stage.show();
+    }
+    
     public void mostrarAlertas(List<Producto> productos) {
         Platform.runLater(() -> {
             productosData.clear();
-            productosData.addAll(productos);
+            if (productos != null) {
+                productosData.addAll(productos);
+            }
         });
     }
 
-	/**
-	 * Muestra un diálogo informativo según el estándar del proyecto
-	 */
-	public void muestraDialogoConMensaje(String mensaje) {
-		if (!Platform.isFxApplicationThread()) {
-			Platform.runLater(() -> this.muestraDialogoConMensaje(mensaje));
-			return;
-		}
-		
-		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setTitle("Información de Inventario");
-		alert.setHeaderText(null);
-		alert.setContentText(mensaje);
-		alert.showAndWait();
-	}
+    public void muestraDialogoConMensaje(String mensaje) {
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> this.muestraDialogoConMensaje(mensaje));
+            return;
+        }
+        
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Información de Inventario");
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
 
     public void mostrarMensajeSinAlertas() {
         muestraDialogoConMensaje("No se detectaron productos con stock bajo el mínimo.");
     }
-	
-	// Manejadores de Eventos FXML
-	
-	@FXML
-	private void handleVerDetalle() {
-		Producto seleccionado = tablaAlertas.getSelectionModel().getSelectedItem();
-		if(seleccionado != null) {
-			control.consultarDetalleProducto(seleccionado.getIdProducto());
-		} else {
-			muestraDialogoConMensaje("Por favor, seleccione un producto de la lista roja.");
-		}
-	}
-	
-	@FXML
-	private void handleCerrar() {
-		stage.close();
-	}
+    
+    @FXML
+    private void handleVerDetalle() {
+        Producto seleccionado = tablaAlertas.getSelectionModel().getSelectedItem();
+        if (seleccionado != null) {
+            control.consultarDetalleProducto(seleccionado.getIdProducto());
+        } else {
+            muestraDialogoConMensaje("Por favor, seleccione un producto de la lista roja.");
+        }
+    }
+    
+    @FXML
+    private void handleCerrar() {
+        stage.close();
+    }
 }
