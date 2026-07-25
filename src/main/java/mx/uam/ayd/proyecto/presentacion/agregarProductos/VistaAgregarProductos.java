@@ -292,4 +292,22 @@ public class VistaAgregarProductos {
     private void handleCerrar() {
         stage.close();
     }
+    /**
+     * Muestra u oculta la ventana según el valor booleano indicado.
+     * @param visible true para mostrar, false para ocultar/cerrar.
+     */
+    public void setVisible(boolean visible) {
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> this.setVisible(visible));
+            return;
+        }
+
+        if (stage != null) {
+            if (visible) {
+                stage.show();
+            } else {
+                stage.hide(); // Oculta la ventana al avanzar a la HU de tu compañero
+            }
+        }
+    }
 }

@@ -7,6 +7,7 @@ import mx.uam.ayd.proyecto.negocio.ServicioProducto;
 import mx.uam.ayd.proyecto.negocio.ServicioVenta;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 import mx.uam.ayd.proyecto.negocio.modelo.Venta;
+import mx.uam.ayd.proyecto.presentacion.registroVenta.ControlRegistroVenta;
 
 @Component
 public class ControlAgregarProductos {
@@ -19,6 +20,10 @@ public class ControlAgregarProductos {
 
     @Autowired
     private VistaAgregarProductos vistaAgregarProductos;
+
+    // Inyección del controlador de la HU de tu compañero
+    @Autowired
+    private ControlRegistroVenta controlRegistroVenta;
 
     // Referencia de la venta activa
     private Venta ventaActual;
@@ -65,19 +70,24 @@ public class ControlAgregarProductos {
             vistaAgregarProductos.muestraMensajeError("No hay inventario suficiente para el producto: " + producto.getNombre());
         }
     }
-   public void continuarRegistroVenta() {
-    // Validamos que el carrito no esté vacío
-    if (this.ventaActual == null || 
-        this.ventaActual.getProductos() == null || 
-        this.ventaActual.getProductos().isEmpty()) {
-        
-        vistaAgregarProductos.muestraMensajeError("Debes agregar al menos un producto a la compra para poder continuar.");
-        return;
-    }
 
-    // Si hay productos, avanzamos al siguiente controlador (ej. Registro de Venta o Cobro)
-    // controlRegistroVenta.inicia(this.ventaActual);
-    
-    System.out.println("Avanzando al registro de la venta con un total de: $" + this.ventaActual.getTotal());
-}
+    /**
+     * Pasa el control a la HU de Registro/Confirmación de Venta al presionar "Siguiente".
+     */
+    public void continuarRegistroVenta() {
+        // Validamos que el carrito no esté vacío
+        if (this.ventaActual == null || 
+            this.ventaActual.getProductos() == null || 
+            this.ventaActual.getProductos().isEmpty()) {
+            
+            vistaAgregarProductos.muestraMensajeError("Debes agregar al menos un producto a la compra para poder continuar.");
+            return;
+        }
+
+        // 1. Ocultamos la vista actual de selección de productos
+        vistaAgregarProductos.setVisible(false); // O vistaAgregarProductos.oculta(); según tu método de ocultar
+
+        // 2. Le enviamos la lista de detalles (carrito) a la HU de tu compañero
+        controlRegistroVenta.iniciaConCarrito(this.ventaActual.getProductos());
+    }
 }
