@@ -1,9 +1,11 @@
 package mx.uam.ayd.proyecto.negocio.modelo;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 /**
@@ -18,13 +20,23 @@ public class DescripcionVenta {
 
     private int cantidad;
 
-
     private Double precioUnitario;
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////77
-@ManyToOne(cascade = jakarta.persistence.CascadeType.MERGE)
-private Producto producto;
+    /*
+     * Muchos detalles de venta pueden corresponder
+     * al mismo producto.
+     */
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "id_producto", nullable = false)
+    private Producto producto;
 
+    /*
+     * Muchos detalles de venta pueden pertenecer
+     * a la misma venta.
+     */
+    @ManyToOne
+    @JoinColumn(name = "id_venta", nullable = false)
+    private Venta venta;
 
     public DescripcionVenta() {
     }
@@ -63,16 +75,29 @@ private Producto producto;
         this.producto = producto;
     }
 
-/////////////////////////////////////////////////////////////////////////////////////7777
+    public Venta getVenta() {
+        return venta;
+    }
+
+    public void setVenta(Venta venta) {
+        this.venta = venta;
+    }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
         DescripcionVenta other = (DescripcionVenta) obj;
+
         return idDetalle == other.idDetalle;
     }
-    
+
     @Override
     public int hashCode() {
         return Long.hashCode(idDetalle);
@@ -82,21 +107,26 @@ private Producto producto;
     public String toString() {
         return "DescripcionVenta{" +
                 "id=" + idDetalle +
-                ", producto=" + (producto != null ? producto.getNombre() : "null") +
+                ", producto=" +
+                (producto != null ? producto.getNombre() : "null") +
                 ", cantidad=" + cantidad +
                 ", precioUnitario=" + precioUnitario +
                 '}';
     }
 
     // --- Constructor parametrizado requerido por Venta.java ---
+
     public DescripcionVenta(Producto producto, int cantidad) {
         this.producto = producto;
         this.cantidad = cantidad;
-        this.precioUnitario = (producto != null && producto.getPrecio() != null) ? producto.getPrecio() : 0.0;
+        this.precioUnitario =
+                (producto != null && producto.getPrecio() != null)
+                        ? producto.getPrecio()
+                        : 0.0;
     }
 
     // --- Métodos Helper para JavaFX (PropertyValueFactory) ---
-    
+
     /**
      * Requerido por la columna colNombre de la TableView
      */
@@ -108,6 +138,7 @@ private Producto producto;
      * Requerido por la columna colSubtotal de la TableView
      */
     public double getSubtotal() {
-        return (precioUnitario != null ? precioUnitario : 0.0) * cantidad;
+        return (precioUnitario != null ? precioUnitario : 0.0)
+                * cantidad;
     }
 }

@@ -1,31 +1,53 @@
 package mx.uam.ayd.proyecto.negocio.modelo;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 /**
  * Entidad de negocio Factura
  *
  * @author JAVITOS, Yamelin, Guillermo, Dydier, Yael, Sheyla
-
  *
  */
-@Entity // Esto le dice a Spring que esta es una entidad persistente
+@Entity
 public class Factura {
 
-    @Id // Esto le dice a Spring que este es el identificador
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Le dice a Spring que genere el id
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idFactura;
 
+    /*
+     * Se conserva este atributo para no afectar
+     * el funcionamiento actual del proyecto.
+     */
+    @Column(name = "id_proveedor")
     private int idProveedor;
+
+    /*
+     * Muchas facturas pueden pertenecer
+     * al mismo proveedor.
+     */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(
+            name = "id_proveedor",
+            insertable = false,
+            updatable = false)
+    private Proveedor proveedor;
 
     private double montoTotal;
 
     private double saldoPendiente;
 
     private String estado;
+
+    public Factura() {
+    }
 
     /**
      * @return the idFactura
@@ -53,6 +75,24 @@ public class Factura {
      */
     public void setIdProveedor(int idProveedor) {
         this.idProveedor = idProveedor;
+    }
+
+    /**
+     * @return proveedor asociado a la factura
+     */
+    public Proveedor getProveedor() {
+        return proveedor;
+    }
+
+    /**
+     * @param proveedor proveedor asociado a la factura
+     */
+    public void setProveedor(Proveedor proveedor) {
+        this.proveedor = proveedor;
+
+        if (proveedor != null) {
+            this.idProveedor = (int) proveedor.getIdProveedor();
+        }
     }
 
     /**
@@ -99,16 +139,21 @@ public class Factura {
 
     @Override
     public boolean equals(Object obj) {
+
         if (this == obj) {
             return true;
         }
+
         if (obj == null) {
             return false;
         }
+
         if (getClass() != obj.getClass()) {
             return false;
         }
+
         Factura other = (Factura) obj;
+
         return idFactura == other.idFactura;
     }
 
@@ -119,7 +164,10 @@ public class Factura {
 
     @Override
     public String toString() {
-        return "Factura [idFactura=" + idFactura + ", idProveedor=" + idProveedor + ", montoTotal=" + montoTotal
-                + ", saldoPendiente=" + saldoPendiente + ", estado=" + estado + "]";
+        return "Factura [idFactura=" + idFactura
+                + ", idProveedor=" + idProveedor
+                + ", montoTotal=" + montoTotal
+                + ", saldoPendiente=" + saldoPendiente
+                + ", estado=" + estado + "]";
     }
 }

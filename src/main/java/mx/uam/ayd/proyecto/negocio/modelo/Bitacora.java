@@ -1,14 +1,19 @@
 package mx.uam.ayd.proyecto.negocio.modelo;
 
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import java.time.LocalDateTime;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 /**
  * Entidad de negocio Bitacora
- * 
+ *
  * @author Yamelin Larios Nepomuseno
  */
 @Entity
@@ -20,16 +25,43 @@ public class Bitacora {
 
     // Atributos para HU-09
     private double precioAnterior;
+
     private double precioNuevo;
 
     // Atributos para la HU-10
+
+    /*
+     * Se conserva el identificador original para evitar afectar
+     * los servicios y controladores que trabajan directamente
+     * con idDevolucion.
+     */
+    @Column(name = "id_devolucion")
     private long idDevolucion;
+
+    /*
+     * Muchas entradas de la bitácora pueden pertenecer
+     * a una misma devolución.
+     *
+     * insertable = false y updatable = false evitan que
+     * JPA intente administrar dos veces la misma columna,
+     * porque idDevolucion ya utiliza id_devolucion.
+     */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(
+            name = "id_devolucion",
+            insertable = false,
+            updatable = false)
+    private Devolucion devolucion;
+
     private int cantidad;
+
     private String motivo;
+
     private String descripcion;
 
     // Atributos compartidos (HU-09 y HU-10)
     private long idProducto;
+
     private LocalDateTime fechaHora;
 
     // Constructor por defecto requerido por JPA
@@ -70,6 +102,24 @@ public class Bitacora {
 
     public void setIdDevolucion(long idDevolucion) {
         this.idDevolucion = idDevolucion;
+    }
+
+    public Devolucion getDevolucion() {
+        return devolucion;
+    }
+
+    /*
+     * Se sincroniza también idDevolucion para conservar
+     * el comportamiento del programa original.
+     */
+    public void setDevolucion(Devolucion devolucion) {
+        this.devolucion = devolucion;
+
+        if (devolucion != null) {
+            this.idDevolucion = devolucion.getIdDevolucion();
+        } else {
+            this.idDevolucion = 0;
+        }
     }
 
     public int getCantidad() {
@@ -121,10 +171,13 @@ public class Bitacora {
         if (this == obj) {
             return true;
         }
+
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
+
         Bitacora other = (Bitacora) obj;
+
         return idBitacora == other.idBitacora;
     }
 
@@ -135,9 +188,14 @@ public class Bitacora {
 
     @Override
     public String toString() {
-        return "Bitacora [idBitacora=" + idBitacora + ", precioAnterior=" + precioAnterior + ", precioNuevo="
-                + precioNuevo + ", idDevolucion=" + idDevolucion + ", cantidad=" 
-                + cantidad + ", motivo=" + motivo + ", descripcion=" + descripcion 
-                + ", idProducto=" + idProducto + ", fechaHora=" + fechaHora + "]";
+        return "Bitacora [idBitacora=" + idBitacora
+                + ", precioAnterior=" + precioAnterior
+                + ", precioNuevo=" + precioNuevo
+                + ", idDevolucion=" + idDevolucion
+                + ", cantidad=" + cantidad
+                + ", motivo=" + motivo
+                + ", descripcion=" + descripcion
+                + ", idProducto=" + idProducto
+                + ", fechaHora=" + fechaHora + "]";
     }
 }

@@ -1,33 +1,55 @@
 package mx.uam.ayd.proyecto.negocio.modelo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
 /**
  * Entidad de negocio Vendedor
- * 
+ *
  * @author javitos
  */
 @Entity // Le dice a Spring que esta es una entidad persistente para la BD
 public class Vendedor {
 
-    @Id 
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Autoincrementable
     private long idEmpleado;
 
     private String nombreCompleto;
 
-    private int age; 
+    private int age;
 
     private String tipoVendedor;
 
-    private String telefono; 
+    private String telefono;
 
-    private double salario; 
+    private double salario;
 
     private String numeroEmpleado;
+
+    /*
+     * Un vendedor puede registrar muchas ventas.
+     *
+     * mappedBy = "vendedor" hace referencia al atributo
+     * vendedor que se agregará dentro de Venta.
+     */
+    @OneToMany(mappedBy = "vendedor")
+    private List<Venta> ventas = new ArrayList<>();
+
+    /*
+     * Un vendedor puede registrar muchas devoluciones.
+     *
+     * mappedBy = "vendedor" hace referencia al atributo
+     * vendedor que se agregará dentro de Devolucion.
+     */
+    @OneToMany(mappedBy = "vendedor")
+    private List<Devolucion> devoluciones = new ArrayList<>();
 
     /**
      * Constructor vacío requerido por JPA
@@ -133,18 +155,50 @@ public class Vendedor {
         this.numeroEmpleado = numeroEmpleado;
     }
 
+    /**
+     * @return ventas registradas por el vendedor
+     */
+    public List<Venta> getVentas() {
+        return ventas;
+    }
+
+    /**
+     * @param ventas ventas registradas por el vendedor
+     */
+    public void setVentas(List<Venta> ventas) {
+        this.ventas = ventas;
+    }
+
+    /**
+     * @return devoluciones registradas por el vendedor
+     */
+    public List<Devolucion> getDevoluciones() {
+        return devoluciones;
+    }
+
+    /**
+     * @param devoluciones devoluciones registradas por el vendedor
+     */
+    public void setDevoluciones(List<Devolucion> devoluciones) {
+        this.devoluciones = devoluciones;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
+
         if (obj == null) {
             return false;
         }
+
         if (getClass() != obj.getClass()) {
             return false;
         }
+
         Vendedor other = (Vendedor) obj;
+
         return idEmpleado == other.idEmpleado;
     }
 
@@ -155,7 +209,11 @@ public class Vendedor {
 
     @Override
     public String toString() {
-        return "Vendedor [idEmpleado=" + idEmpleado + ", nombreCompleto=" + nombreCompleto + ", tipoVendedor=" 
-                + tipoVendedor + ", telefono=" + telefono + ", salario=" + salario + ", numeroEmpleado=" + numeroEmpleado + "]";
+        return "Vendedor [idEmpleado=" + idEmpleado
+                + ", nombreCompleto=" + nombreCompleto
+                + ", tipoVendedor=" + tipoVendedor
+                + ", telefono=" + telefono
+                + ", salario=" + salario
+                + ", numeroEmpleado=" + numeroEmpleado + "]";
     }
 }

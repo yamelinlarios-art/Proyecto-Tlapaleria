@@ -1,9 +1,13 @@
 package mx.uam.ayd.proyecto.negocio.modelo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
 /**
  * Entidad de negocio Inventario
@@ -23,6 +27,21 @@ public class Inventario {
     private int existenciaDisponible;
 
     private int stockMinimo;
+
+    /*
+     * Un inventario puede contener muchos productos.
+     *
+     * mappedBy = "inventario" hace referencia al atributo
+     * llamado inventario dentro de la clase Producto.
+     */
+    @OneToMany(mappedBy = "inventario")
+    private List<Producto> productos = new ArrayList<>();
+
+    /**
+     * Constructor vacío requerido por JPA.
+     */
+    public Inventario() {
+    }
 
     /**
      * @return the idProducto
@@ -80,12 +99,27 @@ public class Inventario {
         this.stockMinimo = stockMinimo;
     }
 
+    /**
+     * @return productos registrados en el inventario
+     */
+    public List<Producto> getProductos() {
+        return productos;
+    }
+
+    /**
+     * @param productos productos registrados en el inventario
+     */
+    public void setProductos(List<Producto> productos) {
+        this.productos = productos;
+    }
+
     // ==========================================
     // Métodos de negocio requeridos por el UML
     // ==========================================
 
     /**
      * Método para obtener la existencia actual
+     *
      * @return la existencia actual del inventario
      */
     public int obtenerExistenciaActual() {
@@ -94,6 +128,7 @@ public class Inventario {
 
     /**
      * Método para actualizar la existencia
+     *
      * @param cantidad el nuevo valor para la existencia actual
      */
     public void actualizarExistencia(int cantidad) {
@@ -109,13 +144,17 @@ public class Inventario {
         if (this == obj) {
             return true;
         }
+
         if (obj == null) {
             return false;
         }
+
         if (getClass() != obj.getClass()) {
             return false;
         }
+
         Inventario other = (Inventario) obj;
+
         return idProducto == other.idProducto;
     }
 
@@ -126,7 +165,9 @@ public class Inventario {
 
     @Override
     public String toString() {
-        return "Inventario [idProducto=" + idProducto + ", existenciaActual=" + existenciaActual
-                + ", existenciaDisponible=" + existenciaDisponible + ", stockMinimo=" + stockMinimo + "]";
+        return "Inventario [idProducto=" + idProducto
+                + ", existenciaActual=" + existenciaActual
+                + ", existenciaDisponible=" + existenciaDisponible
+                + ", stockMinimo=" + stockMinimo + "]";
     }
 }
