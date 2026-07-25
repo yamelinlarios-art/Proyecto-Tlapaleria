@@ -5,12 +5,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.time.LocalDateTime;
 
 import mx.uam.ayd.proyecto.datos.ProductoRepository;
-import mx.uam.ayd.proyecto.datos.MovimientoInventarioRepository;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
-import mx.uam.ayd.proyecto.negocio.modelo.MovimientoInventario;
 
 /**
  * Servicio encargado de la lógica de negocio de los productos.
@@ -26,17 +23,17 @@ public class ServicioProducto {
     // Repositorios y Servicios
     private final ProductoRepository productoRepository;
     private final ServicioBitacora servicioBitacora;
-    private final MovimientoInventarioRepository movimientoInventarioRepository;
+    private final ServicioMovimientoInventario servicioMovimientoInventario; // <--- Usamos el Servicio, NO el Repository
 
     @Autowired
     public ServicioProducto(
             ProductoRepository productoRepository, 
             ServicioBitacora servicioBitacora,
-            MovimientoInventarioRepository movimientoInventarioRepository) {
+            ServicioMovimientoInventario servicioMovimientoInventario) {
         
         this.productoRepository = productoRepository;
         this.servicioBitacora = servicioBitacora;
-        this.movimientoInventarioRepository = movimientoInventarioRepository;
+        this.servicioMovimientoInventario = servicioMovimientoInventario;
     }
 
     /**
@@ -181,17 +178,23 @@ public class ServicioProducto {
             log.error("Error al registrar el cambio de precio en la Bitácora: ", e);
         }
 
-        // 2. Registro en MovimientoInventario para reflejarse en la pantalla de Historial
+        // 2. Registro en MovimientoInventario VÍA ServicioMovimientoInventario
         try {
-            MovimientoInventario movimiento = new MovimientoInventario();
-            movimiento.setProducto(productoGuardado);
-            movimiento.setTipoMovimiento("CAMBIO_PRECIO");
-            movimiento.setFecha(LocalDateTime.now());
+            String observacion = "Cambio de precio de $" + precioAnterior + " a $" + nuevoPrecio;
             
-            movimientoInventarioRepository.save(movimiento);
+            // Usamos el método delegado del ServicioMovimientoInventario
+            servicioMovimientoInventario.registrarMovimiento(
+                productoGuardado, 
+                productoGuardado.getExistenciaActual(), // Cantidad actual
+                productoGuardado.getExistenciaActual(), // Existencia anterior
+                productoGuardado.getExistenciaActual(), // Existencia actual
+                "CAMBIO_PRECIO", 
+                observacion
+            );
+            
             log.info("Movimiento de inventario guardado para el Historial del producto ID: {}", idProducto);
         } catch (Exception e) {
-            log.error("Error al guardar el registro en MovimientoInventarioRepository: ", e);
+            log.error("Error al guardar el registro en ServicioMovimientoInventario: ", e);
         }
 
         return productoGuardado;
