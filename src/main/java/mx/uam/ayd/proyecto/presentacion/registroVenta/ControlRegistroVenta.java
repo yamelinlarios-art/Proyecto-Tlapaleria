@@ -49,29 +49,36 @@ public class ControlRegistroVenta {
     /**
      * Valida reglas de negocio antes de permitir el cobro.
      */
-    public void procesarConfirmacionVenta() {
-        if (ventaActual == null || ventaActual.getProductos() == null || ventaActual.getProductos().isEmpty()) {
+/**
+ * Valida reglas de negocio antes de permitir el cobro.
+ */
+public void procesarConfirmacionVenta() {
+    if (ventaActual == null || ventaActual.getProductos() == null || ventaActual.getProductos().isEmpty()) {
+        if (ventanaCarrito != null) {
+            ventanaCarrito.muestraDialogoConMensaje("El carrito de compras está vacío.");
+        }
+        return;
+    }
+
+    // RN-04: Validar precios antes de habilitar pantalla de cobro
+    for (DescripcionVenta d : ventaActual.getProductos()) {
+        if (d != null && d.getPrecioUnitario() <= 0) {
             if (ventanaCarrito != null) {
-                ventanaCarrito.muestraDialogoConMensaje("El carrito de compras está vacío.");
+                ventanaCarrito.muestraDialogoConMensaje("RN-04: Todo precio asignado debe ser strictly mayor a cero.");
             }
             return;
         }
-
-        // RN-04: Validar precios antes de habilitar pantalla de cobro
-        for (DescripcionVenta d : ventaActual.getProductos()) {
-            if (d != null && d.getPrecioUnitario() <= 0) {
-                if (ventanaCarrito != null) {
-                    ventanaCarrito.muestraDialogoConMensaje("RN-04: Todo precio asignado debe ser estrictamente mayor a cero.");
-                }
-                return;
-            }
-        }
-
-        // Habilita la pantalla de cobro enviando el total directo de la Venta
-        if (ventanaCobro != null) {
-            ventanaCobro.muestra(ventaActual.getTotal());
-        }
     }
+
+    // 🔧 FIX DE TRANSICIÓN: Ocultar carrito y mostrar pantalla de cobro
+    if (ventanaCarrito != null) {
+        ventanaCarrito.setVisible(false); // Oculta la ventana de Carrito
+    }
+
+    if (ventanaCobro != null) {
+        ventanaCobro.muestra(ventaActual.getTotal()); // Abre la ventana de Cobro con el total
+    }
+}
 
     /**
      * Calcula el cambio basándose en el total de la Venta activa

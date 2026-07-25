@@ -44,48 +44,44 @@ public class VentanaCarrito {
         this.control = control;
     }
 
-    private void initializeUI() {
-        if (initialized) return;
-        
-        if (!Platform.isFxApplicationThread()) {
-            Platform.runLater(this::initializeUI);
-            return;
-        }
-
-        // Validación preventiva de la existencia del FXML
-        URL fxmlUrl = getClass().getResource("/fxml/ventana-carrito.fxml");
-        if (fxmlUrl == null) {
-            System.err.println("❌ Error: No se encontró el FXML '/fxml/ventana-carrito.fxml'");
-            return;
-        }
-
-        try {
-            FXMLLoader loader = new FXMLLoader(fxmlUrl);
-            
-            // Si el FXML NO tiene definida la etiqueta fx:controller, asignamos este controlador.
-            // Si ya la tiene en el FXML, loader.load() la vinculará automáticamente.
-            if (loader.getController() == null) {
-                loader.setController(this);
-            }
-
-            Parent root = loader.load();
-            
-            stage = new Stage();
-            stage.setTitle("Confirmación de Venta - Resumen");
-            stage.setScene(new Scene(root));
-            
-            // Configuración segura de columnas de la tabla (evita NullPointerException)
-            if (colNombre != null) colNombre.setCellValueFactory(new PropertyValueFactory<>("productoNombre")); 
-            if (colPrecio != null) colPrecio.setCellValueFactory(new PropertyValueFactory<>("precioUnitario"));
-            if (colCantidad != null) colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
-            if (colSubtotal != null) colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
-
-            initialized = true;
-        } catch (IOException e) {
-            System.err.println("❌ Error al cargar la interfaz FXML de VentanaCarrito:");
-            e.printStackTrace();
-        }
+private void initializeUI() {
+    if (initialized) return;
+    
+    if (!Platform.isFxApplicationThread()) {
+        Platform.runLater(this::initializeUI);
+        return;
     }
+
+    URL fxmlUrl = getClass().getResource("/fxml/ventana-carrito.fxml");
+    if (fxmlUrl == null) {
+        System.err.println("❌ Error: No se encontró el FXML '/fxml/ventana-carrito.fxml'");
+        return;
+    }
+
+    try {
+        FXMLLoader loader = new FXMLLoader(fxmlUrl);
+        
+        // 🔧 FIX CRÍTICO: Usar setControllerFactory para que utilice la misma instancia de Spring
+        loader.setControllerFactory(clazz -> this);
+
+        Parent root = loader.load();
+        
+        stage = new Stage();
+        stage.setTitle("Confirmación de Venta - Resumen");
+        stage.setScene(new Scene(root));
+        
+        // Mapeo seguro de columnas
+        if (colNombre != null) colNombre.setCellValueFactory(new PropertyValueFactory<>("productoNombre")); 
+        if (colPrecio != null) colPrecio.setCellValueFactory(new PropertyValueFactory<>("precioUnitario"));
+        if (colCantidad != null) colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
+        if (colSubtotal != null) colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
+
+        initialized = true;
+    } catch (IOException e) {
+        System.err.println("❌ Error al cargar la interfaz FXML de VentanaCarrito:");
+        e.printStackTrace();
+    }
+}
 
     /**
      * Despliega la ventana recibiendo el objeto Venta completo.
