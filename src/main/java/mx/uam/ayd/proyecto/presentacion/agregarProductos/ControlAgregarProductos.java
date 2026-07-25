@@ -1,6 +1,7 @@
 package mx.uam.ayd.proyecto.presentacion.agregarProductos; // Revisa que el paquete coincida con tu proyecto
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import mx.uam.ayd.proyecto.negocio.ServicioProducto;
@@ -23,6 +24,7 @@ public class ControlAgregarProductos {
 
     // Inyección del controlador de la HU de tu compañero
     @Autowired
+    @Lazy
     private ControlRegistroVenta controlRegistroVenta;
 
     // Referencia de la venta activa
