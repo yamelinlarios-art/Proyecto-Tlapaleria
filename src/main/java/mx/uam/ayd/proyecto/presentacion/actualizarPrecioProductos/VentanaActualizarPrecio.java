@@ -17,8 +17,6 @@ import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 
 /**
  * Ventana para la actualización de precios de productos (HU09).
- * 
- * @author Yamelin Larios Nepomuseno
  */
 @Component
 public class VentanaActualizarPrecio {
@@ -30,54 +28,49 @@ public class VentanaActualizarPrecio {
     @FXML private Label lblNombreProducto;
     @FXML private Label lblPrecioActual;
     @FXML private TextField txtNuevoPrecio;
-    
-    private boolean initialized = false;
 
-    /** Constructor básico. */
     public VentanaActualizarPrecio() {}
-    
-    /** Inicializa los componentes de la interfaz de usuario en el hilo de JavaFX. */
+
     private void initializeUI() {
-        if (initialized) return;
-        if (!Platform.isFxApplicationThread()) {
-            Platform.runLater(this::initializeUI);
-            return;
-        }
+        if (stage != null) return; // Si ya fue creada, no se vuelve a cargar
+
         try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-actualizar-precio.fxml"));
+            
+            // Asignamos manualmente este bean como el controlador
+            loader.setController(this);
+            
             stage = new Stage();
             stage.setTitle("Actualizar Precio de Producto");
-            
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-actualizar-precio.fxml"));
-            // Se le asigna este bean como controller de la vista
-            loader.setControllerFactory(param -> this);
-            
             stage.setScene(new Scene(loader.load()));
-            initialized = true;
+            
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
     
-    /** Establece el controlador asociado a esta ventana. */
     public void setControl(ControlActualizarPrecio control) {
         this.control = control;
     }
     
-    /** Muestra la ventana de actualización de precio y limpia sus campos. */
     public void muestra() {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(this::muestra);
             return;
         }
+        
         initializeUI();
+        
         if (txtIdProducto != null) txtIdProducto.setText("");
         if (lblNombreProducto != null) lblNombreProducto.setText("-");
         if (lblPrecioActual != null) lblPrecioActual.setText("-");
         if (txtNuevoPrecio != null) txtNuevoPrecio.setText("");
-        stage.show();
+        
+        if (stage != null) {
+            stage.show();
+        }
     }
     
-    /** Muestra un diálogo de información con un mensaje. */
     public void muestraDialogoConMensaje(String mensaje) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> this.muestraDialogoConMensaje(mensaje));
@@ -90,20 +83,19 @@ public class VentanaActualizarPrecio {
         alert.showAndWait();
     }
     
-    /** Oculta o muestra la ventana de manera segura. */
     public void setVisible(boolean visible) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> this.setVisible(visible));
             return;
         }
-        if (!initialized && visible) initializeUI();
+        if (stage == null && visible) initializeUI();
         if (stage != null) {
             if (visible) stage.show();
             else stage.hide();
         }
     }
     
-    // --- Manejadores de eventos de FXML ---
+    // --- Manejadores de eventos FXML ---
     
     @FXML
     private void onBuscarProducto() {
@@ -141,10 +133,7 @@ public class VentanaActualizarPrecio {
                 muestraDialogoConMensaje("El precio debe ser un número mayor a cero.");
                 return;
             }
-            
-            // Delegamos al control la actualización e inserción en el historial
             Producto productoActualizado = control.actualizarPrecio(idProducto, nuevoPrecio);
-            
             if (productoActualizado != null) {
                 muestraDialogoConMensaje("El precio del producto '" + productoActualizado.getNombre() + "' fue actualizado exitosamente.");
                 lblPrecioActual.setText(String.valueOf(productoActualizado.getPrecio()));
