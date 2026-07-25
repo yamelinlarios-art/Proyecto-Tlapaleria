@@ -52,9 +52,9 @@ private void initializeUI() {
         return;
     }
 
-    URL fxmlUrl = getClass().getResource("/fxml/ventana-carrito.fxml");
+    URL fxmlUrl = getClass().getResource("/fxml/ventana-carrito-compras.fxml");
     if (fxmlUrl == null) {
-        System.err.println("❌ Error: No se encontró el FXML '/fxml/ventana-carrito.fxml'");
+        System.err.println("❌ Error: No se encontró el FXML '/fxml/ventana-carrito-compras.fxml'");
         return;
     }
 

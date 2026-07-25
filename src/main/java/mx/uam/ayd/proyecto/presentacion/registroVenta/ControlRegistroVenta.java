@@ -35,17 +35,21 @@ public class ControlRegistroVenta {
     /**
      * Recibe la venta completa creada en la HU de selección de productos.
      */
-    public void iniciaConVenta(Venta venta) {
-        if (venta == null) return;
-
-        this.ventaActual = venta;
-        
-        // Ya no necesitamos calcular nada; la Venta ya tiene sus productos y su total
-        if (ventanaCarrito != null) {
-            ventanaCarrito.muestra(this.ventaActual);
-        }
+   public void iniciaConVenta(Venta venta) {
+    this.ventaActual = venta;
+    
+    // Debug en consola
+    if (venta != null) {
+        System.out.println("📦 Productos recibidos: " + (venta.getProductos() != null ? venta.getProductos().size() : 0));
+        System.out.println("💰 Total recibido: $" + venta.getTotal());
+    } else {
+        System.out.println("❌ Objeto Venta recibido es NULL");
     }
 
+    if (ventanaCarrito != null) {
+        ventanaCarrito.muestra(this.ventaActual);
+    }
+}
     /**
      * Valida reglas de negocio antes de permitir el cobro.
      */
