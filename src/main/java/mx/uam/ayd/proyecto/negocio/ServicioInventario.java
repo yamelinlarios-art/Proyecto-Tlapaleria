@@ -124,30 +124,24 @@ public List<Producto> consultarAlertas() {
      *
      * @return Lista de inventarios.
      */
-    public List<Inventario> recuperaInventario() {
-        List<Inventario> inventarios = new ArrayList<>();
-
-        for (Inventario inventario : inventarioRepository.findAll()) {
-            inventarios.add(inventario);
-        }
-
-        return inventarios;
-    }
-
-    /**
-     * Recupera únicamente los productos con bajo stock.
-     *
-     * @return Lista de inventarios con bajo stock.
-     */
     public List<Inventario> obtenerProductosBajoStock() {
-        List<Inventario> productosBajoStock = new ArrayList<>();
 
-        for (Inventario inventario : inventarioRepository.findAll()) {
-            if (inventario.getExistenciaActual() <= inventario.getStockMinimo()) {
-                productosBajoStock.add(inventario);
-            }
+    System.out.println("===== INVENTARIO =====");
+
+    List<Inventario> productosBajoStock = new ArrayList<>();
+
+    for (Inventario inventario : inventarioRepository.findAll()) {
+
+        System.out.println(inventario);
+
+        if (inventario.getExistenciaActual() <= inventario.getStockMinimo()) {
+            productosBajoStock.add(inventario);
         }
-
-        return productosBajoStock;
     }
+
+    System.out.println("Cantidad de productos encontrados: "
+            + productosBajoStock.size());
+
+    return productosBajoStock;
+   }
 }
