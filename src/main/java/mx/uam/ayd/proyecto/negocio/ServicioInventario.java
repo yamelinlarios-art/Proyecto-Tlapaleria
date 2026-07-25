@@ -40,36 +40,45 @@ public class ServicioInventario {
      *
      * @return Lista de productos que requieren reabastecimiento (resaltados en rojo).
      */
-    public List<Producto> consultarAlertas() {
-        log.info("Iniciando consulta de alertas de inventario...");
-        List<Producto> productosConAlerta = new ArrayList<>();
+public List<Producto> consultarAlertas() {
+    log.info("Iniciando consulta de alertas de inventario...");
+    List<Producto> productosConAlerta = new ArrayList<>();
 
-        // Recuperar todos los registros de inventario
-        Iterable<Inventario> todosLosInventarios = inventarioRepository.findAll();
+    // Recuperar todos los registros de inventario
+    Iterable<Inventario> todosLosInventarios = inventarioRepository.findAll();
 
-        for (Inventario item : todosLosInventarios) {
-            // Validar Stock Mínimo
-            if (item.getExistenciaActual() <= item.getStockMinimo()) {
-                
-                // Recuperar el producto para obtener su Clave Única
-                Producto producto = productoRepository.findById(item.getIdProducto()).orElse(null);
+    for (Inventario item : todosLosInventarios) {
+        // Validar Stock Mínimo
+        if (item.getExistenciaActual() <= item.getStockMinimo()) {
+            
+            // Buscamos el producto utilizando el id del inventario
+            Producto producto = productoRepository.findByIdProducto(item.getIdProducto());
 
-                if (producto != null) {
-                    // Sincronizar el stock del inventario hacia el objeto Producto para la UI
-                    producto.setExistenciaActual(item.getExistenciaActual());
-                    
-                    productosConAlerta.add(producto);
-                    
-                    // Registrar el evento en la Bitácora (RN-02)
-                    registrarEventoAlerta(producto.getIdProducto(), producto.getClave());
-                }
+            // Si no lo encuentra por método personalizado, intenta por findById
+            if (producto == null) {
+                producto = productoRepository.findById(item.getIdProducto()).orElse(null);
             }
-        }
 
-        log.info("Consulta finalizada. Se encontraron {} productos con stock bajo.", productosConAlerta.size());
-        return productosConAlerta;
+            // Si aún sigue sin existir en la tabla PRODUCTO, creamos un objeto para que la vista lo muestre
+            if (producto == null) {
+                producto = new Producto();
+                producto.setIdProducto(item.getIdProducto());
+                producto.setClave("PROD-0" + item.getIdProducto());
+                producto.setNombre("Producto ID " + item.getIdProducto());
+            }
+
+            // Sincronizar el stock del inventario hacia el objeto Producto para la UI
+            producto.setExistenciaActual(item.getExistenciaActual());
+
+            productosConAlerta.add(producto);
+
+            // Registrar el evento en la Bitácora (RN-02)
+            registrarEventoAlerta(producto.getIdProducto(), producto.getClave());
+        }
     }
 
+    return productosConAlerta;
+}
     // Método para encapsular el registro de acciones de control (RN-02)
     private void registrarEventoAlerta(long idProducto, String claveProducto) {
         Bitacora evento = new Bitacora();
