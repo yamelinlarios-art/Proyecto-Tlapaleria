@@ -38,27 +38,21 @@ public class Proveedor {
 
     /*
      * Un proveedor puede estar relacionado con muchos pedidos.
-     *
-     * mappedBy = "proveedor" hace referencia al atributo
-     * proveedor de la clase Pedido.
+     * mappedBy = "proveedor" hace referencia al atributo proveedor de Pedido.
      */
     @OneToMany(mappedBy = "proveedor")
     private List<Pedido> pedidos = new ArrayList<>();
 
     /*
      * Un proveedor puede tener muchas facturas.
-     *
-     * mappedBy = "proveedor" hará referencia al atributo
-     * proveedor que agregaremos en la clase Factura.
+     * mappedBy = "proveedor" hace referencia al atributo proveedor de Factura.
      */
     @OneToMany(mappedBy = "proveedor")
     private List<Factura> facturas = new ArrayList<>();
 
     /*
      * Un proveedor puede recibir muchas devoluciones.
-     *
-     * mappedBy = "proveedor" hace referencia al atributo
-     * proveedor que ya existe en Devolucion.
+     * mappedBy = "proveedor" hace referencia al atributo proveedor de Devolucion.
      */
     @OneToMany(mappedBy = "proveedor")
     private List<Devolucion> devoluciones = new ArrayList<>();
@@ -69,148 +63,91 @@ public class Proveedor {
     public Proveedor() {
     }
 
-    /**
-     * @return the idProveedor
-     */
+    // --- GETTERS Y SETTERS ---
+
     public long getIdProveedor() {
         return idProveedor;
     }
 
-    /**
-     * @param idProveedor the idProveedor to set
-     */
     public void setIdProveedor(long idProveedor) {
         this.idProveedor = idProveedor;
     }
 
-    /**
-     * @return the nombreCompleto
-     */
     public String getNombreCompleto() {
         return nombreCompleto;
     }
 
-    /**
-     * @param nombreCompleto the nombreCompleto to set
-     */
     public void setNombreCompleto(String nombreCompleto) {
         this.nombreCompleto = nombreCompleto;
     }
 
-    /**
-     * @return the corporativo
-     */
     public String getCorporativo() {
         return corporativo;
     }
 
-    /**
-     * @param corporativo the corporativo to set
-     */
     public void setCorporativo(String corporativo) {
         this.corporativo = corporativo;
     }
 
-    /**
-     * @return the idDevolucion
-     */
     public int getIdDevolucion() {
         return idDevolucion;
     }
 
-    /**
-     * @param idDevolucion the idDevolucion to set
-     */
     public void setIdDevolucion(int idDevolucion) {
         this.idDevolucion = idDevolucion;
     }
 
-    /**
-     * @return the telefono
-     */
     public String getTelefono() {
         return telefono;
     }
 
-    /**
-     * @param telefono the telefono to set
-     */
     public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
 
-    /**
-     * @return the tipoProveedor
-     */
     public String getTipoProveedor() {
         return tipoProveedor;
     }
 
-    /**
-     * @param tipoProveedor the tipoProveedor to set
-     */
     public void setTipoProveedor(String tipoProveedor) {
         this.tipoProveedor = tipoProveedor;
     }
 
-    /**
-     * @return pedidos relacionados con el proveedor
-     */
     public List<Pedido> getPedidos() {
         return pedidos;
     }
 
-    /**
-     * @param pedidos pedidos relacionados con el proveedor
-     */
     public void setPedidos(List<Pedido> pedidos) {
         this.pedidos = pedidos;
     }
 
-    /**
-     * @return facturas relacionadas con el proveedor
-     */
     public List<Factura> getFacturas() {
         return facturas;
     }
 
-    /**
-     * @param facturas facturas relacionadas con el proveedor
-     */
     public void setFacturas(List<Factura> facturas) {
         this.facturas = facturas;
     }
 
-    /**
-     * @return devoluciones relacionadas con el proveedor
-     */
     public List<Devolucion> getDevoluciones() {
         return devoluciones;
     }
 
-    /**
-     * @param devoluciones devoluciones relacionadas con el proveedor
-     */
     public void setDevoluciones(List<Devolucion> devoluciones) {
         this.devoluciones = devoluciones;
     }
+
+    // --- EQUALS, HASHCODE Y TOSTRING ---
 
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
-
-        if (obj == null) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-
         Proveedor other = (Proveedor) obj;
-
         return idProveedor == other.idProveedor;
     }
 
