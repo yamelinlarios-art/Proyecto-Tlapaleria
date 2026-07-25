@@ -38,8 +38,11 @@ public class ControlListarInventario {
      */
     public void inicia() {
 
-        List<Inventario> inventarios = servicioInventario.obtenerProductosBajoStock();
+    List<Inventario> inventarios = servicioInventario.obtenerProductosBajoStock();
 
-        ventana.muestra(inventarios);
-    }
+    System.out.println("Cantidad de productos encontrados: " + inventarios.size());
+
+    ventana.muestra(inventarios);
 }
+    }
+
