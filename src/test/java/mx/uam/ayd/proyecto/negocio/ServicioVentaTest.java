@@ -1,0 +1,168 @@
+package mx.uam.ayd.proyecto.negocio;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import mx.uam.ayd.proyecto.datos.InventarioRepository;
+import mx.uam.ayd.proyecto.datos.MovimientoInventarioRepository;
+import mx.uam.ayd.proyecto.datos.ProductoRepository;
+import mx.uam.ayd.proyecto.datos.VentaRepository;
+import mx.uam.ayd.proyecto.negocio.modelo.DescripcionVenta;
+import mx.uam.ayd.proyecto.negocio.modelo.Inventario;
+import mx.uam.ayd.proyecto.negocio.modelo.MovimientoInventario;
+import mx.uam.ayd.proyecto.negocio.modelo.Producto;
+import mx.uam.ayd.proyecto.negocio.modelo.Venta;
+
+@ExtendWith(MockitoExtension.class)
+class ServicioVentaTest {
+
+    @Mock
+    private VentaRepository ventaRepository;
+
+    @Mock
+    private ProductoRepository productoRepository;
+
+    @Mock
+    private InventarioRepository inventarioRepository;
+
+    @Mock
+    private MovimientoInventarioRepository movimientoRepository;
+
+    @InjectMocks
+    private ServicioVenta servicioVenta;
+
+    @Test
+    @DisplayName("Debería iniciar una nueva venta vacía")
+    void testIniciarVenta() {
+        // When
+        Venta resultado = servicioVenta.iniciarVenta();
+
+        // Then
+        assertNotNull(resultado);
+    }
+
+    @Test
+    @DisplayName("Debería agregar un producto a una venta existente")
+    void testAgregarProductoVentaExistente() {
+        // Given
+        Venta venta = new Venta();
+        Producto producto = new Producto();
+        producto.setNombre("Martillo");
+        producto.setPrecio(150.0);
+
+        // When
+        Venta resultado = servicioVenta.agregarProducto(producto, 2, venta);
+
+        // Then
+        assertNotNull(resultado);
+        verify(ventaRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Debería crear e iniciar una venta si la venta enviada es nula al agregar producto")
+    void testAgregarProductoVentaNula() {
+        // Given
+        Producto producto = new Producto();
+        producto.setNombre("Clavos");
+        producto.setPrecio(20.0); // <-- Aquí le asignamos precio para evitar el NullPointerException
+
+        // When
+        Venta resultado = servicioVenta.agregarProducto(producto, 10, null);
+
+        // Then
+        assertNotNull(resultado);
+    }
+
+    @Test
+    @DisplayName("Debería actualizar una venta exitosamente en el repositorio")
+    void testActualizarVentaExitoso() {
+        // Given
+        Venta venta = new Venta();
+
+        // When
+        boolean resultado = servicioVenta.actualizarVenta(venta);
+
+        // Then
+        assertTrue(resultado);
+        verify(ventaRepository).save(venta);
+    }
+
+    @Test
+    @DisplayName("Debería regresar false al intentar actualizar una venta nula")
+    void testActualizarVentaNulaRegresaFalse() {
+        // When
+        boolean resultado = servicioVenta.actualizarVenta(null);
+
+        // Then
+        assertFalse(resultado);
+        verify(ventaRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Debería registrar una venta completa, actualizar stock en producto e inventario y guardar movimiento")
+    void testRegistrarVentaExitoso() {
+        // Given
+        Producto producto = new Producto();
+        producto.setIdProducto(1L);
+        producto.setNombre("Desarmador");
+        producto.setExistenciaActual(20);
+        producto.setPrecio(50.0);
+
+        DescripcionVenta detalle = new DescripcionVenta();
+        detalle.setProducto(producto);
+        detalle.setCantidad(5);
+
+        List<DescripcionVenta> detalles = new ArrayList<>();
+        detalles.add(detalle);
+
+        Inventario inventario = new Inventario();
+        inventario.setIdProducto(1L);
+        inventario.setExistenciaActual(20);
+
+        when(inventarioRepository.findById(1L)).thenReturn(Optional.of(inventario));
+        when(ventaRepository.save(any(Venta.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // When
+        double pago = 300.0;
+        Venta ventaResultante = servicioVenta.registrarVenta(detalles, pago);
+
+        // Then
+        assertNotNull(ventaResultante);
+        assertEquals(15, producto.getExistenciaActual());
+        assertEquals(15, inventario.getExistenciaActual());
+
+        verify(productoRepository).save(producto);
+        verify(inventarioRepository).save(inventario);
+        verify(movimientoRepository).save(any(MovimientoInventario.class));
+        verify(ventaRepository).save(any(Venta.class));
+    }
+
+    @Test
+    @DisplayName("Debería registrar una venta correctamente cuando la lista de detalles es nula")
+    void testRegistrarVentaDetallesNulos() {
+        // Given
+        when(ventaRepository.save(any(Venta.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // When
+        Venta ventaResultante = servicioVenta.registrarVenta(null, 100.0);
+
+        // Then
+        assertNotNull(ventaResultante);
+        assertEquals(100.0, ventaResultante.getCambio());
+        verify(productoRepository, never()).save(any());
+        verify(inventarioRepository, never()).save(any());
+        verify(movimientoRepository, never()).save(any());
+    }
+}
