@@ -1,8 +1,6 @@
 package mx.uam.ayd.proyecto.negocio.modelo;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -11,9 +9,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 
-/*
+/**
  * Entidad de negocio Devolucion
  * HU10 - Devolución de productos dañados
  *
@@ -26,10 +23,10 @@ public class Devolucion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idDevolucion;
 
-    /*
+    /**
      * Muchas devoluciones pueden corresponder al mismo producto.
      */
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_producto", nullable = false)
     private Producto producto;
 
@@ -41,45 +38,23 @@ public class Devolucion {
 
     private LocalDateTime fecha;
 
-    /*
-     * Muchas devoluciones pueden enviarse al mismo proveedor.
-     *
-     * La relación es opcional porque no todas las devoluciones
-     * necesariamente tienen un proveedor.
-     */
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_proveedor", nullable = true)
-    private Proveedor proveedor;
-
-    /*
-     * Se conserva este atributo porque ya forma parte
-     * del programa original.
+    /**
+     * Se conserva este atributo por compatibilidad con el sistema base.
      */
     private String numeroEmpleado;
 
-    /*
-     * Muchas devoluciones pueden ser registradas
-     * por el mismo vendedor.
+    /**
+     * Muchas devoluciones pueden ser registradas por el mismo vendedor.
      */
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_vendedor")
     private Vendedor vendedor;
-
-    /*
-     * Una devolución puede producir varios registros
-     * dentro de la bitácora.
-     *
-     * mappedBy hace referencia al atributo "devolucion"
-     * que se agregará en la clase Bitacora.
-     */
-    @OneToMany(mappedBy = "devolucion")
-    private List<Bitacora> registrosBitacora = new ArrayList<>();
 
     // Constructor por defecto requerido por JPA
     public Devolucion() {
     }
 
-    //          MÉTODOS DE ACCESO: GETTERS
+    // MÉTODOS DE ACCESO: GETTERS
 
     public long getIdDevolucion() {
         return idDevolucion;
@@ -105,10 +80,6 @@ public class Devolucion {
         return fecha;
     }
 
-    public Proveedor getProveedor() {
-        return proveedor;
-    }
-
     public String getNumeroEmpleado() {
         return numeroEmpleado;
     }
@@ -117,11 +88,7 @@ public class Devolucion {
         return vendedor;
     }
 
-    public List<Bitacora> getRegistrosBitacora() {
-        return registrosBitacora;
-    }
-
-    //          MÉTODOS DE ACCESO: SETTERS
+    // MÉTODOS DE ACCESO: SETTERS
 
     public void setIdDevolucion(long idDevolucion) {
         this.idDevolucion = idDevolucion;
@@ -147,10 +114,6 @@ public class Devolucion {
         this.fecha = fecha;
     }
 
-    public void setProveedor(Proveedor proveedor) {
-        this.proveedor = proveedor;
-    }
-
     public void setNumeroEmpleado(String numeroEmpleado) {
         this.numeroEmpleado = numeroEmpleado;
     }
@@ -159,44 +122,33 @@ public class Devolucion {
         this.vendedor = vendedor;
     }
 
-    public void setRegistrosBitacora(
-            List<Bitacora> registrosBitacora) {
-
-        this.registrosBitacora = registrosBitacora;
-    }
-
-    //          MÉTODOS SOBREESCRITOS (@Override)
+    // MÉTODOS SOBREESCRITOS (@Override)
 
     @Override
     public boolean equals(Object obj) {
-
         if (this == obj) {
             return true;
         }
-
         if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-
         Devolucion other = (Devolucion) obj;
-
         return idDevolucion == other.idDevolucion;
     }
 
     @Override
     public int hashCode() {
-        return (int) (31 * idDevolucion);
+        return Long.hashCode(idDevolucion);
     }
 
     @Override
     public String toString() {
         return "Devolucion [idDevolucion=" + idDevolucion
-                + ", producto=" + producto
+                + ", idProducto=" + (producto != null ? producto.getIdProducto() : null)
                 + ", cantidad=" + cantidad
                 + ", motivo=" + motivo
                 + ", tipoDevolucion=" + tipoDevolucion
                 + ", fecha=" + fecha
-                + ", proveedor=" + proveedor
                 + ", numeroEmpleado=" + numeroEmpleado + "]";
     }
 }
