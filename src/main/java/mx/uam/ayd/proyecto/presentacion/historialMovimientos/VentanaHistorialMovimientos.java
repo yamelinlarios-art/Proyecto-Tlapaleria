@@ -92,12 +92,6 @@ public class VentanaHistorialMovimientos {
             escenario = new Stage();
             escenario.setTitle("Historial de Movimientos");
             escenario.setScene(new Scene(root));
-            
-            // Carga automáticamente los datos en la tabla al abrir la ventana
-            if (control != null) {
-                control.cargarMovimientos();
-            }
-
             escenario.show();
 
         } catch (IOException e) {
