@@ -9,14 +9,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import mx.uam.ayd.proyecto.datos.DevolucionRepository;
-import mx.uam.ayd.proyecto.datos.MovimientoInventarioRepository; // 1. IMPORTAR REPOSITORIO DE MOVIMIENTO
 import mx.uam.ayd.proyecto.datos.ProductoRepository;
 import mx.uam.ayd.proyecto.negocio.modelo.Devolucion;
-import mx.uam.ayd.proyecto.negocio.modelo.MovimientoInventario; // 2. IMPORTAR MODELO DE MOVIMIENTO
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 
 /**
- * Servicio encargado de la lógica de negocio para la devolución de productos dañados a proveedores (HU10).
+ * Servicio encargado de la lógica de negocio para la devolución de productos dañados (HU-10).
  *
  * @author Yamelin Larios Nepomuseno
  */
@@ -27,30 +25,24 @@ public class ServicioDevolucion {
 
     private final DevolucionRepository devolucionRepository;
     private final ProductoRepository productoRepository;
-    private final MovimientoInventarioRepository movimientoInventarioRepository; // 3. DECLARAR REPOSITORIO
+    private final ServicioMovimientoInventario servicioMovimientoInventario;
 
     @Autowired
     public ServicioDevolucion(DevolucionRepository devolucionRepository, 
                               ProductoRepository productoRepository,
-                              MovimientoInventarioRepository movimientoInventarioRepository) { // 4. INYECTAR
+                              ServicioMovimientoInventario servicioMovimientoInventario) {
         this.devolucionRepository = devolucionRepository;
         this.productoRepository = productoRepository;
-        this.movimientoInventarioRepository = movimientoInventarioRepository;
+        this.servicioMovimientoInventario = servicioMovimientoInventario;
     }
 
     /**
-     * Registra la devolución de un producto dañado al proveedor y actualiza el inventario (HU10).
-     *
-     * @param idProducto Identificador del producto a devolver
-     * @param cantidad Cantidad de unidades defectuosas a devolver
-     * @param motivo Explicación o causa del daño/devolución
-     * @return El objeto Devolucion persistido
+     * Registra la devolución de un producto dañado y actualiza el inventario (HU-10).
      */
     @Transactional
     public Devolucion registrarDevolucionDanado(long idProducto, int cantidad, String motivo) {
         log.info("Iniciando proceso de devolución por daño para producto ID: {}, Cantidad: {}", idProducto, cantidad);
 
-        // Validaciones de negocio
         if (cantidad <= 0) {
             log.warn("La cantidad a devolver debe ser mayor a cero: {}", cantidad);
             throw new IllegalArgumentException("La cantidad a devolver debe ser mayor a cero.");
@@ -67,15 +59,17 @@ public class ServicioDevolucion {
             throw new IllegalArgumentException("No se encontró ningún producto registrado con el ID: " + idProducto);
         }
 
-        if (producto.getExistenciaActual() < cantidad) {
+        int existenciaAnterior = producto.getExistenciaActual();
+
+        if (existenciaAnterior < cantidad) {
             log.warn("Existencia insuficiente para devolver. Disponible: {}, Solicitado: {}", 
-                    producto.getExistenciaActual(), cantidad);
+                    existenciaAnterior, cantidad);
             throw new IllegalArgumentException("No hay suficiente stock disponible para devolver esa cantidad. Stock actual: " 
-                    + producto.getExistenciaActual());
+                    + existenciaAnterior);
         }
 
         // 1. Descontar la mercancía dañada del inventario
-        int nuevaExistencia = producto.getExistenciaActual() - cantidad;
+        int nuevaExistencia = existenciaAnterior - cantidad;
         producto.setExistenciaActual(nuevaExistencia);
         productoRepository.save(producto);
 
@@ -91,17 +85,17 @@ public class ServicioDevolucion {
         log.info("Devolución registrada exitosamente con ID: {} para el producto {}", 
                 devolucionGuardada.getIdDevolucion(), producto.getNombre());
 
-        // 3. REGISTRAR EL MOVIMIENTO EN EL HISTORIAL
+        // 3. Registrar el movimiento en el historial VÍA ServicioMovimientoInventario
         try {
-            MovimientoInventario movimiento = new MovimientoInventario();
-            movimiento.setProducto(producto);
-            movimiento.setTipoMovimiento("DEVOLUCION_PROVEEDOR");
-            movimiento.setCantidad(cantidad);
-            movimiento.setFecha(LocalDateTime.now());
-            
-            // Guardar directamente en la tabla de movimientos
-            movimientoInventarioRepository.save(movimiento);
-            log.info("Movimiento de inventario guardado exitosamente en la BD.");
+            servicioMovimientoInventario.registrarMovimiento(
+                producto, 
+                cantidad, 
+                existenciaAnterior, 
+                nuevaExistencia, 
+                "DEVOLUCION_DANADO", 
+                "Devolución por daño (Folio #" + devolucionGuardada.getIdDevolucion() + "): " + motivo
+            );
+            log.info("Movimiento de inventario guardado exitosamente mediante ServicioMovimientoInventario.");
         } catch (Exception e) {
             log.error("Error al registrar el movimiento de inventario: ", e);
         }
