@@ -353,7 +353,7 @@
                                           </Button>
 
                                           <!-- 5. Consultar carrito -->
-                                      <Button fx:id="btnConsultarProveedor" onAction="#handleConsultarProveedor" maxWidth="1.7976931348623157E308" minHeight="130.0" mnemonicParsing="false" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" textFill="#212121" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                      <Button fx:id="btnConsultarProveedor" maxWidth="1.7976931348623157E308" minHeight="130.0" mnemonicParsing="false" onAction="#handleConsultarProveedor" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" textFill="#212121" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                            <graphic>
                                               <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: #C9CADE;">
                                                     <children>
@@ -438,15 +438,7 @@
                   
                                                 </Label>
                   
-                                                <Label mouseTransparent="true" pickOnBounds="false" prefHeight="40.0" prefWidth="211.0" text="Procesar transacciones y emitir facturas." textFill="WHITE" wrapText="true">
-                  
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                  
-                                                </Label>
-                  
-                                                <Label mouseTransparent="true" pickOnBounds="false" text="INICIAR TERMINAL →" textFill="WHITE">
+                                                <Label mouseTransparent="true" pickOnBounds="false" text="INICIAR →" textFill="WHITE">
                   
                                                    <font>
                                                       <Font name="System Bold" size="14.0" />
