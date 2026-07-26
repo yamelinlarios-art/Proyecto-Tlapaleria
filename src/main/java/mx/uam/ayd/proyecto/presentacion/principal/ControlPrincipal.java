@@ -134,6 +134,6 @@ public class ControlPrincipal {
      * Inicia la HU-06: Directorio de Proveedores
      */
     public void consultarProveedor() {
-        controlProveedor.inicia();
+        controlProveedor.buscaProveedores();
     }
 }

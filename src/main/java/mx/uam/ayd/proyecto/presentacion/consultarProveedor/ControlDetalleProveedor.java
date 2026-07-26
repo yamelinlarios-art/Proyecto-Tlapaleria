@@ -29,7 +29,7 @@ public class ControlDetalleProveedor {
      * 
      * @param proveedor El proveedor del cual se quieren consultar los detalles
      */
-    public void inicia(Proveedor proveedor) {
+    public void detalleProveedor(Proveedor proveedor) {
         if (proveedor != null) {
             // Se inyecta la referencia de este control en la ventana si fuera necesario
             ventana.setControl(this);
@@ -42,7 +42,7 @@ public class ControlDetalleProveedor {
      */
     public void inicia(long idProveedor) {
         Proveedor proveedor = servicioProveedor.recuperarProveedor(idProveedor);
-        inicia(proveedor);
+        detalleProveedor(proveedor);
     }
 
     /**

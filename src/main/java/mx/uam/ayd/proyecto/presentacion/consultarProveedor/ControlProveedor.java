@@ -37,7 +37,7 @@ public class ControlProveedor {
     /**
      * Inicia el flujo principal recuperando los proveedores y mostrándolos en la ventana.
      */
-    public void inicia() {
+    public void buscaProveedores() {
         try {
             List<Proveedor> proveedores = servicioProveedor.recuperarProveedores();
             ventana.muestra(proveedores);
@@ -51,7 +51,7 @@ public class ControlProveedor {
      */
     public void mostrarDetalleProveedor(Proveedor proveedor) {
         if (proveedor != null) {
-            controlDetalle.inicia(proveedor);
+            controlDetalle.detalleProveedor(proveedor);
         }
     }
 
@@ -61,7 +61,7 @@ public class ControlProveedor {
     public void consultarProveedor(long idProveedor) {
         Proveedor proveedor = servicioProveedor.recuperarProveedor(idProveedor);
         if (proveedor != null) {
-            controlDetalle.inicia(proveedor);
+            controlDetalle.detalleProveedor(proveedor);
         } else {
             ventana.muestraDialogoConMensaje("No se encontró el proveedor solicitado.");
         }

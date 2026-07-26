@@ -181,7 +181,7 @@ stage.setScene(scene);
     public void handleConsultarProveedor() {
         // Inicia el flujo del caso de uso a través de su controlador
         if (controlProveedor != null) {
-            controlProveedor.inicia();
+            controlProveedor.buscaProveedores();
         }
     }
 }
