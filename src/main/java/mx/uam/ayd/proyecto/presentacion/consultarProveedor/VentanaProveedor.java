@@ -96,6 +96,16 @@ public class VentanaProveedor {
                 return new SimpleStringProperty(String.format("$%.2f", saldo));
             });
 
+            // --- CONEXIÓN DE DETALLE: Doble clic sobre una fila de la tabla ---
+            tablaProveedores.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2) {
+                    Proveedor seleccionado = tablaProveedores.getSelectionModel().getSelectedItem();
+                    if (seleccionado != null) {
+                        control.mostrarDetalleProveedor(seleccionado);
+                    }
+                }
+            });
+
             initialized = true;
 
         } catch (IOException e) {

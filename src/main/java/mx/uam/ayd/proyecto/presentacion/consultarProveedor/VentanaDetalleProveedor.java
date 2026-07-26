@@ -1,6 +1,7 @@
 package mx.uam.ayd.proyecto.presentacion.consultarProveedor;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import javafx.fxml.FXML;
@@ -17,11 +18,15 @@ import mx.uam.ayd.proyecto.negocio.modelo.Proveedor;
 public class VentanaDetalleProveedor {
 
     @Autowired
+    @Lazy
     private ControlDetalleProveedor control;
+
+    @Autowired
+    @Lazy
+    private ControlProveedor controlProveedor;
 
     private Stage stage;
 
-    // --- ELEMENTOS FXML DE LA INTERFAZ ---
     @FXML
     private Label lblNombre;
 
@@ -43,25 +48,21 @@ public class VentanaDetalleProveedor {
     @FXML
     private Button btnCerrar;
 
-    /**
-     * Carga el FXML con el nombre correcto en minúsculas y guiones
-     */
     public void muestra(Proveedor proveedor) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/ventana-detalle-proveedor.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-detalle-proveedor.fxml"));
             
-            // Le decimos a JavaFX que esta clase maneja sus @FXML
+            // Asignamos el controlador dinámicamente
             loader.setController(this);
 
             Parent root = loader.load();
 
-            // Poblamos los campos visuales
             poblarDatos(proveedor);
 
             stage = new Stage();
             stage.setTitle("Detalles del Proveedor");
             stage.setScene(new Scene(root));
-            stage.initModality(Modality.APPLICATION_MODAL); // Bloquea la ventana de atrás
+            stage.initModality(Modality.APPLICATION_MODAL);
             stage.showAndWait();
 
         } catch (Exception e) {
@@ -71,12 +72,14 @@ public class VentanaDetalleProveedor {
 
     private void poblarDatos(Proveedor proveedor) {
         if (proveedor != null) {
-            lblNombre.setText(proveedor.getNombre() != null ? proveedor.getNombre() : "N/A");
-            lblContacto.setText(proveedor.getNombreContacto() != null ? proveedor.getNombreContacto() : "N/A");
+            lblNombre.setText(proveedor.getNombreCompleto() != null ? proveedor.getNombreCompleto() : "N/A");
+            lblContacto.setText(proveedor.getCorporativo() != null ? proveedor.getCorporativo() : "N/A");
             lblTelefono.setText(proveedor.getTelefono() != null ? proveedor.getTelefono() : "N/A");
-            lblCorreo.setText(proveedor.getCorreo() != null ? proveedor.getCorreo() : "N/A");
-            lblDireccion.setText(proveedor.getDireccion() != null ? proveedor.getDireccion() : "N/A");
-            lblTotalAdeudado.setText(String.format("$%.2f", proveedor.getTotalAdeudado()));
+            lblCorreo.setText(proveedor.getTipoProveedor() != null ? proveedor.getTipoProveedor() : "N/A");
+            lblDireccion.setText(String.valueOf(proveedor.getIdProveedor()));
+            
+            double saldo = controlProveedor.obtenerSaldoProveedor(proveedor.getIdProveedor());
+            lblTotalAdeudado.setText(String.format("$%.2f", saldo));
         }
     }
 

@@ -19,6 +19,9 @@ public class ControlProveedor {
     private final VentanaProveedor ventana;
 
     @Autowired
+    private ControlDetalleProveedor controlDetalle;
+
+    @Autowired
     public ControlProveedor(ServicioProveedor servicioProveedor, VentanaProveedor ventana) {
         this.servicioProveedor = servicioProveedor;
         this.ventana = ventana;
@@ -35,6 +38,16 @@ public class ControlProveedor {
             ventana.muestra(proveedores);
         } catch (Exception ex) {
             ventana.muestraDialogoConMensaje("Error al recuperar los proveedores: " + ex.getMessage());
+        }
+    }
+
+    /**
+     * Pasa el proveedor seleccionado al ControlDetalleProveedor para iniciar
+     * el flujo de ver el detalle.
+     */
+    public void mostrarDetalleProveedor(Proveedor proveedor) {
+        if (proveedor != null) {
+            controlDetalle.inicia(proveedor);
         }
     }
 

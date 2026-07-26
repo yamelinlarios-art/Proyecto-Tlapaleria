@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="450.0" prefWidth="500.0" style="-fx-background-color: #F4F7FC;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="450.0" prefWidth="500.0" style="-fx-background-color: #F4F7FC;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <VBox spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -38,7 +38,7 @@
                </children>
             </HBox>
 
-            <!-- CONTENIDO DE DATOS -->
+            <!-- CONTENIDO DE DATOS DE LA ENTIDAD -->
             <VBox spacing="15.0" VBox.vgrow="ALWAYS">
                <padding>
                   <Insets bottom="20.0" left="25.0" right="25.0" top="10.0" />
@@ -46,7 +46,7 @@
                <children>
                   <GridPane hgap="15.0" vgap="12.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="NEVER" minWidth="120.0" />
+                        <ColumnConstraints hgrow="NEVER" minWidth="130.0" />
                         <ColumnConstraints hgrow="ALWAYS" minWidth="200.0" />
                      </columnConstraints>
                      <rowConstraints>
@@ -59,14 +59,14 @@
                      </rowConstraints>
                      <children>
 
-                        <Label text="Nombre:" textFill="#555555" GridPane.rowIndex="0">
+                        <Label text="Nombre Completo:" textFill="#555555" GridPane.rowIndex="0">
                            <font><Font name="System Bold" size="13.0" /></font>
                         </Label>
                         <Label fx:id="lblNombre" text="-" textFill="#212121" GridPane.columnIndex="1" GridPane.rowIndex="0">
                            <font><Font size="14.0" /></font>
                         </Label>
 
-                        <Label text="Contacto:" textFill="#555555" GridPane.rowIndex="1">
+                        <Label text="Corporativo:" textFill="#555555" GridPane.rowIndex="1">
                            <font><Font name="System Bold" size="13.0" /></font>
                         </Label>
                         <Label fx:id="lblContacto" text="-" textFill="#212121" GridPane.columnIndex="1" GridPane.rowIndex="1">
@@ -80,14 +80,14 @@
                            <font><Font size="14.0" /></font>
                         </Label>
 
-                        <Label text="Correo:" textFill="#555555" GridPane.rowIndex="3">
+                        <Label text="Tipo de Proveedor:" textFill="#555555" GridPane.rowIndex="3">
                            <font><Font name="System Bold" size="13.0" /></font>
                         </Label>
                         <Label fx:id="lblCorreo" text="-" textFill="#212121" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <font><Font size="14.0" /></font>
                         </Label>
 
-                        <Label text="Dirección:" textFill="#555555" GridPane.rowIndex="4">
+                        <Label text="ID Proveedor:" textFill="#555555" GridPane.rowIndex="4">
                            <font><Font name="System Bold" size="13.0" /></font>
                         </Label>
                         <Label fx:id="lblDireccion" text="-" textFill="#212121" GridPane.columnIndex="1" GridPane.rowIndex="4">
