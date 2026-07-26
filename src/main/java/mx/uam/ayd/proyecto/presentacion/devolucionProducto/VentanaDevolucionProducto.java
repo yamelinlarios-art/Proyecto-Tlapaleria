@@ -51,7 +51,6 @@ public class VentanaDevolucionProducto {
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-devolucion-producto.fxml"));
             loader.setController(this);
-            // Carga la escena adaptada a las dimensiones del FXML
             stage.setScene(new Scene(loader.load()));
             initialized = true;
         } catch (IOException e) {
@@ -72,7 +71,9 @@ public class VentanaDevolucionProducto {
         }
         initializeUI();
         limpiarCampos();
-        stage.show();
+        if (stage != null) {
+            stage.show();
+        }
     }
 
     /** Muestra en la interfaz los datos del producto encontrado. */
@@ -138,7 +139,7 @@ public class VentanaDevolucionProducto {
         if (lblMensaje != null) lblMensaje.setText("");
     }
 
-    // --- Manejadores de eventos FXML (Coinciden con onAction del FXML) ---
+    // --- Manejadores de eventos FXML ---
 
     @FXML
     private void accionBuscarProducto() {
