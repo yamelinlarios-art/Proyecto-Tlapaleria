@@ -97,7 +97,8 @@
                         <Label text="Saldo Pendiente:" textFill="#555555" GridPane.rowIndex="5">
                            <font><Font name="System Bold" size="13.0" /></font>
                         </Label>
-                        <Label fx:id="lblTotalAdeudado" text="$0.00" textFill="#E53935" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                        <!-- Se cambió "$0.00" por "0.00" para evitar la excepción de KeyPath -->
+                        <Label fx:id="lblTotalAdeudado" text="0.00" textFill="#E53935" GridPane.columnIndex="1" GridPane.rowIndex="5">
                            <font><Font name="System Bold" size="16.0" /></font>
                         </Label>
 

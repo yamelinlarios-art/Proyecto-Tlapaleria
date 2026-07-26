@@ -15,6 +15,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -52,6 +53,10 @@ public class VentanaProveedor {
 
     @FXML
     private TableColumn<Proveedor, String> colSaldo;
+
+    // Inyección del nuevo botón de la vista
+    @FXML
+    private Button btnVerDetalle;
 
     public VentanaProveedor() {
     }
@@ -96,21 +101,31 @@ public class VentanaProveedor {
                 return new SimpleStringProperty(String.format("$%.2f", saldo));
             });
 
-            // --- CONEXIÓN DE DETALLE: Doble clic sobre una fila de la tabla ---
-            tablaProveedores.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2) {
-                    Proveedor seleccionado = tablaProveedores.getSelectionModel().getSelectedItem();
-                    if (seleccionado != null) {
-                        control.mostrarDetalleProveedor(seleccionado);
-                    }
-                }
-            });
+            // --- HABILITAR/DESHABILITAR BOTÓN SEGÚN SELECCIÓN ---
+            if (btnVerDetalle != null) {
+                btnVerDetalle.setDisable(true); // Deshabilitado de inicio
+                
+                tablaProveedores.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+                    btnVerDetalle.setDisable(newSelection == null);
+                });
+            }
 
             initialized = true;
 
         } catch (IOException e) {
             e.printStackTrace();
             muestraDialogoConMensaje("No fue posible cargar la ventana de proveedores");
+        }
+    }
+
+    /**
+     * Acción invocada al presionar el botón "Ver Detalles" (definido en FXML via onAction="#handleVerDetalle")
+     */
+    @FXML
+    private void handleVerDetalle() {
+        Proveedor seleccionado = tablaProveedores.getSelectionModel().getSelectedItem();
+        if (seleccionado != null) {
+            control.mostrarDetalleProveedor(seleccionado);
         }
     }
 
@@ -133,6 +148,10 @@ public class VentanaProveedor {
         }
 
         tablaProveedores.setItems(listaObservable);
+        
+        // Limpiamos la selección activa de la tabla para que el botón empiece desactivado
+        tablaProveedores.getSelectionModel().clearSelection();
+
         lblSaldoTotalGeneral.setText(String.format("SALDO TOTAL PENDIENTE: $%.2f", saldoTotalGeneral));
 
         stage.show();
