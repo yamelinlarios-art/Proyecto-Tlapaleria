@@ -279,7 +279,7 @@
 
                                                       </Label>
 
-                                                      <Label text="Actualizar Precio" textFill="#212121">
+                                                      <Label text="Actualizar Precio">
 
                                                          <font>
                                                             <Font name="System Bold" size="18.0" />
@@ -471,24 +471,6 @@
 
                                                          <graphic>
                                                             <Label text="➕" textFill="#303030" />
-                                                         </graphic>
-
-                                                      </Button>
-
-                                                      <!-- Botón existente del equipo -->
-                                                      <Button fx:id="btnAgregarUsuario" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleAgregarUsuario" style="-fx-background-color: transparent;" text="Agregar Usuario" textFill="#0b0b0b" GridPane.columnIndex="1">
-
-                                                         <graphic>
-                                                            <Label text="👤" />
-                                                         </graphic>
-
-                                                      </Button>
-
-                                                      <!-- NUEVO: módulo de historial -->
-                                                      <Button fx:id="btnHistorialMovimientos" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleHistorialMovimientos" style="-fx-background-color: transparent;" text="Historial Movimientos" textFill="#404040" GridPane.rowIndex="1">
-
-                                                         <graphic>
-                                                            <Label text="🕒" textFill="#282828" />
                                                          </graphic>
 
                                                       </Button>
