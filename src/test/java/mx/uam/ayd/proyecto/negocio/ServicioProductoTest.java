@@ -30,8 +30,8 @@ class ServicioProductoTest {
     private ServicioProducto servicioProducto;
 
     @Test
-    void testActualizarPrecioProducto() {
-        // Caso 1: Actualizar precio con éxito (precio válido y producto existente)
+    void testActualizarPrecioProductoExitoso() {
+        // Caso 1: Probar la actualización exitosa del precio de un producto[cite: 2]
         long idProducto = 1L;
         double nuevoPrecio = 55.50;
 
@@ -39,7 +39,6 @@ class ServicioProductoTest {
         productoExistente.setIdProducto(idProducto);
         productoExistente.setNombre("Martillo");
         productoExistente.setPrecio(40.00);
-        productoExistente.setExistenciaActual(10);
 
         when(productoRepository.findByIdProducto(idProducto)).thenReturn(productoExistente);
         when(productoRepository.save(any(Producto.class))).thenReturn(productoExistente);
@@ -51,22 +50,34 @@ class ServicioProductoTest {
         assertEquals(nuevoPrecio, resultado.getPrecio());
         verify(productoRepository, times(1)).save(any(Producto.class));
         verify(movimientoRepository, times(1)).save(any(MovimientoInventario.class));
+    }
 
-        // Caso 2: Intentar actualizar con un precio inválido (menor o igual a 0)
-        assertThrows(IllegalArgumentException.class, () -> {
-            servicioProducto.actualizarPrecioProducto(idProducto, 0.0);
-        });
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            servicioProducto.actualizarPrecioProducto(idProducto, -10.50);
-        });
-
-        // Caso 3: Intentar actualizar un producto que no existe en la base de datos
+    @Test
+    void testActualizarPrecioProductoInexistente() {
+        // Caso 2: Probar el fallo al actualizar un producto que no existe[cite: 2]
         long idInexistente = 99L;
         when(productoRepository.findByIdProducto(idInexistente)).thenReturn(null);
 
         assertThrows(IllegalArgumentException.class, () -> {
             servicioProducto.actualizarPrecioProducto(idInexistente, 50.0);
+        });
+    }
+
+    @Test
+    void testActualizarPrecioValoresInvalidos() {
+        // Caso 3: Probar la validación con precios inválidos o nulos ($\le 0$)[cite: 2]
+        long idProducto = 1L;
+        Producto productoExistente = new Producto();
+        productoExistente.setIdProducto(idProducto);
+        
+        when(productoRepository.findByIdProducto(idProducto)).thenReturn(productoExistente);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            servicioProducto.actualizarPrecioProducto(idProducto, 0.0);
+        });
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            servicioProducto.actualizarPrecioProducto(idProducto, -5.0);
         });
     }
 }

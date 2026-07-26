@@ -35,8 +35,8 @@ class ServicioDevolucionTest {
     private ServicioDevolucion servicioDevolucion;
 
     @Test
-    void testRegistrarDevolucionDanado() {
-        // Caso 1: Registro de devolución por daño exitoso
+    void testRegistrarDevolucionDanadoExitoso() {
+        // Caso 1: Probar el registro exitoso de una devolución por producto dañado[cite: 2]
         long idProducto = 1L;
         int cantidadDevolucion = 2;
         String motivo = "Pieza con defecto de fábrica";
@@ -59,29 +59,46 @@ class ServicioDevolucionTest {
         assertNotNull(resultado);
         verify(devolucionRepository, times(1)).save(any(Devolucion.class));
         verify(movimientoRepository, times(1)).save(any(MovimientoInventario.class));
+    }
 
-        // Caso 2: Intentar devolver una cantidad menor o igual a cero
+    @Test
+    void testRegistrarDevolucionDatosIncompletosONulos() {
+        // Caso 2: Probar el comportamiento ante datos incompletos o nulos[cite: 2]
+        long idProducto = 1L;
+        String motivo = "Pieza con defecto de fábrica";
+
         assertThrows(IllegalArgumentException.class, () -> {
             servicioDevolucion.registrarDevolucionDanado(idProducto, 0, motivo);
         });
 
-        // Caso 3: Intentar devolver con motivo nulo o vacío
         assertThrows(IllegalArgumentException.class, () -> {
             servicioDevolucion.registrarDevolucionDanado(idProducto, 2, "   ");
         });
 
-        // Caso 4: Intentar devolver un producto que no existe
         long idInexistente = 99L;
         when(productoRepository.findByIdProducto(idInexistente)).thenReturn(null);
 
         assertThrows(IllegalArgumentException.class, () -> {
             servicioDevolucion.registrarDevolucionDanado(idInexistente, 2, motivo);
         });
+    }
 
-        // Caso 5: Intentar devolver más cantidad de la que existe en el inventario
+    @Test
+    void testRegistrarDevolucionSuperaExistenciaActual() {
+        // Caso 3: Probar el rechazo cuando la cantidad a devolver supera la cantidad original/stock[cite: 2]
+        long idProducto = 1L;
+        int cantidadDevolucion = 15;
+        String motivo = "Pieza con defecto de fábrica";
+
+        Producto productoExistente = new Producto();
+        productoExistente.setIdProducto(idProducto);
+        productoExistente.setNombre("Desarmador");
+        productoExistente.setExistenciaActual(10);
+
         when(productoRepository.findByIdProducto(idProducto)).thenReturn(productoExistente);
+
         assertThrows(IllegalArgumentException.class, () -> {
-            servicioDevolucion.registrarDevolucionDanado(idProducto, 15, motivo); // Stock actual es 10
+            servicioDevolucion.registrarDevolucionDanado(idProducto, cantidadDevolucion, motivo);
         });
     }
 }
