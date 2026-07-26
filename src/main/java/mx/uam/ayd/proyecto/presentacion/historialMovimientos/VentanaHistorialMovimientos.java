@@ -79,35 +79,35 @@ public class VentanaHistorialMovimientos {
      */
     public void muestra() {
 
-        if (escenario == null) {
-            try {
-                FXMLLoader loader = new FXMLLoader(
-                        getClass().getResource(
-                                "/fxml/historial-movimientos.fxml"));
+        try {
 
-                // Permite que Spring / FXML reconozcan la instancia del controlador
-                loader.setControllerFactory(c -> this);
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource(
+                            "/fxml/historial-movimientos.fxml"));
 
-                Parent root = loader.load();
+            // Asignamos explícitamente esta clase como controlador del FXML
+            loader.setController(this);
 
-                escenario = new Stage();
-                escenario.setTitle("Historial de Movimientos");
-                escenario.setScene(new Scene(root));
+            Parent root = loader.load();
 
-            } catch (IOException e) {
-                System.err.println(
-                        "No se pudo cargar la ventana "
-                        + "de historial de movimientos.");
-                e.printStackTrace();
-                return;
+            escenario = new Stage();
+            escenario.setTitle("Historial de Movimientos");
+            escenario.setScene(new Scene(root));
+            
+            escenario.show();
+
+            // Llamamos a cargar datos justo después de construir la ventana
+            if (control != null) {
+                control.cargarMovimientos();
             }
-        }
 
-        escenario.show();
+        } catch (IOException e) {
 
-        // Solicita los movimientos al controlador al mostrar la ventana
-        if (control != null) {
-            control.cargarMovimientos();
+            System.err.println(
+                    "No se pudo cargar la ventana "
+                    + "de historial de movimientos.");
+
+            e.printStackTrace();
         }
     }
 
