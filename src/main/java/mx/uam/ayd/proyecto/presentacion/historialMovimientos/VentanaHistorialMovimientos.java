@@ -79,28 +79,35 @@ public class VentanaHistorialMovimientos {
      */
     public void muestra() {
 
-        try {
+        if (escenario == null) {
+            try {
+                FXMLLoader loader = new FXMLLoader(
+                        getClass().getResource(
+                                "/fxml/historial-movimientos.fxml"));
 
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource(
-                            "/fxml/historial-movimientos.fxml"));
+                // Permite que Spring / FXML reconozcan la instancia del controlador
+                loader.setControllerFactory(c -> this);
 
-            loader.setController(this);
+                Parent root = loader.load();
 
-            Parent root = loader.load();
+                escenario = new Stage();
+                escenario.setTitle("Historial de Movimientos");
+                escenario.setScene(new Scene(root));
 
-            escenario = new Stage();
-            escenario.setTitle("Historial de Movimientos");
-            escenario.setScene(new Scene(root));
-            escenario.show();
+            } catch (IOException e) {
+                System.err.println(
+                        "No se pudo cargar la ventana "
+                        + "de historial de movimientos.");
+                e.printStackTrace();
+                return;
+            }
+        }
 
-        } catch (IOException e) {
+        escenario.show();
 
-            System.err.println(
-                    "No se pudo cargar la ventana "
-                    + "de historial de movimientos.");
-
-            e.printStackTrace();
+        // Solicita los movimientos al controlador al mostrar la ventana
+        if (control != null) {
+            control.cargarMovimientos();
         }
     }
 
