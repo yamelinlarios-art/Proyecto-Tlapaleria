@@ -3,6 +3,7 @@ package mx.uam.ayd.proyecto.presentacion.alertaStock;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -31,6 +32,7 @@ public class VentanaRevisionExistencia {
     private Stage stage;
     private ControlRevisarExistencia control;
     private ObservableList<Producto> productosData;
+    private FilteredList<Producto> filteredData; // Lista filtrada para la búsqueda en tiempo real
     
     @FXML
     private TableView<Producto> tablaAlertas;
@@ -51,6 +53,7 @@ public class VentanaRevisionExistencia {
 
     public VentanaRevisionExistencia() {
         productosData = FXCollections.observableArrayList();
+        filteredData = new FilteredList<>(productosData, p -> true); // Inicializa aceptando todos los elementos
     }
     
     private void initializeUI() {
@@ -78,6 +81,32 @@ public class VentanaRevisionExistencia {
             colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
             colStock.setCellValueFactory(new PropertyValueFactory<>("existenciaActual"));
             
+            // Ajuste automático del ancho de las columnas para ocupar todo el ancho disponible
+            tablaAlertas.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+            // Listener de búsqueda en tiempo real
+            txtBusqueda.textProperty().addListener((observable, oldValue, newValue) -> {
+                filteredData.setPredicate(producto -> {
+                    // Si el cuadro de búsqueda está vacío, muestra todos los productos
+                    if (newValue == null || newValue.trim().isEmpty()) {
+                        return true;
+                    }
+                    
+                    String lowerCaseFilter = newValue.toLowerCase().trim();
+                    
+                    // Compara por clave
+                    if (producto.getClave() != null && producto.getClave().toLowerCase().contains(lowerCaseFilter)) {
+                        return true;
+                    }
+                    // Compara por nombre
+                    if (producto.getNombre() != null && producto.getNombre().toLowerCase().contains(lowerCaseFilter)) {
+                        return true;
+                    }
+                    
+                    return false; // No coincide
+                });
+            });
+
             // 🚨 CORRECCIÓN AQUÍ: Resaltado en rojo respetando la selección de JavaFX
             tablaAlertas.setRowFactory(tv -> new TableRow<Producto>() {
                 @Override
@@ -96,7 +125,8 @@ public class VentanaRevisionExistencia {
                 }
             });
 
-            tablaAlertas.setItems(productosData);
+            // Se asigna la lista filtrada a la tabla
+            tablaAlertas.setItems(filteredData);
             initialized = true;
             
         } catch (IOException e) {
