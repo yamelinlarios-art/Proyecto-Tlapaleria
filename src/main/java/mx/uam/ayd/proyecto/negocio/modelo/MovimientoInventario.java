@@ -39,9 +39,10 @@ public class MovimientoInventario {
 
     /**
      * Producto afectado por el movimiento.
-     * Muchos movimientos pueden pertenecer al mismo producto.
+     * Se configura FetchType.EAGER para evitar LazyInitializationException 
+     * al renderizar en la vista de JavaFX.
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_producto", nullable = false)
     private Producto producto;
 
