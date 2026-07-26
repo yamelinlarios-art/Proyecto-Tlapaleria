@@ -27,6 +27,7 @@ public class ServicioProveedor {
 
     /**
      * Recupera todos los proveedores registrados en el sistema.
+     * Convierte el Iterable de CrudRepository a List.
      * 
      * @return Lista de proveedores
      */
@@ -47,13 +48,21 @@ public class ServicioProveedor {
     }
 
     /**
-     * Recupera la lista de facturas pendientes de un proveedor.
+     * Recupera la lista de facturas pendientes de un proveedor de forma tolerante a Mayúsculas/Minúsculas.
      * 
      * @param idProveedor ID del proveedor
-     * @return Lista de facturas en estado "Pendiente"
+     * @return Lista de facturas pendientes
      */
     public List<Factura> recuperarFacturasPendientes(long idProveedor) {
-        return facturaRepository.findByIdProveedorAndEstado(idProveedor, "Pendiente");
+        // Se buscan las facturas usando IgnoreCase para que no falle por "PENDIENTE" vs "Pendiente"
+        List<Factura> pendientes = facturaRepository.findByIdProveedorAndEstadoIgnoreCase(idProveedor, "PENDIENTE");
+        
+        // Si no regresa nada con el idPrimitivo, intenta por la relación JPA de respaldo
+        if (pendientes == null || pendientes.isEmpty()) {
+            pendientes = facturaRepository.findByProveedorIdProveedorAndEstadoIgnoreCase(idProveedor, "PENDIENTE");
+        }
+        
+        return pendientes;
     }
 
     /**
@@ -65,8 +74,10 @@ public class ServicioProveedor {
     public double calcularSaldoPendienteProveedor(long idProveedor) {
         List<Factura> facturasPendientes = recuperarFacturasPendientes(idProveedor);
         double saldoTotal = 0.0;
-        for (Factura f : facturasPendientes) {
-            saldoTotal += f.getSaldoPendiente();
+        if (facturasPendientes != null) {
+            for (Factura f : facturasPendientes) {
+                saldoTotal += f.getSaldoPendiente();
+            }
         }
         return saldoTotal;
     }
@@ -76,14 +87,14 @@ public class ServicioProveedor {
      * RN-02 y RN-05: Se actualiza en la base de datos automáticamente.
      * 
      * @param idFactura ID de la factura a pagar
-     * @return La factura actualizada o null si no existe
+     * @return La factura actualizada o null si no existe o ya estaba pagada
      */
     public Factura registrarPago(long idFactura) {
         Factura factura = facturaRepository.findByIdFactura(idFactura);
 
-        if (factura != null && "Pendiente".equals(factura.getEstado())) {
+        if (factura != null && "PENDIENTE".equalsIgnoreCase(factura.getEstado())) {
             factura.setSaldoPendiente(0.0);
-            factura.setEstado("Pagado");
+            factura.setEstado("PAGADA");
             return facturaRepository.save(factura);
         }
 

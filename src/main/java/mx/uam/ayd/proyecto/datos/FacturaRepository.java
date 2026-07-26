@@ -13,27 +13,21 @@ public interface FacturaRepository extends CrudRepository<Factura, Long> {
 
     /**
      * Busca una factura específica por su idFactura.
-     * 
-     * @param idFactura El identificador único de la factura
-     * @return la factura o null si no existe
      */
     public Factura findByIdFactura(long idFactura);
 
     /**
-     * Busca todas las facturas pertenecientes a un proveedor.
-     * 
-     * @param idProveedor El identificador del proveedor
-     * @return lista de facturas asociadas al proveedor
+     * Busca todas las facturas pertenecientes a un proveedor por su ID.
      */
-    public List<Factura> findByIdProveedor(int idProveedor);
+    public List<Factura> findByIdProveedor(long idProveedor);
 
     /**
-     * Busca las facturas de un proveedor filtradas por su estado (ej. "Pendiente").
-     * Indispensable para la consulta de saldos en la HU-06.
-     * 
-     * @param idProveedor El identificador del proveedor
-     * @param estado El estado de la factura
-     * @return lista de facturas que coinciden con el estado
+     * Busca las facturas de un proveedor por estado ignorando Mayúsculas/Minúsculas (ej. "PENDIENTE" o "Pendiente").
      */
-    public List<Factura> findByIdProveedorAndEstado(long idProveedor, String estado);
+    public List<Factura> findByIdProveedorAndEstadoIgnoreCase(long idProveedor, String estado);
+
+    /**
+     * Alternativa usando la relación JPA ignora mayúsculas/minúsculas.
+     */
+    public List<Factura> findByProveedorIdProveedorAndEstadoIgnoreCase(long idProveedor, String estado);
 }

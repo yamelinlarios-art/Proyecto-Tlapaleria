@@ -94,10 +94,17 @@ public class VentanaProveedor {
             colContactoPersonal.setCellValueFactory(new PropertyValueFactory<>("nombreCompleto"));
             colCategoria.setCellValueFactory(new PropertyValueFactory<>("tipoProveedor"));
 
-            // Cálculo dinámico del saldo llamando al control
+            // Cálculo dinámico seguro del saldo llamando al control
             colSaldo.setCellValueFactory(cellData -> {
                 Proveedor p = cellData.getValue();
-                double saldo = control.obtenerSaldoProveedor(p.getIdProveedor());
+                double saldo = 0.0;
+                if (p != null && control != null) {
+                    try {
+                        saldo = control.obtenerSaldoProveedor(p.getIdProveedor());
+                    } catch (Exception e) {
+                        saldo = 0.0;
+                    }
+                }
                 return new SimpleStringProperty(String.format("$%.2f", saldo));
             });
 
@@ -143,11 +150,16 @@ public class VentanaProveedor {
         if (proveedores != null) {
             for (Proveedor proveedor : proveedores) {
                 listaObservable.add(proveedor);
-                saldoTotalGeneral += control.obtenerSaldoProveedor(proveedor.getIdProveedor());
+                if (control != null) {
+                    saldoTotalGeneral += control.obtenerSaldoProveedor(proveedor.getIdProveedor());
+                }
             }
         }
 
         tablaProveedores.setItems(listaObservable);
+        
+        // Forzamos la actualización visual de las celdas
+        tablaProveedores.refresh();
         
         // Limpiamos la selección activa de la tabla para que el botón empiece desactivado
         tablaProveedores.getSelectionModel().clearSelection();

@@ -1,5 +1,7 @@
 package mx.uam.ayd.proyecto.negocio.modelo;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -22,20 +24,18 @@ public class Factura {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idFactura;
 
-    /*
-     * Se conserva este atributo para no afectar
-     * el funcionamiento actual del proyecto.
-     */
-    @Column(name = "id_proveedor")
-    private int idProveedor;
+    private String numeroFactura; // Requisito HU-06 (ej: "FAC-2026-089")
 
-    /*
-     * Muchas facturas pueden pertenecer
-     * al mismo proveedor.
-     */
+    private LocalDate fechaEmision; // Requisito HU-06
+
+    private LocalDate fechaVencimiento; // Requisito HU-06
+
+    @Column(name = "ID_PROVEEDOR")
+    private long idProveedor;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(
-            name = "id_proveedor",
+            name = "ID_PROVEEDOR",
             insertable = false,
             updatable = false)
     private Proveedor proveedor;
@@ -44,116 +44,105 @@ public class Factura {
 
     private double saldoPendiente;
 
-    private String estado;
+    private String estado; // ej. "PENDIENTE", "PAGADA"
 
     public Factura() {
     }
 
-    /**
-     * @return the idFactura
-     */
+    // --- GETTERS Y SETTERS ---
+
     public long getIdFactura() {
         return idFactura;
     }
 
-    /**
-     * @param idFactura the idFactura to set
-     */
     public void setIdFactura(long idFactura) {
         this.idFactura = idFactura;
     }
 
-    /**
-     * @return the idProveedor
-     */
-    public int getIdProveedor() {
+    public String getNumeroFactura() {
+        return numeroFactura != null ? numeroFactura : "FAC-" + idFactura;
+    }
+
+    public void setNumeroFactura(String numeroFactura) {
+        this.numeroFactura = numeroFactura;
+    }
+
+    public LocalDate getFechaEmision() {
+        return fechaEmision;
+    }
+
+    public void setFechaEmision(LocalDate fechaEmision) {
+        this.fechaEmision = fechaEmision;
+    }
+
+    public LocalDate getFechaVencimiento() {
+        return fechaVencimiento;
+    }
+
+    public void setFechaVencimiento(LocalDate fechaVencimiento) {
+        this.fechaVencimiento = fechaVencimiento;
+    }
+
+    public long getIdProveedor() {
         return idProveedor;
     }
 
-    /**
-     * @param idProveedor the idProveedor to set
-     */
-    public void setIdProveedor(int idProveedor) {
+    public void setIdProveedor(long idProveedor) {
         this.idProveedor = idProveedor;
     }
 
-    /**
-     * @return proveedor asociado a la factura
-     */
     public Proveedor getProveedor() {
         return proveedor;
     }
 
-    /**
-     * @param proveedor proveedor asociado a la factura
-     */
     public void setProveedor(Proveedor proveedor) {
         this.proveedor = proveedor;
 
         if (proveedor != null) {
-            this.idProveedor = (int) proveedor.getIdProveedor();
+            this.idProveedor = proveedor.getIdProveedor();
         }
     }
 
-    /**
-     * @return the montoTotal
-     */
     public double getMontoTotal() {
         return montoTotal;
     }
 
-    /**
-     * @param montoTotal the montoTotal to set
-     */
     public void setMontoTotal(double montoTotal) {
         this.montoTotal = montoTotal;
     }
 
-    /**
-     * @return the saldoPendiente
-     */
     public double getSaldoPendiente() {
         return saldoPendiente;
     }
 
-    /**
-     * @param saldoPendiente the saldoPendiente to set
-     */
     public void setSaldoPendiente(double saldoPendiente) {
         this.saldoPendiente = saldoPendiente;
     }
 
-    /**
-     * @return the estado
-     */
     public String getEstado() {
         return estado;
     }
 
-    /**
-     * @param estado the estado to set
-     */
     public void setEstado(String estado) {
         this.estado = estado;
     }
 
+    /**
+     * Helper para la vista: indica si la factura aún tiene saldo adeudado
+     */
+    public boolean esPendiente() {
+        return "PENDIENTE".equalsIgnoreCase(this.estado) || this.saldoPendiente > 0;
+    }
+
     @Override
     public boolean equals(Object obj) {
-
         if (this == obj) {
             return true;
         }
-
-        if (obj == null) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-
         Factura other = (Factura) obj;
-
         return idFactura == other.idFactura;
     }
 
@@ -165,6 +154,7 @@ public class Factura {
     @Override
     public String toString() {
         return "Factura [idFactura=" + idFactura
+                + ", numeroFactura=" + numeroFactura
                 + ", idProveedor=" + idProveedor
                 + ", montoTotal=" + montoTotal
                 + ", saldoPendiente=" + saldoPendiente

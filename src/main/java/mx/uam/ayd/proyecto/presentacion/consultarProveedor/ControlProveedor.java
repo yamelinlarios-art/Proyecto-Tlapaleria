@@ -11,6 +11,8 @@ import mx.uam.ayd.proyecto.negocio.modelo.Proveedor;
 
 /**
  * Control para el caso de uso Consultar Proveedores (HU-06).
+ * 
+ * @author JAVITOS, Yamelin, Guillermo, Dydier, Yael, Sheyla
  */
 @Component
 public class ControlProveedor {
@@ -32,6 +34,9 @@ public class ControlProveedor {
         ventana.setControl(this);
     }
 
+    /**
+     * Inicia el flujo principal recuperando los proveedores y mostrándolos en la ventana.
+     */
     public void inicia() {
         try {
             List<Proveedor> proveedores = servicioProveedor.recuperarProveedores();
@@ -42,8 +47,7 @@ public class ControlProveedor {
     }
 
     /**
-     * Pasa el proveedor seleccionado al ControlDetalleProveedor para iniciar
-     * el flujo de ver el detalle.
+     * Inicia el detalle de un proveedor a partir del objeto seleccionado en la tabla.
      */
     public void mostrarDetalleProveedor(Proveedor proveedor) {
         if (proveedor != null) {
@@ -52,12 +56,24 @@ public class ControlProveedor {
     }
 
     /**
+     * Inicia el detalle recuperando el proveedor por su ID (Según Diagrama de Secuencia).
+     */
+    public void consultarProveedor(long idProveedor) {
+        Proveedor proveedor = servicioProveedor.recuperarProveedor(idProveedor);
+        if (proveedor != null) {
+            controlDetalle.inicia(proveedor);
+        } else {
+            ventana.muestraDialogoConMensaje("No se encontró el proveedor solicitado.");
+        }
+    }
+
+    /**
      * Calcula el saldo total de un proveedor llamando al servicio.
-     * Este método es consultado por la vista para rendering dinámico.
+     * Método utilizado por la vista para rendering dinámico o cálculo de columnas.
      */
     public double obtenerSaldoProveedor(long idProveedor) {
         try {
-            return servicioProveedor.calcularSaldoPendienteProveedor((int) idProveedor);
+            return servicioProveedor.calcularSaldoPendienteProveedor(idProveedor);
         } catch (Exception e) {
             return 0.0;
         }

@@ -3,6 +3,8 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -11,9 +13,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="450.0" prefWidth="500.0" style="-fx-background-color: #F4F7FC;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="650.0" prefWidth="650.0" style="-fx-background-color: #F4F7FC;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <VBox spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox spacing="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             
             <!-- CABECERA -->
@@ -39,23 +41,23 @@
             </HBox>
 
             <!-- CONTENIDO DE DATOS DE LA ENTIDAD -->
-            <VBox spacing="15.0" VBox.vgrow="ALWAYS">
+            <VBox spacing="15.0">
                <padding>
-                  <Insets bottom="20.0" left="25.0" right="25.0" top="10.0" />
+                  <Insets left="25.0" right="25.0" top="10.0" />
                </padding>
                <children>
-                  <GridPane hgap="15.0" vgap="12.0">
+                  <GridPane hgap="15.0" vgap="10.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="NEVER" minWidth="130.0" />
                         <ColumnConstraints hgrow="ALWAYS" minWidth="200.0" />
                      </columnConstraints>
                      <rowConstraints>
-                        <RowConstraints minHeight="30.0" />
-                        <RowConstraints minHeight="30.0" />
-                        <RowConstraints minHeight="30.0" />
-                        <RowConstraints minHeight="30.0" />
-                        <RowConstraints minHeight="30.0" />
-                        <RowConstraints minHeight="30.0" />
+                        <RowConstraints minHeight="25.0" />
+                        <RowConstraints minHeight="25.0" />
+                        <RowConstraints minHeight="25.0" />
+                        <RowConstraints minHeight="25.0" />
+                        <RowConstraints minHeight="25.0" />
+                        <RowConstraints minHeight="25.0" />
                      </rowConstraints>
                      <children>
 
@@ -97,7 +99,6 @@
                         <Label text="Saldo Pendiente:" textFill="#555555" GridPane.rowIndex="5">
                            <font><Font name="System Bold" size="13.0" /></font>
                         </Label>
-                        <!-- Se cambió "$0.00" por "0.00" para evitar la excepción de KeyPath -->
                         <Label fx:id="lblTotalAdeudado" text="0.00" textFill="#E53935" GridPane.columnIndex="1" GridPane.rowIndex="5">
                            <font><Font name="System Bold" size="16.0" /></font>
                         </Label>
@@ -107,10 +108,38 @@
                </children>
             </VBox>
 
-            <!-- BOTÓN CERRAR -->
-            <HBox alignment="CENTER_RIGHT">
+            <!-- SECCIÓN: TABLA DE FACTURAS PENDIENTES (REQUERIMIENTO HU-06) -->
+            <VBox spacing="10.0" VBox.vgrow="ALWAYS">
                <padding>
-                  <Insets bottom="20.0" right="25.0" />
+                  <Insets left="25.0" right="25.0" />
+               </padding>
+               <children>
+                  <Label text="Facturas Pendientes de Pago" textFill="#333333">
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                  </Label>
+                  
+                  <TableView fx:id="tablaFacturas" VBox.vgrow="ALWAYS" style="-fx-background-radius: 5; -fx-border-color: #DCDCDC; -fx-border-radius: 5;">
+                     <columns>
+                        <TableColumn fx:id="colNumeroFactura" prefWidth="100.0" text="No. Factura" />
+                        <TableColumn fx:id="colFechaEmision" prefWidth="100.0" text="Emisión" />
+                        <TableColumn fx:id="colFechaVencimiento" prefWidth="100.0" text="Vencimiento" />
+                        <TableColumn fx:id="colMonto" prefWidth="90.0" text="Monto" />
+                        <TableColumn fx:id="colSaldo" prefWidth="100.0" text="Saldo" />
+                        <TableColumn fx:id="colAccion" prefWidth="100.0" text="Acción" />
+                     </columns>
+                     <columnResizePolicy>
+                        <TableView fx:constant="UNCONSTRAINED_RESIZE_POLICY" />
+                     </columnResizePolicy>
+                  </TableView>
+               </children>
+            </VBox>
+
+            <!-- BOTONES DE ACCIÓN -->
+            <HBox alignment="CENTER_RIGHT" spacing="10.0">
+               <padding>
+                  <Insets bottom="20.0" right="25.0" top="10.0" />
                </padding>
                <children>
                   <Button fx:id="btnCerrar" mnemonicParsing="false" onAction="#handleCerrar" style="-fx-background-color: #C9CDE0; -fx-cursor: hand;" text="Cerrar" textFill="#212121">
