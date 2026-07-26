@@ -353,35 +353,24 @@
                                           </Button>
 
                                           <!-- 5. Consultar carrito -->
-                                          <Button fx:id="btnConsultarCarrito" maxWidth="1.7976931348623157E308" minHeight="130.0" mnemonicParsing="false" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" textFill="#212121" GridPane.columnIndex="1" GridPane.rowIndex="1">
-
-                                             <graphic>
-
-                                                <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: #C9CADE;">
-
-                                                   <children>
-
-                                                      <Label text="🛒" textFill="#181818">
-
-                                                         <font>
-                                                            <Font size="24.0" />
-                                                         </font>
-
+                                      <Button fx:id="btnConsultarProveedor" onAction="#handleConsultarProveedor" maxWidth="1.7976931348623157E308" minHeight="130.0" mnemonicParsing="false" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" textFill="#212121" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                           <graphic>
+                                              <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: #C9CADE;">
+                                                    <children>
+                                                       <Label text="🚚" textFill="#181818">
+                                                        <font>
+                                                          <Font size="24.0" />
+                                                       </font>
+                                                    </Label>
+                                                    <Label text="Proveedores" textFill="#212121">
+                                                       <font>
+                                                          <Font name="System Bold" size="14.0" />
+                                                       </font>
                                                       </Label>
-
-                                                      <Label text="Consultar Carrito" textFill="#212121">
-
-                                                         <font>
-                                                            <Font name="System Bold" size="14.0" />
-                                                         </font>
-
-                                                      </Label>
-
-                                                   </children>
-                                                </VBox>
-
-                                             </graphic>
-                                          </Button>
+                                                 </children>
+                                             </VBox>
+                                          </graphic>
+                                       </Button>
 
                                           <!-- 6. Consultar inventario -->
                                           <Button fx:id="btnConsultarInventario" maxWidth="1.7976931348623157E308" minHeight="130.0" mnemonicParsing="false" onAction="#handleConsultarInventario" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" textFill="#212121" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1">
