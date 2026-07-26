@@ -1,6 +1,5 @@
 package mx.uam.ayd.proyecto.negocio;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,14 +8,13 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import mx.uam.ayd.proyecto.datos.BitacoraRepository;
 import mx.uam.ayd.proyecto.datos.InventarioRepository;
 import mx.uam.ayd.proyecto.datos.ProductoRepository;
-import mx.uam.ayd.proyecto.negocio.modelo.Bitacora;
 import mx.uam.ayd.proyecto.negocio.modelo.Inventario;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 
 /**
+ * Servicio encargado de la lógica de negocio del inventario.
  *
  * @author Kevin Dydier y Yael Mora Simón
  */
@@ -27,67 +25,52 @@ public class ServicioInventario {
 
     private final InventarioRepository inventarioRepository;
     private final ProductoRepository productoRepository;
-    private final BitacoraRepository bitacoraRepository;
 
     @Autowired
-    public ServicioInventario(InventarioRepository inventarioRepository, ProductoRepository productoRepository, BitacoraRepository bitacoraRepository) {
+    public ServicioInventario(InventarioRepository inventarioRepository, ProductoRepository productoRepository) {
         this.inventarioRepository = inventarioRepository;
         this.productoRepository = productoRepository;
-        this.bitacoraRepository = bitacoraRepository;
     }
 
     /**
      *
      * @return Lista de productos que requieren reabastecimiento (resaltados en rojo).
      */
-public List<Producto> consultarAlertas() {
-    log.info("Iniciando consulta de alertas de inventario...");
-    List<Producto> productosConAlerta = new ArrayList<>();
+    public List<Producto> consultarAlertas() {
+        log.info("Iniciando consulta de alertas de inventario...");
+        List<Producto> productosConAlerta = new ArrayList<>();
 
-    // Recuperar todos los registros de inventario
-    Iterable<Inventario> todosLosInventarios = inventarioRepository.findAll();
+        // Recuperar todos los registros de inventario
+        Iterable<Inventario> todosLosInventarios = inventarioRepository.findAll();
 
-    for (Inventario item : todosLosInventarios) {
-        // Validar Stock Mínimo
-        if (item.getExistenciaActual() <= item.getStockMinimo()) {
-            
-            // Buscamos el producto utilizando el id del inventario
-            Producto producto = productoRepository.findByIdProducto(item.getIdProducto());
+        for (Inventario item : todosLosInventarios) {
+            // Validar Stock Mínimo
+            if (item.getExistenciaActual() <= item.getStockMinimo()) {
+                
+                // Buscamos el producto utilizando el id del inventario
+                Producto producto = productoRepository.findByIdProducto(item.getIdProducto());
 
-            // Si no lo encuentra por método personalizado, intenta por findById
-            if (producto == null) {
-                producto = productoRepository.findById(item.getIdProducto()).orElse(null);
+                // Si no lo encuentra por método personalizado, intenta por findById
+                if (producto == null) {
+                    producto = productoRepository.findById(item.getIdProducto()).orElse(null);
+                }
+
+                // Si aún sigue sin existir en la tabla PRODUCTO, creamos un objeto para que la vista lo muestre
+                if (producto == null) {
+                    producto = new Producto();
+                    producto.setIdProducto(item.getIdProducto());
+                    producto.setClave("PROD-0" + item.getIdProducto());
+                    producto.setNombre("Producto ID " + item.getIdProducto());
+                }
+
+                // Sincronizar el stock del inventario hacia el objeto Producto para la UI
+                producto.setExistenciaActual(item.getExistenciaActual());
+
+                productosConAlerta.add(producto);
             }
-
-            // Si aún sigue sin existir en la tabla PRODUCTO, creamos un objeto para que la vista lo muestre
-            if (producto == null) {
-                producto = new Producto();
-                producto.setIdProducto(item.getIdProducto());
-                producto.setClave("PROD-0" + item.getIdProducto());
-                producto.setNombre("Producto ID " + item.getIdProducto());
-            }
-
-            // Sincronizar el stock del inventario hacia el objeto Producto para la UI
-            producto.setExistenciaActual(item.getExistenciaActual());
-
-            productosConAlerta.add(producto);
-
-            // Registrar el evento en la Bitácora (RN-02)
-            registrarEventoAlerta(producto.getIdProducto(), producto.getClave());
         }
-    }
 
-    return productosConAlerta;
-}
-    // Método para encapsular el registro de acciones de control (RN-02)
-    private void registrarEventoAlerta(long idProducto, String claveProducto) {
-        Bitacora evento = new Bitacora();
-        evento.setIdProducto((int) idProducto);
-        evento.setFechaHora(LocalDateTime.now());
-        evento.setMotivo("Emisión de alerta visual por stock bajo: " + claveProducto);
-        
-        bitacoraRepository.save(evento);
-        log.debug("Evento de alerta registrado para producto: {}", claveProducto);
+        return productosConAlerta;
     }
     
     /**
@@ -126,22 +109,22 @@ public List<Producto> consultarAlertas() {
      */
     public List<Inventario> obtenerProductosBajoStock() {
 
-    System.out.println("===== INVENTARIO =====");
+        System.out.println("===== INVENTARIO =====");
 
-    List<Inventario> productosBajoStock = new ArrayList<>();
+        List<Inventario> productosBajoStock = new ArrayList<>();
 
-    for (Inventario inventario : inventarioRepository.findAll()) {
+        for (Inventario inventario : inventarioRepository.findAll()) {
 
-        System.out.println(inventario);
+            System.out.println(inventario);
 
-        if (inventario.getExistenciaActual() <= inventario.getStockMinimo()) {
-            productosBajoStock.add(inventario);
+            if (inventario.getExistenciaActual() <= inventario.getStockMinimo()) {
+                productosBajoStock.add(inventario);
+            }
         }
+
+        System.out.println("Cantidad de productos encontrados: "
+                + productosBajoStock.size());
+
+        return productosBajoStock;
     }
-
-    System.out.println("Cantidad de productos encontrados: "
-            + productosBajoStock.size());
-
-    return productosBajoStock;
-   }
 }

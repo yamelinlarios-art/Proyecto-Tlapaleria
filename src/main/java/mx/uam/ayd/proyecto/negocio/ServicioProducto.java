@@ -22,17 +22,14 @@ public class ServicioProducto {
 
     // Repositorios y Servicios
     private final ProductoRepository productoRepository;
-    private final ServicioBitacora servicioBitacora;
-    private final ServicioMovimientoInventario servicioMovimientoInventario; // <--- Usamos el Servicio, NO el Repository
+    private final ServicioMovimientoInventario servicioMovimientoInventario;
 
     @Autowired
     public ServicioProducto(
             ProductoRepository productoRepository, 
-            ServicioBitacora servicioBitacora,
             ServicioMovimientoInventario servicioMovimientoInventario) {
         
         this.productoRepository = productoRepository;
-        this.servicioBitacora = servicioBitacora;
         this.servicioMovimientoInventario = servicioMovimientoInventario;
     }
 
@@ -135,8 +132,8 @@ public class ServicioProducto {
     }
 
     /**
-     * Actualiza el precio de un producto, guarda el movimiento en la Bitácora y en
-     * el Historial de Movimientos de Inventario (HU09).
+     * Actualiza el precio de un producto y registra el ajuste en el
+     * Historial de Movimientos de Inventario (HU09).
      * 
      * @param idProducto Identificador del producto a modificar.
      * @param nuevoPrecio El nuevo precio a asignar.
@@ -159,7 +156,7 @@ public class ServicioProducto {
             throw new IllegalArgumentException("No se encontró ningún producto con el ID: " + idProducto);
         }
 
-        // Guardamos el precio anterior antes de hacer la modificación
+        // Guardamos el precio anterior antes de realizar la modificación
         double precioAnterior = producto.getPrecio();
 
         // Asignamos el nuevo precio al producto
@@ -170,32 +167,19 @@ public class ServicioProducto {
         log.info("Precio del producto {} (ID: {}) actualizado exitosamente de ${} a ${}", 
                  productoGuardado.getNombre(), idProducto, precioAnterior, nuevoPrecio);
 
-        // 1. Registro en la Bitácora (HU09)
-        try {
-            servicioBitacora.registrarCambioPrecio(idProducto, precioAnterior, nuevoPrecio);
-            log.info("Cambio de precio registrado exitosamente en la Bitácora para el producto ID: {}", idProducto);
-        } catch (Exception e) {
-            log.error("Error al registrar el cambio de precio en la Bitácora: ", e);
-        }
-
-        // 2. Registro en MovimientoInventario VÍA ServicioMovimientoInventario
-        try {
-            String observacion = "Cambio de precio de $" + precioAnterior + " a $" + nuevoPrecio;
-            
-            // Usamos el método delegado del ServicioMovimientoInventario
-            servicioMovimientoInventario.registrarMovimiento(
-                productoGuardado, 
-                productoGuardado.getExistenciaActual(), // Cantidad actual
-                productoGuardado.getExistenciaActual(), // Existencia anterior
-                productoGuardado.getExistenciaActual(), // Existencia actual
-                "CAMBIO_PRECIO", 
-                observacion
-            );
-            
-            log.info("Movimiento de inventario guardado para el Historial del producto ID: {}", idProducto);
-        } catch (Exception e) {
-            log.error("Error al guardar el registro en ServicioMovimientoInventario: ", e);
-        }
+        // Registro del ajuste en ServicioMovimientoInventario (HU09)
+        String observacion = "Ajuste de precio: de $" + precioAnterior + " a $" + nuevoPrecio;
+        
+        servicioMovimientoInventario.registrarMovimiento(
+            productoGuardado, 
+            0, // La cantidad de stock no cambia en un ajuste de precio
+            productoGuardado.getExistenciaActual(), 
+            productoGuardado.getExistenciaActual(), 
+            "CAMBIO_PRECIO", 
+            observacion
+        );
+        
+        log.info("Movimiento de cambio de precio registrado exitosamente para el producto ID: {}", idProducto);
 
         return productoGuardado;
     }
