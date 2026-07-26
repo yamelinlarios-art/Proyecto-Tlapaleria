@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import mx.uam.ayd.proyecto.datos.DevolucionRepository;
+import mx.uam.ayd.proyecto.datos.MovimientoInventarioRepository;
 import mx.uam.ayd.proyecto.datos.ProductoRepository;
 import mx.uam.ayd.proyecto.negocio.modelo.Devolucion;
+import mx.uam.ayd.proyecto.negocio.modelo.MovimientoInventario;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 
 /**
@@ -25,20 +27,17 @@ public class ServicioDevolucion {
 
     private final DevolucionRepository devolucionRepository;
     private final ProductoRepository productoRepository;
-    private final ServicioMovimientoInventario servicioMovimientoInventario;
+    private final MovimientoInventarioRepository movimientoRepository;
 
     @Autowired
     public ServicioDevolucion(DevolucionRepository devolucionRepository, 
                               ProductoRepository productoRepository,
-                              ServicioMovimientoInventario servicioMovimientoInventario) {
+                              MovimientoInventarioRepository movimientoRepository) {
         this.devolucionRepository = devolucionRepository;
         this.productoRepository = productoRepository;
-        this.servicioMovimientoInventario = servicioMovimientoInventario;
+        this.movimientoRepository = movimientoRepository;
     }
 
-    /**
-     * Registra la devolución de un producto dañado y actualiza el inventario (HU-10).
-     */
     @Transactional
     public Devolucion registrarDevolucionDanado(long idProducto, int cantidad, String motivo) {
         log.info("Iniciando proceso de devolución por daño para producto ID: {}, Cantidad: {}", idProducto, cantidad);
@@ -71,11 +70,11 @@ public class ServicioDevolucion {
         // 1. Descontar la mercancía dañada del inventario
         int nuevaExistencia = existenciaAnterior - cantidad;
         producto.setExistenciaActual(nuevaExistencia);
-        productoRepository.save(producto);
+        Producto productoGuardado = productoRepository.save(producto);
 
         // 2. Crear y guardar el registro de devolución
         Devolucion devolucion = new Devolucion();
-        devolucion.setProducto(producto); 
+        devolucion.setProducto(productoGuardado); 
         devolucion.setCantidad(cantidad);
         devolucion.setMotivo(motivo);
         devolucion.setTipoDevolucion("DAÑADO");
@@ -83,19 +82,21 @@ public class ServicioDevolucion {
 
         Devolucion devolucionGuardada = devolucionRepository.save(devolucion);
         log.info("Devolución registrada exitosamente con ID: {} para el producto {}", 
-                devolucionGuardada.getIdDevolucion(), producto.getNombre());
+                devolucionGuardada.getIdDevolucion(), productoGuardado.getNombre());
 
-        // 3. Registrar el movimiento en el historial VÍA ServicioMovimientoInventario
-        // Al no envolverlo en un try-catch sin rethrow, si esto falla se deshace toda la transacción
-        servicioMovimientoInventario.registrarMovimiento(
-            producto, 
-            cantidad, 
-            existenciaAnterior, 
-            nuevaExistencia, 
-            "DEVOLUCION_DANADO", 
-            "Devolución por daño (Folio #" + devolucionGuardada.getIdDevolucion() + "): " + motivo
-        );
-        log.info("Movimiento de inventario guardado exitosamente mediante ServicioMovimientoInventario.");
+        // 3. Registrar directamente en el historial de movimientos
+        MovimientoInventario movimiento = new MovimientoInventario();
+        movimiento.setFecha(LocalDateTime.now());
+        movimiento.setTipoMovimiento("DEVOLUCION_DANADO");
+        movimiento.setCantidad(cantidad);
+        movimiento.setExistenciaAnterior(existenciaAnterior);
+        movimiento.setExistenciaActual(nuevaExistencia);
+        movimiento.setObservacion("Devolución por daño (Folio #" + devolucionGuardada.getIdDevolucion() + "): " + motivo);
+        movimiento.setProducto(productoGuardado);
+
+        movimientoRepository.save(movimiento);
+
+        log.info("Movimiento de devolución guardado exitosamente en MovimientoInventarioRepository.");
 
         return devolucionGuardada;
     }
