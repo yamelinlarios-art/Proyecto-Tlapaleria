@@ -10,11 +10,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-/**
- * Encargada de cargar el FXML y mostrar la ventana en el hilo de JavaFX.
- * 
- * @author JAVITOS, Yamelin, Guillermo, Dydier, Yael, Sheyla
- */
 @Component
 public class VentanaProveedor {
 
@@ -23,28 +18,30 @@ public class VentanaProveedor {
 
     private Stage stage;
 
-    /**
-     * Carga el archivo FXML e inicia la vista de JavaFX.
-     */
     public void muestra(ControlProveedor control) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/presentacion/consultarProveedor/ventana-proveedor.fxml"));
-            
-            // Le indicamos a JavaFX que use el contenedor de Spring para instanciar el controlador
-            loader.setControllerFactory(context::getBean);
-            
-            Parent root = loader.load();
-
             if (stage == null) {
+                // 💡 RUTA CORRECTA: /fxml/ventana-proveedor.fxml
+                java.net.URL url = getClass().getResource("/fxml/ventana-proveedor.fxml");
+                
+                if (url == null) {
+                    System.err.println("❌ Ojo: Verifica si el archivo termina en 'ventana-proveedor.fxml' o 'ventana-proveedores.fxml'");
+                    return;
+                }
+
+                FXMLLoader loader = new FXMLLoader(url);
+                loader.setControllerFactory(context::getBean);
+                
+                Parent root = loader.load();
+
                 stage = new Stage();
                 stage.setTitle("Directorio de Proveedores - La Nueva");
                 stage.setScene(new Scene(root));
             }
 
-            // Llamamos al método del control para llenar las tablas
-            control.muestra();
-
             stage.show();
+            stage.toFront();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
