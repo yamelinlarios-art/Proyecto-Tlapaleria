@@ -257,7 +257,10 @@
                                        <children>
 
                                           <!-- 1. Cobro / POS -->
-                                          <Button maxWidth="1.7976931348623157E308" minHeight="250.0" mnemonicParsing="false" onAction="#handleRealizarVenta" style="-fx-background-color: #D4A8D6; -fx-background-radius: 12;" textFill="WHITE" GridPane.columnSpan="2" />
+                                          <Button maxWidth="1.7976931348623157E308" minHeight="250.0" mnemonicParsing="false" onAction="#handleRealizarVenta" style="-fx-background-color: #A55CAA; -fx-background-radius: 12;" text="🛒     Nueva venta       " GridPane.columnSpan="2">
+                                             <font>
+                                                <Font name="System Bold" size="25.0" />
+                                             </font></Button>
 
                                           <!-- 2. Actualizar precio -->
                                           <Button fx:id="btnActualizarPrecio" maxWidth="1.7976931348623157E308" minHeight="250.0" mnemonicParsing="false" onAction="#handleActualizarPrecio" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" textFill="#212121" GridPane.columnIndex="2">
@@ -353,7 +356,7 @@
                                           </Button>
 
                                           <!-- 5. Consultar carrito -->
-                                      <Button fx:id="btnConsultarProveedor" onAction="#handleConsultarProveedor" maxWidth="1.7976931348623157E308" minHeight="130.0" mnemonicParsing="false" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" textFill="#212121" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                      <Button fx:id="btnConsultarProveedor" maxWidth="1.7976931348623157E308" minHeight="130.0" mnemonicParsing="false" onAction="#handleConsultarProveedor" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-border-color: #EEEEEE; -fx-border-width: 1;" textFill="#212121" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                            <graphic>
                                               <VBox alignment="CENTER" spacing="10.0" style="-fx-background-color: #C9CADE;">
                                                     <children>
@@ -417,49 +420,6 @@
 
                                              </graphic>
                                           </Button>
-                  
-                                          <VBox alignment="CENTER" prefHeight="239.0" prefWidth="462.0" spacing="10.0" style="-fx-background-color: #A55CAA;">
-                  
-                                             <children>
-                  
-                                                <Label mouseTransparent="true" pickOnBounds="false" text="💳🖥️" textFill="WHITE">
-                  
-                                                   <font>
-                                                      <Font size="48.0" />
-                                                   </font>
-                  
-                                                </Label>
-                  
-                                                <Label mouseTransparent="true" pickOnBounds="false" text="Nueva venta" textFill="WHITE">
-                  
-                                                   <font>
-                                                      <Font name="System Bold" size="24.0" />
-                                                   </font>
-                  
-                                                </Label>
-                  
-                                                <Label mouseTransparent="true" pickOnBounds="false" prefHeight="40.0" prefWidth="211.0" text="Procesar transacciones y emitir facturas." textFill="WHITE" wrapText="true">
-                  
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                  
-                                                </Label>
-                  
-                                                <Label mouseTransparent="true" pickOnBounds="false" text="INICIAR TERMINAL →" textFill="WHITE">
-                  
-                                                   <font>
-                                                      <Font name="System Bold" size="14.0" />
-                                                   </font>
-                  
-                                                   <VBox.margin>
-                                                      <Insets top="15.0" />
-                                                   </VBox.margin>
-                  
-                                                </Label>
-                  
-                                             </children>
-                                          </VBox>
 
                                        </children>
                                     </GridPane>
