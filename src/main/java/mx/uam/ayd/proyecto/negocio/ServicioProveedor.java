@@ -52,7 +52,7 @@ public class ServicioProveedor {
      * @param idProveedor ID del proveedor
      * @return Lista de facturas en estado "Pendiente"
      */
-    public List<Factura> recuperarFacturasPendientes(int idProveedor) {
+    public List<Factura> recuperarFacturasPendientes(long idProveedor) {
         return facturaRepository.findByIdProveedorAndEstado(idProveedor, "Pendiente");
     }
 
@@ -62,7 +62,7 @@ public class ServicioProveedor {
      * @param idProveedor ID del proveedor
      * @return Saldo pendiente total
      */
-    public double calcularSaldoPendienteProveedor(int idProveedor) {
+    public double calcularSaldoPendienteProveedor(long idProveedor) {
         List<Factura> facturasPendientes = recuperarFacturasPendientes(idProveedor);
         double saldoTotal = 0.0;
         for (Factura f : facturasPendientes) {

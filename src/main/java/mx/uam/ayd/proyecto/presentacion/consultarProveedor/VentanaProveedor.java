@@ -1,49 +1,166 @@
 package mx.uam.ayd.proyecto.presentacion.consultarProveedor;
 
 import java.io.IOException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
+import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import mx.uam.ayd.proyecto.negocio.modelo.Proveedor;
 
+/**
+ * Ventana para consultar el directorio de proveedores.
+ */
 @Component
 public class VentanaProveedor {
 
-    @Autowired
-    private ApplicationContext context;
-
     private Stage stage;
+    private ControlProveedor control;
+    private boolean initialized = false;
 
-    public void muestra(ControlProveedor control) {
+    @FXML
+    private Label lblSaldoTotalGeneral;
+
+    @FXML
+    private TableView<Proveedor> tablaProveedores;
+
+    @FXML
+    private TableColumn<Proveedor, Long> colId;
+
+    @FXML
+    private TableColumn<Proveedor, String> colProveedor;
+
+    @FXML
+    private TableColumn<Proveedor, String> colContactoPersonal;
+
+    @FXML
+    private TableColumn<Proveedor, String> colCategoria;
+
+    @FXML
+    private TableColumn<Proveedor, String> colSaldo;
+
+    public VentanaProveedor() {
+    }
+
+    public void setControl(ControlProveedor control) {
+        this.control = control;
+    }
+
+    private void initializeUI() {
+        if (initialized) {
+            return;
+        }
+
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(this::initializeUI);
+            return;
+        }
+
         try {
-            if (stage == null) {
-                // 💡 RUTA CORRECTA: /fxml/ventana-proveedor.fxml
-                java.net.URL url = getClass().getResource("/fxml/ventana-proveedor.fxml");
-                
-                if (url == null) {
-                    System.err.println("❌ Ojo: Verifica si el archivo termina en 'ventana-proveedor.fxml' o 'ventana-proveedores.fxml'");
-                    return;
-                }
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/fxml/ventana-proveedor.fxml"));
 
-                FXMLLoader loader = new FXMLLoader(url);
-                loader.setControllerFactory(context::getBean);
-                
-                Parent root = loader.load();
+            // Asignamos esta misma clase como controlador FXML
+            loader.setController(this);
 
-                stage = new Stage();
-                stage.setTitle("Directorio de Proveedores - La Nueva");
-                stage.setScene(new Scene(root));
-            }
+            Parent root = loader.load();
 
-            stage.show();
-            stage.toFront();
+            stage = new Stage();
+            stage.setTitle("Directorio de Proveedores - La Nueva");
+            stage.setScene(new Scene(root));
+
+            // Configuración de celdas según las propiedades de Proveedor.java
+            colId.setCellValueFactory(new PropertyValueFactory<>("idProveedor"));
+            colProveedor.setCellValueFactory(new PropertyValueFactory<>("corporativo"));
+            colContactoPersonal.setCellValueFactory(new PropertyValueFactory<>("nombreCompleto"));
+            colCategoria.setCellValueFactory(new PropertyValueFactory<>("tipoProveedor"));
+
+            // Cálculo dinámico del saldo llamando al control
+            colSaldo.setCellValueFactory(cellData -> {
+                Proveedor p = cellData.getValue();
+                double saldo = control.obtenerSaldoProveedor(p.getIdProveedor());
+                return new SimpleStringProperty(String.format("$%.2f", saldo));
+            });
+
+            initialized = true;
 
         } catch (IOException e) {
             e.printStackTrace();
+            muestraDialogoConMensaje("No fue posible cargar la ventana de proveedores");
         }
+    }
+
+    public void muestra(List<Proveedor> proveedores) {
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> muestra(proveedores));
+            return;
+        }
+
+        initializeUI();
+
+        ObservableList<Proveedor> listaObservable = FXCollections.observableArrayList();
+        double saldoTotalGeneral = 0.0;
+
+        if (proveedores != null) {
+            for (Proveedor proveedor : proveedores) {
+                listaObservable.add(proveedor);
+                saldoTotalGeneral += control.obtenerSaldoProveedor(proveedor.getIdProveedor());
+            }
+        }
+
+        tablaProveedores.setItems(listaObservable);
+        lblSaldoTotalGeneral.setText(String.format("SALDO TOTAL PENDIENTE: $%.2f", saldoTotalGeneral));
+
+        stage.show();
+        stage.toFront();
+    }
+
+    public void muestraDialogoConMensaje(String mensaje) {
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> muestraDialogoConMensaje(mensaje));
+            return;
+        }
+
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Directorio de Proveedores");
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
+
+    public void setVisible(boolean visible) {
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(() -> setVisible(visible));
+            return;
+        }
+
+        if (stage == null) {
+            initializeUI();
+        }
+
+        if (visible) {
+            stage.show();
+        } else {
+            stage.hide();
+        }
+    }
+
+    @FXML
+    private void onRegresar() {
+        control.termina();
     }
 }
