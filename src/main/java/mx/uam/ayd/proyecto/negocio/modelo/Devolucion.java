@@ -50,6 +50,14 @@ public class Devolucion {
     @JoinColumn(name = "id_vendedor")
     private Vendedor vendedor;
 
+    /**
+     * Muchas devoluciones pueden asociarse a un mismo proveedor.
+     * Mapeado para resolver el 'mappedBy' de la entidad Proveedor.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_proveedor")
+    private Proveedor proveedor;
+
     // Constructor por defecto requerido por JPA
     public Devolucion() {
     }
@@ -88,6 +96,10 @@ public class Devolucion {
         return vendedor;
     }
 
+    public Proveedor getProveedor() {
+        return proveedor;
+    }
+
     // MÉTODOS DE ACCESO: SETTERS
 
     public void setIdDevolucion(long idDevolucion) {
@@ -120,6 +132,10 @@ public class Devolucion {
 
     public void setVendedor(Vendedor vendedor) {
         this.vendedor = vendedor;
+    }
+
+    public void setProveedor(Proveedor proveedor) {
+        this.proveedor = proveedor;
     }
 
     // MÉTODOS SOBREESCRITOS (@Override)
