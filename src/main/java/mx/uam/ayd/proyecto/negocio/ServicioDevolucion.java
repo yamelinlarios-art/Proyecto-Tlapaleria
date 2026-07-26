@@ -36,9 +36,6 @@ public class ServicioDevolucion {
         this.servicioMovimientoInventario = servicioMovimientoInventario;
     }
 
-    /**
-     * Registra la devolución de un producto dañado y actualiza el inventario (HU-10).
-     */
     @Transactional
     public Devolucion registrarDevolucionDanado(long idProducto, int cantidad, String motivo) {
         log.info("Iniciando proceso de devolución por daño para producto ID: {}, Cantidad: {}", idProducto, cantidad);
@@ -85,8 +82,7 @@ public class ServicioDevolucion {
         log.info("Devolución registrada exitosamente con ID: {} para el producto {}", 
                 devolucionGuardada.getIdDevolucion(), producto.getNombre());
 
-        // 3. Registrar el movimiento en el historial VÍA ServicioMovimientoInventario
-        // Al no envolverlo en un try-catch sin rethrow, si esto falla se deshace toda la transacción
+        // 3. Registrar el movimiento en el historial
         servicioMovimientoInventario.registrarMovimiento(
             producto, 
             cantidad, 

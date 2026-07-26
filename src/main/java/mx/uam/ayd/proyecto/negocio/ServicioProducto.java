@@ -170,11 +170,14 @@ public class ServicioProducto {
         // Registro del ajuste en ServicioMovimientoInventario (HU09)
         String observacion = "Ajuste de precio: de $" + precioAnterior + " a $" + nuevoPrecio;
         
+        int existencia = productoGuardado.getExistenciaActual();
+        int cantidadMovimiento = existencia > 0 ? existencia : 1;
+
         servicioMovimientoInventario.registrarMovimiento(
             productoGuardado, 
-            0, // La cantidad de stock no cambia en un ajuste de precio
-            productoGuardado.getExistenciaActual(), 
-            productoGuardado.getExistenciaActual(), 
+            cantidadMovimiento, 
+            existencia, 
+            existencia, 
             "CAMBIO_PRECIO", 
             observacion
         );
