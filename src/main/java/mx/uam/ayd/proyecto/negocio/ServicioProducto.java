@@ -171,11 +171,10 @@ public class ServicioProducto {
         String observacion = "Ajuste de precio: de $" + precioAnterior + " a $" + nuevoPrecio;
         
         int existencia = productoGuardado.getExistenciaActual();
-        int cantidadMovimiento = existencia > 0 ? existencia : 1;
 
         servicioMovimientoInventario.registrarMovimiento(
             productoGuardado, 
-            cantidadMovimiento, 
+            0, // La cantidad de piezas movidas en un cambio de precio es 0
             existencia, 
             existencia, 
             "CAMBIO_PRECIO", 

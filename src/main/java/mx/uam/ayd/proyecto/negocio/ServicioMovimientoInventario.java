@@ -67,12 +67,13 @@ public class ServicioMovimientoInventario {
     /**
      * Registra un nuevo movimiento en el historial/bitácora del inventario.
      * Requerido para HU-10: Registrar devolución por material dañado.
+     * Requerido para HU-09: Actualizar precio de producto.
      *
      * @param producto Producto afectado por el movimiento
      * @param cantidad Cantidad devuelta o ajustada
      * @param existenciaAnterior Stock antes de la devolución
      * @param existenciaActual Stock final después de la devolución
-     * @param tipoMovimiento Tipo de movimiento (ej. "DEVOLUCION_DANADO")
+     * @param tipoMovimiento Tipo de movimiento (ej. "DEVOLUCION_DANADO", "CAMBIO_PRECIO")
      * @param motivo Justificación/Observación del movimiento
      * @return MovimientoInventario guardado en la base de datos
      */
@@ -83,7 +84,10 @@ public class ServicioMovimientoInventario {
             throw new IllegalArgumentException("El producto no puede ser nulo al registrar el movimiento.");
         }
         
-        if (cantidad <= 0) {
+        // Un cambio de precio no altera piezas del inventario, por lo que su cantidad es 0.
+        boolean esCambioPrecio = "CAMBIO_PRECIO".equalsIgnoreCase(tipoMovimiento);
+
+        if (!esCambioPrecio && cantidad <= 0) {
             throw new IllegalArgumentException("La cantidad del movimiento debe ser mayor a cero.");
         }
 
@@ -94,7 +98,7 @@ public class ServicioMovimientoInventario {
         movimiento.setExistenciaActual(existenciaActual);
         movimiento.setTipoMovimiento(tipoMovimiento);
         movimiento.setFecha(LocalDateTime.now());
-        movimiento.setObservacion(motivo); // Usamos setObservacion de tu entidad
+        movimiento.setObservacion(motivo);
 
         return movimientoInventarioRepository.save(movimiento);
     }
