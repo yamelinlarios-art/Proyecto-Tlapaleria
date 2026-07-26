@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="15.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" 
+      fx:controller="mx.uam.ayd.proyecto.presentacion.consultarProveedor.ControlDetalleProveedor">
+   <padding>
+      <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
+   </padding>
+   <children>
+      <!-- Datos del Proveedor -->
+      <VBox spacing="5.0" style="-fx-background-color: #f4f4f4; -fx-padding: 10; -fx-background-radius: 5;">
+         <children>
+            <Label fx:id="lblNombreProveedor" style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Proveedor: " />
+            <Label fx:id="lblContacto" text="Contacto: " />
+            <Label fx:id="lblTipo" text="Categoría: " />
+            <Label fx:id="lblSaldoTotal" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: red;" text="Saldo Pendiente Total: $0.00" />
+         </children>
+      </VBox>
+
+      <!-- Tabla de Facturas -->
+      <Label style="-fx-font-weight: bold;" text="Facturas Pendientes:" />
+      <TableView fx:id="tablaFacturas" VBox.vgrow="ALWAYS">
+        <columns>
+          <TableColumn fx:id="colIdFactura" prefWidth="80.0" text="ID Factura" />
+          <TableColumn fx:id="colMontoTotal" prefWidth="120.0" text="Monto Total" />
+          <TableColumn fx:id="colSaldoPendiente" prefWidth="130.0" text="Saldo Pendiente" />
+          <TableColumn fx:id="colEstado" prefWidth="120.0" text="Estado" />
+        </columns>
+      </TableView>
+
+      <!-- Botones -->
+      <HBox alignment="CENTER_RIGHT" spacing="10.0">
+         <children>
+            <Button fx:id="btnRegistrarPago" onAction="#handleRegistrarPago" style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-weight: bold;" text="Registrar Pago" />
+            <Button onAction="#handleRegresar" text="Regresar" />
+         </children>
+      </HBox>
+   </children>
+</VBox>

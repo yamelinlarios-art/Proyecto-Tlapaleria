@@ -28,26 +28,16 @@ public class ControlProveedor {
     @Autowired
     private VentanaProveedor ventanaProveedor;
 
-    @FXML
-    private TableView<Proveedor> tablaProveedores;
+    @Autowired
+    private VentanaDetalleProveedor ventanaDetalleProveedor;
 
-    @FXML
-    private TableColumn<Proveedor, Long> colId;
-
-    @FXML
-    private TableColumn<Proveedor, String> colProveedor;
-
-    @FXML
-    private TableColumn<Proveedor, String> colContactoPersonal;
-
-    @FXML
-    private TableColumn<Proveedor, String> colCategoria;
-
-    @FXML
-    private TableColumn<Proveedor, String> colSaldo;
-
-    @FXML
-    private Label lblSaldoTotalGeneral;
+    @FXML private TableView<Proveedor> tablaProveedores;
+    @FXML private TableColumn<Proveedor, Long> colId;
+    @FXML private TableColumn<Proveedor, String> colProveedor;
+    @FXML private TableColumn<Proveedor, String> colContactoPersonal;
+    @FXML private TableColumn<Proveedor, String> colCategoria;
+    @FXML private TableColumn<Proveedor, String> colSaldo;
+    @FXML private Label lblSaldoTotalGeneral;
 
     public ControlProveedor(ServicioProveedor servicioProveedor) {
         this.servicioProveedor = servicioProveedor;
@@ -62,29 +52,36 @@ public class ControlProveedor {
 
     @FXML
     public void initialize() {
-        // Mapeo de propiedades simples de la entidad Proveedor
         colId.setCellValueFactory(new PropertyValueFactory<>("idProveedor"));
         colProveedor.setCellValueFactory(new PropertyValueFactory<>("nombreCompleto"));
         colContactoPersonal.setCellValueFactory(new PropertyValueFactory<>("telefono"));
         colCategoria.setCellValueFactory(new PropertyValueFactory<>("tipoProveedor"));
-
-        // Mapeo dinámico para el cálculo del Saldo de cada proveedor en la tabla
         colSaldo.setCellValueFactory(cellData -> {
             Proveedor p = cellData.getValue();
             double saldo = servicioProveedor.calcularSaldoPendienteProveedor((int) p.getIdProveedor());
             return new SimpleStringProperty(String.format("$%.2f", saldo));
         });
+
+        // Detectar doble clic sobre una fila de la tabla
+        tablaProveedores.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                Proveedor seleccionado = tablaProveedores.getSelectionModel().getSelectedItem();
+                if (seleccionado != null) {
+                    ventanaDetalleProveedor.muestra(this, seleccionado);
+                }
+            }
+        });
     }
 
     /**
-     * Carga los proveedores registrados y refresca el saldo general.
+     * Carga la lista de proveedores y refresca el saldo general.
      */
     public void muestra() {
         List<Proveedor> lista = servicioProveedor.recuperarProveedores();
         ObservableList<Proveedor> proveedoresObservable = FXCollections.observableArrayList(lista);
         tablaProveedores.setItems(proveedoresObservable);
+        tablaProveedores.refresh();
 
-        // Calcular la suma del saldo total pendiente
         double totalGeneral = 0.0;
         for (Proveedor p : lista) {
             totalGeneral += servicioProveedor.calcularSaldoPendienteProveedor((int) p.getIdProveedor());
