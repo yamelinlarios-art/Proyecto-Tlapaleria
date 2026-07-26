@@ -35,5 +35,5 @@ public interface FacturaRepository extends CrudRepository<Factura, Long> {
      * @param estado El estado de la factura
      * @return lista de facturas que coinciden con el estado
      */
-    public List<Factura> findByIdProveedorAndEstado(int idProveedor, String estado);
+    public List<Factura> findByIdProveedorAndEstado(long idProveedor, String estado);
 }
