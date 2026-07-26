@@ -86,19 +86,16 @@ public class ServicioDevolucion {
                 devolucionGuardada.getIdDevolucion(), producto.getNombre());
 
         // 3. Registrar el movimiento en el historial VÍA ServicioMovimientoInventario
-        try {
-            servicioMovimientoInventario.registrarMovimiento(
-                producto, 
-                cantidad, 
-                existenciaAnterior, 
-                nuevaExistencia, 
-                "DEVOLUCION_DANADO", 
-                "Devolución por daño (Folio #" + devolucionGuardada.getIdDevolucion() + "): " + motivo
-            );
-            log.info("Movimiento de inventario guardado exitosamente mediante ServicioMovimientoInventario.");
-        } catch (Exception e) {
-            log.error("Error al registrar el movimiento de inventario: ", e);
-        }
+        // Al no envolverlo en un try-catch sin rethrow, si esto falla se deshace toda la transacción
+        servicioMovimientoInventario.registrarMovimiento(
+            producto, 
+            cantidad, 
+            existenciaAnterior, 
+            nuevaExistencia, 
+            "DEVOLUCION_DANADO", 
+            "Devolución por daño (Folio #" + devolucionGuardada.getIdDevolucion() + "): " + motivo
+        );
+        log.info("Movimiento de inventario guardado exitosamente mediante ServicioMovimientoInventario.");
 
         return devolucionGuardada;
     }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,69 +30,33 @@ public class Producto {
 
     private String tipoProducto;
 
-    /*
-     * Usado para HU09.
-     */
+    /* Usado para HU09 */
     private Double precio;
 
     private String marca;
 
-    /*
-     * Se cambió de Object a String para evitar
-     * problemas de persistencia en JPA.
-     */
     private String categoria;
 
-    /*
-     * Atributos colaborativos.
-     */
     private Double precioCompra;
 
     private int existenciaActual;
 
-    /*
-     * Muchos productos pueden pertenecer
-     * al mismo inventario.
-     */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_inventario")
     private Inventario inventario;
 
-    /*
-     * Un producto puede tener muchos movimientos.
-     *
-     * El atributo producto existe en
-     * MovimientoInventario.
-     */
     @OneToMany(mappedBy = "producto")
-    private List<MovimientoInventario>
-            movimientosInventario =
-                    new ArrayList<>();
+    private List<MovimientoInventario> movimientosInventario = new ArrayList<>();
 
-    /*
-     * Un producto puede aparecer en varios
-     * detalles de venta.
-     */
     @OneToMany(mappedBy = "producto")
-    private List<DescripcionVenta>
-            descripcionesVenta =
-                    new ArrayList<>();
+    private List<DescripcionVenta> descripcionesVenta = new ArrayList<>();
 
-    /*
-     * Un producto puede tener varias devoluciones.
-     */
     @OneToMany(mappedBy = "producto")
-    private List<Devolucion> devoluciones =
-            new ArrayList<>();
+    private List<Devolucion> devoluciones = new ArrayList<>();
 
-    /*
-     * Un producto puede aparecer en varios pedidos.
-     */
     @OneToMany(mappedBy = "producto")
-    private List<Pedido> pedidos =
-            new ArrayList<>();
+    private List<Pedido> pedidos = new ArrayList<>();
 
-    // Constructor por defecto requerido por JPA
     public Producto() {
     }
 
@@ -137,15 +102,11 @@ public class Producto {
         return inventario;
     }
 
-    public List<MovimientoInventario>
-            getMovimientosInventario() {
-
+    public List<MovimientoInventario> getMovimientosInventario() {
         return movimientosInventario;
     }
 
-    public List<DescripcionVenta>
-            getDescripcionesVenta() {
-
+    public List<DescripcionVenta> getDescripcionesVenta() {
         return descripcionesVenta;
     }
 
@@ -171,9 +132,7 @@ public class Producto {
         this.nombre = nombre;
     }
 
-    public void setTipoProducto(
-            String tipoProducto) {
-
+    public void setTipoProducto(String tipoProducto) {
         this.tipoProducto = tipoProducto;
     }
 
@@ -189,70 +148,44 @@ public class Producto {
         this.categoria = categoria;
     }
 
-    public void setPrecioCompra(
-            Double precioCompra) {
-
+    public void setPrecioCompra(Double precioCompra) {
         this.precioCompra = precioCompra;
     }
 
-    public void setExistenciaActual(
-            int existenciaActual) {
-
-        this.existenciaActual =
-                existenciaActual;
+    public void setExistenciaActual(int existenciaActual) {
+        this.existenciaActual = existenciaActual;
     }
 
-    public void setInventario(
-            Inventario inventario) {
-
+    public void setInventario(Inventario inventario) {
         this.inventario = inventario;
     }
 
-    public void setMovimientosInventario(
-            List<MovimientoInventario>
-                    movimientosInventario) {
-
-        this.movimientosInventario =
-                movimientosInventario;
+    public void setMovimientosInventario(List<MovimientoInventario> movimientosInventario) {
+        this.movimientosInventario = movimientosInventario;
     }
 
-    public void setDescripcionesVenta(
-            List<DescripcionVenta>
-                    descripcionesVenta) {
-
-        this.descripcionesVenta =
-                descripcionesVenta;
+    public void setDescripcionesVenta(List<DescripcionVenta> descripcionesVenta) {
+        this.descripcionesVenta = descripcionesVenta;
     }
 
-    public void setDevoluciones(
-            List<Devolucion> devoluciones) {
-
+    public void setDevoluciones(List<Devolucion> devoluciones) {
         this.devoluciones = devoluciones;
     }
 
-    public void setPedidos(
-            List<Pedido> pedidos) {
-
+    public void setPedidos(List<Pedido> pedidos) {
         this.pedidos = pedidos;
     }
 
     @Override
     public boolean equals(Object obj) {
-
         if (this == obj) {
             return true;
         }
-
-        if (obj == null
-                || getClass() != obj.getClass()) {
-
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-
         Producto other = (Producto) obj;
-
-        return idProducto ==
-                other.idProducto;
+        return idProducto == other.idProducto;
     }
 
     @Override
@@ -262,12 +195,10 @@ public class Producto {
 
     @Override
     public String toString() {
-        return "Producto{"
-                + "id=" + idProducto
+        return "Producto [idProducto=" + idProducto
+                + ", clave='" + clave + '\''
                 + ", nombre='" + nombre + '\''
-                + ", precioVenta=" + precio
-                + ", precioCompra=" + precioCompra
-                + ", stock=" + existenciaActual
-                + '}';
+                + ", precio=" + precio
+                + ", stock=" + existenciaActual + "]";
     }
 }
