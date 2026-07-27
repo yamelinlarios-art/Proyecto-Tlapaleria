@@ -53,26 +53,25 @@ public class Venta {
     public Venta() {
     }
 
-    /**
-     * Agrega un producto y su cantidad a la venta actual.
+  /**
+     * Agrega un producto a la venta y actualiza el total.
+     * Permite cumplir con la HU-05 validando que el producto exista 
+     * y la cantidad sea mayor a 0.
      *
-     * @param producto producto que se agregará
-     * @param cantidad cantidad de unidades
-     * @return true si se agregó correctamente
+     * @param producto producto a agregar
+     * @param cantidad cantidad de piezas
+     * @return true si se agrego con exito, false si los datos no son validos
      */
-    public boolean agregaProducto(
-            Producto producto,
-            int cantidad) {
+    public boolean agregaProducto(Producto producto, int cantidad) {
 
         if (producto == null || cantidad <= 0) {
             return false;
         }
 
-        DescripcionVenta detalle =
-                new DescripcionVenta(producto, cantidad);
+        DescripcionVenta detalle = new DescripcionVenta(producto, cantidad);
 
         /*
-         * Se establece el lado propietario de la relación.
+         * Relacion con la venta
          */
         detalle.setVenta(this);
 
@@ -83,6 +82,10 @@ public class Venta {
         return true;
     }
 
+    /**
+     * Suma los precios y cantidades de cada producto 
+     * para calcular el total de la venta (HU-05).
+     */
     public void calculaTotal() {
 
         double acumulado = 0.0;
@@ -91,9 +94,7 @@ public class Venta {
 
             if (detalle.getProducto() != null) {
 
-                acumulado +=
-                        detalle.getProducto().getPrecio()
-                        * detalle.getCantidad();
+                acumulado += detalle.getProducto().getPrecio() * detalle.getCantidad();
             }
         }
 
