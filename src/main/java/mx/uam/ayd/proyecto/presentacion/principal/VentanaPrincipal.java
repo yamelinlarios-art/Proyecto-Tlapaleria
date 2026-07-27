@@ -1,20 +1,15 @@
-
 package mx.uam.ayd.proyecto.presentacion.principal;
 
+import java.io.IOException;
+
+import org.springframework.stereotype.Component;
+
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import mx.uam.ayd.proyecto.presentacion.consultarProveedor.ControlProveedor;
-import javafx.scene.input.MouseEvent;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import javafx.scene.Parent;
-
-import java.io.IOException;
 
 /**
  * Ventana principal usando JavaFX con FXML
@@ -22,8 +17,6 @@ import java.io.IOException;
 @Component
 public class VentanaPrincipal {
 
-    @Autowired
-    private ControlProveedor controlProveedor;
     private Stage stage;
     private ControlPrincipal control;
     private boolean initialized = false;
@@ -52,14 +45,12 @@ public class VentanaPrincipal {
             stage = new Stage();
             stage.setTitle("Mi Aplicación");
 
-FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-principal.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-principal.fxml"));
+            loader.setControllerFactory(clazz -> this);
 
-// En lugar de setController, usamos setControllerFactory para pasarle ESTA misma instancia:
-loader.setControllerFactory(clazz -> this);
-
-Parent root = loader.load();
-Scene scene = new Scene(root, 1366, 768);
-stage.setScene(scene);
+            Parent root = loader.load();
+            Scene scene = new Scene(root, 1366, 768);
+            stage.setScene(scene);
 
             initialized = true;
         } catch (IOException e) {
@@ -137,9 +128,6 @@ stage.setScene(scene);
         }
     }
 
-    /**
-     * Alias para vincular el botón de Devoluciones por Daños desde FXML
-     */
     @FXML
     private void abrirVentanaDevolucionProducto() {
         handleDevolucionProducto();
@@ -154,12 +142,9 @@ stage.setScene(scene);
 
     @FXML
     private void handleRealizarVenta() {
-        System.out.println(">>> ¡EL BOTÓN SÍ DETECTA EL CLIC! <<<");
         if (control != null) {
             control.realizarVenta();
-        }else {
-        System.out.println(">>> ERROR: El objeto control es NULL <<<");
-    }
+        }
     }
 
     @FXML
@@ -176,12 +161,14 @@ stage.setScene(scene);
         }
     }
 
-
-   @FXML
+    /**
+     * Acción del botón de "Gestionar Proveedores".
+     * Delega la responsabilidad a ControlPrincipal para respetar la arquitectura.
+     */
+    @FXML
     public void handleConsultarProveedor() {
-        // Inicia el flujo del caso de uso a través de su controlador
-        if (controlProveedor != null) {
-            controlProveedor.buscaProveedores();
+        if (control != null) {
+            control.consultarProveedor();
         }
     }
 }

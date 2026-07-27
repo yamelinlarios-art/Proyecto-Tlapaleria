@@ -17,32 +17,31 @@ import mx.uam.ayd.proyecto.negocio.modelo.Proveedor;
 @Component
 public class ControlDetalleProveedor {
 
-    @Autowired
-    private ServicioProveedor servicioProveedor;
+    private final ServicioProveedor servicioProveedor;
+    private final VentanaDetalleProveedor ventana;
 
     @Autowired
-    private VentanaDetalleProveedor ventana;
-
-    /**
-     * Inicia el flujo para mostrar los detalles de un proveedor.
-     * Manda llamar a la ventana y le pasa el proveedor seleccionado.
-     * 
-     * @param proveedor El proveedor del cual se quieren consultar los detalles
-     */
-    public void detalleProveedor(Proveedor proveedor) {
-        if (proveedor != null) {
-            // Se inyecta la referencia de este control en la ventana si fuera necesario
-            ventana.setControl(this);
-            ventana.muestra(proveedor);
-        }
+    public ControlDetalleProveedor(ServicioProveedor servicioProveedor, VentanaDetalleProveedor ventana) {
+        this.servicioProveedor = servicioProveedor;
+        this.ventana = ventana;
     }
 
     /**
-     * Inicia el flujo recuperando el proveedor por ID.
+     * Inicia el flujo recuperando el proveedor, sus facturas pendientes y
+     * su saldo total adeudado para enviarlos juntos a la vista.
+     * 
+     * @param idProveedor Identificador único del proveedor
      */
     public void inicia(long idProveedor) {
         Proveedor proveedor = servicioProveedor.recuperarProveedor(idProveedor);
-        detalleProveedor(proveedor);
+        
+        if (proveedor != null) {
+            List<Factura> facturas = servicioProveedor.recuperarFacturasPendientes(idProveedor);
+            double saldoTotal = servicioProveedor.calcularSaldoPendienteProveedor(idProveedor);
+            
+            ventana.setControl(this);
+            ventana.muestra(proveedor, facturas, saldoTotal);
+        }
     }
 
     /**
@@ -60,7 +59,7 @@ public class ControlDetalleProveedor {
     }
 
     /**
-     * Registra el pago de una factura pendiente y actualiza la vista.
+     * Registra el pago de una factura pendiente.
      */
     public boolean registrarPagoFactura(long idFactura) {
         Factura facturaPagada = servicioProveedor.registrarPago(idFactura);
