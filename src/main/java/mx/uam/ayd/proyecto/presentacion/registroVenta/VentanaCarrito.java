@@ -24,7 +24,7 @@ import mx.uam.ayd.proyecto.negocio.modelo.Venta;
 /**
  * Ventana de javafx para mostrar el resumen de los productos agregados al carrito de compras.
  * 
- * @author Equipo Proyecto
+ * @author Dydier
  */
 @Component
 public class VentanaCarrito {
@@ -76,7 +76,7 @@ public class VentanaCarrito {
         try {
             FXMLLoader loader = new FXMLLoader(fxmlUrl);
             
-            //FIX CRÍTICO: Usar setControllerFactory para que utilice la misma instancia de Spring
+            //Usar setControllerFactory para que utilice la misma instancia de Spring
             loader.setControllerFactory(clazz -> this);
 
             Parent root = loader.load();
@@ -93,7 +93,7 @@ public class VentanaCarrito {
 
             initialized = true;
         } catch (IOException e) {
-            System.err.println("❌ Error al cargar la interfaz FXML de VentanaCarrito:");
+            System.err.println("Error al cargar la interfaz FXML de VentanaCarrito:");
             e.printStackTrace();
         }
     }
