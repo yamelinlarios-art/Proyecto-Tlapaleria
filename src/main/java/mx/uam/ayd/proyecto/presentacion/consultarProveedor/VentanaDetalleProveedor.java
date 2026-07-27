@@ -167,6 +167,11 @@ public class VentanaDetalleProveedor {
         }
     }
 
+  /**
+     * Muestra en la interfaz los datos generales del proveedor consultado (HU-06).
+     * 
+     * @param proveedor objeto con la informacion del proveedor
+     */
     private void poblarDatosProveedor(Proveedor proveedor) {
         if (proveedor != null) {
             lblNombre.setText(proveedor.getNombreCompleto() != null ? proveedor.getNombreCompleto() : "N/A");
@@ -177,6 +182,11 @@ public class VentanaDetalleProveedor {
         }
     }
 
+    /**
+     * Actualiza el contenido de la tabla con las facturas pendientes recibidas (HU-06).
+     * 
+     * @param facturas lista de facturas a desplegar
+     */
     private void actualizarTablaFacturas(List<Factura> facturas) {
         if (tablaFacturas != null && facturas != null) {
             ObservableList<Factura> listaObservable = FXCollections.observableArrayList(facturas);
@@ -184,12 +194,16 @@ public class VentanaDetalleProveedor {
         }
     }
 
+    /**
+     * Muestra el saldo total acumulado del proveedor formateado como moneda (HU-06).
+     * 
+     * @param saldo monto total pendiente de pago
+     */
     private void actualizarSaldoTotal(double saldo) {
         if (lblTotalAdeudado != null) {
             lblTotalAdeudado.setText(String.format("$%.2f", saldo));
         }
     }
-
     /**
      * Vuelve a consultar al controlador las facturas y el saldo para
      * mantener actualizada la vista tras registrar un pago (HU-06).
