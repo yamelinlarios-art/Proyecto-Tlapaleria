@@ -58,7 +58,7 @@ public class Proveedor {
     private List<Devolucion> devoluciones = new ArrayList<>();
 
     /**
-     * Constructor vacío requerido por JPA.
+     * Constructor vacío 
      */
     public Proveedor() {
     }

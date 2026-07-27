@@ -24,7 +24,8 @@ import javafx.stage.Stage;
 import mx.uam.ayd.proyecto.negocio.modelo.Proveedor;
 
 /**
- * Ventana para consultar el directorio de proveedores.
+ * Ventana principal para la HU-06 (Consultar datos pendientes de proveedores).
+ * Muestra el directorio de proveedores junto con sus saldos acumulados.
  */
 @Component
 public class VentanaProveedor {
@@ -121,8 +122,7 @@ public class VentanaProveedor {
     }
 
     /**
-     * Acción invocada al presionar el botón "Ver Detalles".
-     * Extrae el ID del proveedor seleccionado y detona consultarProveedor(idProveedor).
+     * Pide consultar el detalle del proveedor seleccionado en la tabla (HU-06).
      */
     @FXML
     private void handleVerDetalle() {
@@ -132,6 +132,12 @@ public class VentanaProveedor {
         }
     }
 
+    /**
+     * Llena la tabla con la lista de proveedores, calcula el saldo total general
+     * y despliega la ventana en pantalla (HU-06).
+     * 
+     * @param proveedores lista de proveedores a mostrar
+     */
     public void muestra(List<Proveedor> proveedores) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> muestra(proveedores));
@@ -162,6 +168,11 @@ public class VentanaProveedor {
         stage.toFront();
     }
 
+    /**
+     * Muestra un dialogo emergente con un mensaje informativo o de error.
+     * 
+     * @param mensaje texto a desplegar
+     */
     public void muestraDialogoConMensaje(String mensaje) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> muestraDialogoConMensaje(mensaje));
@@ -175,6 +186,11 @@ public class VentanaProveedor {
         alert.showAndWait();
     }
 
+    /**
+     * Muestra u oculta la ventana según el valor recibido.
+     * 
+     * @param visible true para mostrar, false para ocultar
+     */
     public void setVisible(boolean visible) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> setVisible(visible));
@@ -192,6 +208,9 @@ public class VentanaProveedor {
         }
     }
 
+    /**
+     * Cierra la ventana invocando la finalizacion del flujo en el controlador (HU-06).
+     */
     @FXML
     private void onRegresar() {
         control.termina();
