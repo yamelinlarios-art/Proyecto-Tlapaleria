@@ -59,13 +59,12 @@ public class ControlDevolucionProducto {
      *
      * @param idProducto Identificador único del producto a buscar
      */
-    public void buscarProducto(long idProducto) {
+    public Producto buscarProducto(long idProducto) {
         try {
-            Producto producto = servicioProducto.buscarProductoPorId(idProducto);
-            ventana.muestraProductoEncontrado(producto);
+            return servicioProducto.buscarProductoPorId(idProducto);
         } catch (Exception e) {
-            log.error("Error al buscar producto por ID: {}", idProducto, e);
-            ventana.muestraError("Error al consultar la base de datos.");
+            log.error("Error al buscar producto con ID: {}", idProducto, e);
+            return null;
         }
     }
 
@@ -78,16 +77,15 @@ public class ControlDevolucionProducto {
      * @param cantidad Cantidad de piezas dañadas a descontar
      * @param motivo Justificación o razón de la devolución
      */
-    public void registrarDevolucion(long idProducto, int cantidad, String motivo) {
+    public Devolucion registrarDevolucion(long idProducto, int cantidad, String motivo) {
         try {
-            Devolucion devolucion = servicioDevolucion.registrarDevolucionDanado(idProducto, cantidad, motivo);
-            ventana.muestraDevolucionExitosa("Devolución registrada correctamente con Folio #" + devolucion.getIdDevolucion());
+            return servicioDevolucion.registrarDevolucionDanado(idProducto, cantidad, motivo);
         } catch (IllegalArgumentException e) {
-            log.warn("Validación fallida en devolución (HU-10): {}", e.getMessage());
-            ventana.muestraError(e.getMessage());
+            log.warn("Error de validación en HU-10: {}", e.getMessage());
+            throw e;
         } catch (Exception e) {
             log.error("Error inesperado al registrar devolución en HU-10", e);
-            ventana.muestraError("Ocurrió un error inesperado al procesar la devolución.");
+            throw e;
         }
     }
 }

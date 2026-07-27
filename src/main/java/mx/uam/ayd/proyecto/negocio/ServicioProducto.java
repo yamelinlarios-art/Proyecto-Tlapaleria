@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import mx.uam.ayd.proyecto.datos.ProductoRepository;
+import mx.uam.ayd.proyecto.negocio.modelo.Devolucion;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 
 /**
@@ -22,17 +23,20 @@ public class ServicioProducto {
 
     private final ProductoRepository productoRepository;
     private final ServicioMovimientoInventario servicioMovimientoInventario;
+    private final ServicioDevolucion servicioDevolucion;
 
     /**
-     * Inyección de dependencias para el repositorio de productos y el servicio de movimientos.
+     * Inyección de dependencias para el repositorio de productos, el servicio de movimientos y el servicio de devolución.
      */
     @Autowired
     public ServicioProducto(
             ProductoRepository productoRepository, 
-            ServicioMovimientoInventario servicioMovimientoInventario) {
+            ServicioMovimientoInventario servicioMovimientoInventario,
+            ServicioDevolucion servicioDevolucion) {
         
         this.productoRepository = productoRepository;
         this.servicioMovimientoInventario = servicioMovimientoInventario;
+        this.servicioDevolucion = servicioDevolucion;
     }
 
     /**
@@ -197,5 +201,20 @@ public class ServicioProducto {
         log.info("Movimiento de cambio de precio guardado exitosamente para el producto ID: {}", idProducto);
 
         return productoGuardado;
+    }
+
+    /**
+     * Método puente para registrar un producto dañado, delegando la responsabilidad
+     * a ServicioDevolucion tal como lo estructuraste originalmente.
+     * 
+     * @param idProducto Identificador del producto
+     * @param cantidad Cantidad dañada
+     * @param motivo Motivo de la devolución
+     * @return El objeto Devolucion registrado
+     */
+    @Transactional
+    public Devolucion registraProductoDañado(long idProducto, int cantidad, String motivo) {
+        log.info("Coordinando registro de producto dañado para ID: {}", idProducto);
+        return servicioDevolucion.registrarDevolucionDanado(idProducto, cantidad, motivo);
     }
 }
