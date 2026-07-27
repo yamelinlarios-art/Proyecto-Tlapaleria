@@ -22,15 +22,17 @@ public class Producto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long idProducto;
+    private long idProducto; // Identificador único del producto en la base de datos (indispensable para buscarlo en HU-09 y HU-10)
 
     private String clave;
 
-    private String nombre;
+    private String nombre; // Nombre del producto (ej. martillo, desarmador)
 
     private String tipoProducto;
 
-    /* Usado para HU09 */
+    /**
+     * Usado para HU-09, se guarda el precio actual del producto que el usuario modifica.
+     */
     private Double precio;
 
     private String marca;
@@ -39,18 +41,28 @@ public class Producto {
 
     private Double precioCompra;
 
+    /**
+     * Stock o piezas disponibles (se usa para la HU-10 cuando descuentas lo que se devuelve por dañado).
+     */
     private int existenciaActual;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_inventario")
     private Inventario inventario;
 
+    /**
+     * Relación con el historial: guarda los movimientos que genera 
+     * la HU-09 (cambio de precio) y la HU-10 (devoluciones).
+     */
     @OneToMany(mappedBy = "producto")
     private List<MovimientoInventario> movimientosInventario = new ArrayList<>();
 
     @OneToMany(mappedBy = "producto")
     private List<DescripcionVenta> descripcionesVenta = new ArrayList<>();
 
+    /**
+     * Relación para la HU-10: lista de devoluciones asociadas a este producto.
+     */
     @OneToMany(mappedBy = "producto")
     private List<Devolucion> devoluciones = new ArrayList<>();
 
@@ -60,8 +72,9 @@ public class Producto {
     public Producto() {
     }
 
-    // GETTERS
+   // GETTERS
 
+    /** Obtiene el ID del producto (usado en HU-09 y HU-10 para identificarlo) */
     public long getIdProducto() {
         return idProducto;
     }
@@ -78,6 +91,7 @@ public class Producto {
         return tipoProducto;
     }
 
+    /** Obtiene el precio actual (usado en HU-09) */
     public Double getPrecio() {
         return precio;
     }
@@ -94,6 +108,7 @@ public class Producto {
         return precioCompra;
     }
 
+    /** Obtiene el stock actual (usado en HU-10 para validar devoluciones) */
     public int getExistenciaActual() {
         return existenciaActual;
     }
@@ -120,6 +135,7 @@ public class Producto {
 
     // SETTERS
 
+    /** Asigna el ID del producto */
     public void setIdProducto(long idProducto) {
         this.idProducto = idProducto;
     }
@@ -136,6 +152,7 @@ public class Producto {
         this.tipoProducto = tipoProducto;
     }
 
+    /** Guarda el nuevo precio actualizado (usado en HU-09) */
     public void setPrecio(Double precio) {
         this.precio = precio;
     }
@@ -152,6 +169,7 @@ public class Producto {
         this.precioCompra = precioCompra;
     }
 
+    /** Actualiza el stock restando las piezas dañadas (usado en HU-10) */
     public void setExistenciaActual(int existenciaActual) {
         this.existenciaActual = existenciaActual;
     }
