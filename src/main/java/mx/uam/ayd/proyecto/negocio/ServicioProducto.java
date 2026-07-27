@@ -1,16 +1,12 @@
 package mx.uam.ayd.proyecto.negocio;
 
-import java.time.LocalDateTime;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import mx.uam.ayd.proyecto.datos.MovimientoInventarioRepository;
 import mx.uam.ayd.proyecto.datos.ProductoRepository;
-import mx.uam.ayd.proyecto.negocio.modelo.MovimientoInventario;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 
 /**
@@ -25,18 +21,18 @@ public class ServicioProducto {
     private static final Logger log = LoggerFactory.getLogger(ServicioProducto.class);
 
     private final ProductoRepository productoRepository;
-    private final MovimientoInventarioRepository movimientoRepository;
+    private final ServicioMovimientoInventario servicioMovimientoInventario;
 
     /**
-     * Inyección de dependencias para los repositorios de productos y movimientos.
+     * Inyección de dependencias para el repositorio de productos y el servicio de movimientos.
      */
     @Autowired
     public ServicioProducto(
             ProductoRepository productoRepository, 
-            MovimientoInventarioRepository movimientoRepository) {
+            ServicioMovimientoInventario servicioMovimientoInventario) {
         
         this.productoRepository = productoRepository;
-        this.movimientoRepository = movimientoRepository;
+        this.servicioMovimientoInventario = servicioMovimientoInventario;
     }
 
     /**
@@ -121,17 +117,15 @@ public class ServicioProducto {
         producto.setExistenciaActual(nuevaExistencia);
         Producto productoGuardado = productoRepository.save(producto);
 
-        // Registro automático del movimiento de entrada en el historial
-        MovimientoInventario movimiento = new MovimientoInventario();
-        movimiento.setFecha(LocalDateTime.now());
-        movimiento.setTipoMovimiento("ENTRADA");
-        movimiento.setCantidad(cantidad);
-        movimiento.setExistenciaAnterior(existenciaAnterior);
-        movimiento.setExistenciaActual(nuevaExistencia);
-        movimiento.setObservacion("Entrada de mercancía registrada por clave");
-        movimiento.setProducto(productoGuardado);
-
-        movimientoRepository.save(movimiento);
+        // Registro automático del movimiento de entrada utilizando el servicio correspondiente
+        servicioMovimientoInventario.registrarMovimiento(
+            productoGuardado, 
+            cantidad, 
+            existenciaAnterior, 
+            nuevaExistencia, 
+            "ENTRADA", 
+            "Entrada de mercancía registrada por clave"
+        );
 
         log.info("Se registró entrada de {} unidades para el producto {}", cantidad, clave);
 
@@ -158,9 +152,7 @@ public class ServicioProducto {
      * 1. Valida que el nuevo precio sea un valor positivo mayor a cero.
      * 2. Busca el producto en la base de datos por su ID.
      * 3. Cambia el precio anterior por el nuevo precio y guarda los cambios.
-     * 4. Genera de forma automática un registro en la bitácora (MovimientoInventario) 
-     *    marcando el tipo como "CAMBIO_PRECIO", con cantidad 0 (porque no afecta piezas físicas)
-     *    y detallando la modificación en las observaciones.
+     * 4. Genera de forma automática un registro en la bitácora llamando al servicio de movimientos.
      * 
      * @param idProducto ID del producto cuyo precio va a cambiar
      * @param nuevoPrecio El nuevo valor monetario asignado al producto
@@ -190,19 +182,17 @@ public class ServicioProducto {
         log.info("Precio del producto {} (ID: {}) actualizado exitosamente de ${} a ${}", 
                  productoGuardado.getNombre(), idProducto, precioAnterior, nuevoPrecio);
 
-        // Registro automático en el repositorio de movimientos
+        // Registro automático en el historial mediante el servicio de movimientos (Coincide con el diagrama)
         int existencia = productoGuardado.getExistenciaActual();
-
-        MovimientoInventario movimiento = new MovimientoInventario();
-        movimiento.setFecha(LocalDateTime.now());
-        movimiento.setTipoMovimiento("CAMBIO_PRECIO");
-        movimiento.setCantidad(0); // Cero piezas afectadas porque solo cambió el costo/precio
-        movimiento.setExistenciaAnterior(existencia);
-        movimiento.setExistenciaActual(existencia);
-        movimiento.setObservacion("Ajuste de precio: de $" + precioAnterior + " a $" + nuevoPrecio);
-        movimiento.setProducto(productoGuardado);
-
-        movimientoRepository.save(movimiento);
+        
+        servicioMovimientoInventario.registrarMovimiento(
+            productoGuardado, 
+            0, // Cero piezas afectadas porque solo cambió el costo/precio
+            existencia, 
+            existencia, 
+            "CAMBIO_PRECIO", 
+            "Ajuste de precio: de $" + precioAnterior + " a $" + nuevoPrecio
+        );
 
         log.info("Movimiento de cambio de precio guardado exitosamente para el producto ID: {}", idProducto);
 
