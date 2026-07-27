@@ -44,3 +44,8 @@ public interface ProductoRepository extends CrudRepository<Producto, Long> {
      */
     Producto findByIdProducto(long idProducto);
 }
+
+
+
+
+//Este repositorio me ayuda en mi HU-03 porque me da la información descriptiva del producto (nombre, clave) para que la alerta no muestre solo un número sin nombre.

@@ -9,8 +9,8 @@ import mx.uam.ayd.proyecto.negocio.ServicioInventario;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 
 /**
- * Controlador para la HU de Revisión de Existencias / Alertas de Stock.
- * 
+ * Controlador de la HU-03 para las alertas de stock y revision de existencias.
+ *
  * @author kevin dydier
  */
 @Component
@@ -23,6 +23,13 @@ public class ControlRevisarExistencia {
     private final VentanaDetalleProducto ventanaDetalle;
 
     ///////////////////////////////////////////////////////////////////////////// constructor para inyección de dependencias
+    /**
+     * Constructor donde spring nos inyecta el servicio de inventarios y las vistas.
+     * 
+     * @param servicioInventario el servicio de negocio
+     * @param ventanaRevision vista principal de la tabla de alertas
+     * @param ventanaDetalle vista modal del detalle
+     */
     @Autowired
     public ControlRevisarExistencia(ServicioInventario servicioInventario, VentanaRevisionExistencia ventanaRevision, VentanaDetalleProducto ventanaDetalle) {
         this.servicioInventario = servicioInventario;
@@ -32,7 +39,7 @@ public class ControlRevisarExistencia {
 
     ////////////////////////////////////////////////////////////////////////////////////// Métodos del controlador
     /**
-     * Inicia el flujo de la vista de alertas de existencia.
+     * Arranca todo el flujo de la vista de alertas al abrir la pantalla.
      */
     public void inicia() {
         this.ventanaDetalle.setControl(this); // Asigna la referencia del controlador al detalle
@@ -42,7 +49,7 @@ public class ControlRevisarExistencia {
 
     ////////////////////////////////////////////////////////////////////////////////////////////// obtiene los productos con bajo stock 
     /**
-     * Consulta al servicio los productos en alerta y los envía a la vista.
+     * Pide las alertas al servicio y decide si mandar la lista a la tabla o sacar aviso de que no hay alertas.
      */
     public void consultarAlertas() {
         List<Producto> productosAlerta = servicioInventario.consultarAlertas();
@@ -56,10 +63,9 @@ public class ControlRevisarExistencia {
     }
 
     /**
-     * Despliega el detalle del stock actual y el límite mínimo configurado.
-     * Se ejecuta cuando el usuario hace clic sobre una advertencia en la tabla.
+     * Pide la informacion detallada de un producto seleccionado para mostralo en el dialogo emergente.
      *
-     * @param idProducto Identificador técnico para recuperar el detalle.
+     * @param idProducto id del producto que selecciono el usuario en la tabla
      */
     public void consultarDetalleProducto(long idProducto) {
         // Recupera el producto desde el negocio

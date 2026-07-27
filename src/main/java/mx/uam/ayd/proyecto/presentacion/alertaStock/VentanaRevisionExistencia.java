@@ -1,5 +1,4 @@
 package mx.uam.ayd.proyecto.presentacion.alertaStock;
-
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,6 +23,8 @@ import java.util.List;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 
 /**
+ * Ventana principal de javafx para la vista de revision de existencias y productos con alerta.
+ *
  * @author kevin dydier
  */
 @Component
@@ -51,11 +52,17 @@ public class VentanaRevisionExistencia {
     
     private boolean initialized = false;
 
+    /**
+     * Constructor donde inicializamos las listas observables para llenar la tabla de alertas
+     */
     public VentanaRevisionExistencia() {
         productosData = FXCollections.observableArrayList();
         filteredData = new FilteredList<>(productosData, p -> true); // Inicializa aceptando todos los elementos
     }
     
+    /**
+     * Prepara y carga los componentes de la interfaz grafica de javafx desde el fxml
+     */
     private void initializeUI() {
         if (initialized) {
             return;
@@ -107,7 +114,6 @@ public class VentanaRevisionExistencia {
                 });
             });
 
-            // 🚨 CORRECCIÓN AQUÍ: Resaltado en rojo respetando la selección de JavaFX
             tablaAlertas.setRowFactory(tv -> new TableRow<Producto>() {
                 @Override
                 protected void updateItem(Producto item, boolean empty) {
@@ -135,6 +141,11 @@ public class VentanaRevisionExistencia {
         }
     }
     
+    /**
+     * Muestra la pantalla principal asignandole primero su controlador
+     * 
+     * @param control instancia del controlador
+     */
     public void muestra(ControlRevisarExistencia control) {
         this.control = control;
         if (!Platform.isFxApplicationThread()) {
@@ -146,6 +157,11 @@ public class VentanaRevisionExistencia {
         stage.show();
     }
     
+    /**
+     * Recibe la lista de productos en alerta y los manda a la tabla para que se vean en rojo
+     * 
+     * @param productos lista de productos recuperados del servicio
+     */
     public void mostrarAlertas(List<Producto> productos) {
         Platform.runLater(() -> {
             productosData.clear();
@@ -155,6 +171,11 @@ public class VentanaRevisionExistencia {
         });
     }
 
+    /**
+     * Despliega un dialogo de alerta generico con un mensaje en pantalla
+     * 
+     * @param mensaje texto a mostrar en la ventana
+     */
     public void muestraDialogoConMensaje(String mensaje) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> this.muestraDialogoConMensaje(mensaje));
@@ -168,10 +189,16 @@ public class VentanaRevisionExistencia {
         alert.showAndWait();
     }
 
+    /**
+     * Muestra el aviso informativo cuando no hay productos bajo el minimo
+     */
     public void mostrarMensajeSinAlertas() {
         muestraDialogoConMensaje("No se detectaron productos con stock bajo el mínimo.");
     }
     
+    /**
+     * Evento al dar clic en ver detalle, valida si se selecciono algo en la tabla
+     */
     @FXML
     private void handleVerDetalle() {
         Producto seleccionado = tablaAlertas.getSelectionModel().getSelectedItem();
@@ -182,6 +209,9 @@ public class VentanaRevisionExistencia {
         }
     }
     
+    /**
+     * Cierra la ventana actual
+     */
     @FXML
     private void handleCerrar() {
         stage.close();

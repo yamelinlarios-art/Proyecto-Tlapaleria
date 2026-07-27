@@ -8,6 +8,7 @@ import mx.uam.ayd.proyecto.negocio.modelo.Inventario;
  *
  * @author KEVIN DYDIER, yael Mora Simón
  */
+
 public interface InventarioRepository extends CrudRepository<Inventario, Long> {
 
     /**
@@ -19,3 +20,6 @@ public interface InventarioRepository extends CrudRepository<Inventario, Long> {
     public Inventario findByIdProducto(long idProducto);
 
 }
+
+// Este repositorio me ayuda a HU-03 en que  me da la información numérica del stock (cuántos hay y cuál es el mínimo).
+

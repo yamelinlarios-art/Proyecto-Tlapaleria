@@ -1,5 +1,4 @@
 package mx.uam.ayd.proyecto.presentacion.alertaStock;
-
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,6 +14,8 @@ import java.io.IOException;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 
 /**
+ * Ventana emergente modal para ver el detalle completo y el stock minimo de un producto.
+ *
  * @author KEVIND DYDIER
  */
 @Component
@@ -39,11 +40,14 @@ public class VentanaDetalleProducto {
     
     private boolean initialized = false;
 
+    /**
+     * Constructor vacio para que spring pueda instanciar el componente
+     */
     public VentanaDetalleProducto() {
     }
     
     /**
-     * Inicializa los componentes de la interfaz en el hilo de JavaFX
+     * Inicializa la interfaz grafica en el hilo de javafx y carga el archivo fxml
      */
     private void initializeUI() {
         if (initialized) {
@@ -74,12 +78,20 @@ public class VentanaDetalleProducto {
         }
     }
     
+    /**
+     * Guarda la referencia al controlador principal por si se ocupa
+     * 
+     * @param control instancia del controlador
+     */
     public void setControl(ControlRevisarExistencia control) {
         this.control = control;
     }
     
     /**
-     * Muestra el diálogo y establece los datos del producto seleccionado
+     * Despliega la ventana modal y le pasa los datos del producto a las etiquetas
+     * 
+     * @param producto objeto producto a mostrar
+     * @param stockMinimo limite de stock minimo configurado
      */
     public void muestra(Producto producto, int stockMinimo) {
         if (!Platform.isFxApplicationThread()) {
@@ -105,6 +117,9 @@ public class VentanaDetalleProducto {
         }
     }
     
+    /**
+     * Evento para cerrar la ventana emergente al dar clic en cerrar
+     */
     @FXML
     private void handleCerrar() {
         if (stage != null) {

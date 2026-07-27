@@ -14,7 +14,7 @@ import mx.uam.ayd.proyecto.negocio.modelo.Inventario;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 
 /**
- * Servicio encargado de la lógica de negocio del inventario.
+ * Servicio para la logica de negocio del inventario y las alertas de stock bajo.
  *
  * @author Kevin Dydier y Yael Mora Simón
  */
@@ -26,6 +26,12 @@ public class ServicioInventario {
     private final InventarioRepository inventarioRepository;
     private final ProductoRepository productoRepository;
 
+    /**
+     * Constructor para inyectar los repos de la bd
+     * 
+     * @param inventarioRepository repo de inventarios
+     * @param productoRepository repo de productos
+     */
     @Autowired
     public ServicioInventario(InventarioRepository inventarioRepository, ProductoRepository productoRepository) {
         this.inventarioRepository = inventarioRepository;
@@ -33,29 +39,31 @@ public class ServicioInventario {
     }
 
     /**
+     * Revisa la bd y busca todos los productos que tienen stock bajo o igual al minimo
+     * para ponerlos en la lista de alertas que se pinta en rojo en la tabla.
      *
-     * @return Lista de productos que requieren reabastecimiento (resaltados en rojo).
+     * @return lista de productos que necesitan reabastecerse
      */
     public List<Producto> consultarAlertas() {
         log.info("Iniciando consulta de alertas de inventario...");
         List<Producto> productosConAlerta = new ArrayList<>();
 
-        // Recuperar todos los registros de inventario
+        // recuperamos todos los registros de inventario de la bd
         Iterable<Inventario> todosLosInventarios = inventarioRepository.findAll();
 
         for (Inventario item : todosLosInventarios) {
-            // Validar Stock Mínimo
+            // checamos si la existencia actual sobrepasa o es igual al stock minimo
             if (item.getExistenciaActual() <= item.getStockMinimo()) {
                 
-                // Buscamos el producto utilizando el id del inventario
+                // buscamos el producto por su id
                 Producto producto = productoRepository.findByIdProducto(item.getIdProducto());
 
-                // Si no lo encuentra por método personalizado, intenta por findById
+                // por si no lo encuentra con el personalizado usamos el de spring
                 if (producto == null) {
                     producto = productoRepository.findById(item.getIdProducto()).orElse(null);
                 }
 
-                // Si aún sigue sin existir en la tabla PRODUCTO, creamos un objeto para que la vista lo muestre
+                // si de plano no esta en la tabla producto creamos uno ficticio para que no truene
                 if (producto == null) {
                     producto = new Producto();
                     producto.setIdProducto(item.getIdProducto());
@@ -63,7 +71,7 @@ public class ServicioInventario {
                     producto.setNombre("Producto ID " + item.getIdProducto());
                 }
 
-                // Sincronizar el stock del inventario hacia el objeto Producto para la UI
+                // le pasamos el stock del inventario al objeto producto para mostrarlo en la tabla
                 producto.setExistenciaActual(item.getExistenciaActual());
 
                 productosConAlerta.add(producto);
@@ -74,15 +82,15 @@ public class ServicioInventario {
     }
     
     /**
-     * Recupera el detalle de un producto específico para la vista.
+     * Regresa la info del producto buscando en la tabla de productos y le pega su stock actual
      *
-     * @param idProducto
-     * @return El producto solicitado
+     * @param idProducto id del producto que queremos
+     * @return el producto encontrado con su existencia
      */
     public Producto obtenerDetalleProducto(long idProducto) {
         Producto producto = productoRepository.findById(idProducto).orElse(null);
         if (producto != null) {
-            // Buscar el inventario correspondiente para asignarle su existencia real
+            // le pegamos la existencia real desde el inventario
             Inventario inventario = inventarioRepository.findById(idProducto).orElse(null);
             if (inventario != null) {
                 producto.setExistenciaActual(inventario.getExistenciaActual());
@@ -92,10 +100,10 @@ public class ServicioInventario {
     }
 
     /**
-     * Recupera el stock mínimo configurado para un producto en el inventario.
+     * Trae el stock minimo que esta guardado en el inventario para un producto
      *
-     * @param idProducto
-     * @return El límite mínimo de stock
+     * @param idProducto id del producto
+     * @return el limite minimo o cero si no hay registro
      */
     public int obtenerStockMinimo(long idProducto) {
         Inventario inventario = inventarioRepository.findById(idProducto).orElse(null);
@@ -103,9 +111,9 @@ public class ServicioInventario {
     }
       
     /**
-     * Recupera todos los registros del inventario.
+     * Imprime en consola los productos con bajo stock, sirve mas para probar que funcione
      *
-     * @return Lista de inventarios.
+     * @return lista con los inventarios que estan en minimo
      */
     public List<Inventario> obtenerProductosBajoStock() {
 
