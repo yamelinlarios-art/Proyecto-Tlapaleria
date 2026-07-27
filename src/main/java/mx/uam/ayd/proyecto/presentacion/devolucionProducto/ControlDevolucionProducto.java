@@ -11,7 +11,9 @@ import mx.uam.ayd.proyecto.negocio.modelo.Devolucion;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 
 /**
- * Controlador de presentación para coordinar el flujo de la HU-10.
+ * Controlador de presentación para coordinar el flujo de la HU-10 (Devolución de productos dañados). 
+ * Conecta las acciones de la interfaz gráfica (VentanaDevolucionProducto) 
+ * con los servicios de negocio de devoluciones y productos.
  *
  * @author Yamelin Larios Nepomuseno
  */
@@ -24,6 +26,14 @@ public class ControlDevolucionProducto {
     private final ServicioProducto servicioProducto;
     private final VentanaDevolucionProducto ventana;
 
+    /**
+     * Constructor utilizado por Spring para inyectar automáticamente 
+     * los servicios necesarios y la ventana asociada.
+     *
+     * @param servicioDevolucion servicio encargado de procesar devoluciones y actualizar stock
+     * @param servicioProducto servicio encargado de buscar y consultar productos
+     * @param ventana interfaz visual de la HU-10
+     */
     @Autowired
     public ControlDevolucionProducto(ServicioDevolucion servicioDevolucion, 
                                      ServicioProducto servicioProducto, 
@@ -34,7 +44,8 @@ public class ControlDevolucionProducto {
     }
 
     /**
-     * Inicia la historia de usuario mostrando la ventana.
+     * Inicia el flujo de la historia de usuario (HU-10) configurando 
+     * el enlace bidireccional con el controlador y ordenando que se muestre la ventana.
      */
     public void inicia() {
         log.info("Iniciando flujo de HU-10: Devolución de productos dañados");
@@ -43,7 +54,10 @@ public class ControlDevolucionProducto {
     }
 
     /**
-     * Busca la información de un producto para previsualizarlo en la vista.
+     * Busca la información de un producto por su ID para previsualizar sus datos 
+     * (como nombre y stock actual) directamente en la vista antes de aplicar la devolución.
+     *
+     * @param idProducto Identificador único del producto a buscar
      */
     public void buscarProducto(long idProducto) {
         try {
@@ -56,17 +70,23 @@ public class ControlDevolucionProducto {
     }
 
     /**
-     * Delega la lógica de negocio para procesar la devolución.
+     * Delega la lógica de negocio para procesar la devolución por daño.
+     * Maneja las excepciones de validación (como stock insuficiente o datos vacíos) 
+     * para ordenarle a la ventana que despliegue alertas gráficas al usuario.
+     *
+     * @param idProducto Identificador del producto afectado
+     * @param cantidad Cantidad de piezas dañadas a descontar
+     * @param motivo Justificación o razón de la devolución
      */
     public void registrarDevolucion(long idProducto, int cantidad, String motivo) {
         try {
             Devolucion devolucion = servicioDevolucion.registrarDevolucionDanado(idProducto, cantidad, motivo);
             ventana.muestraDevolucionExitosa("Devolución registrada correctamente con Folio #" + devolucion.getIdDevolucion());
         } catch (IllegalArgumentException e) {
-            log.warn("Validación fallida en devolución: {}", e.getMessage());
+            log.warn("Validación fallida en devolución (HU-10): {}", e.getMessage());
             ventana.muestraError(e.getMessage());
         } catch (Exception e) {
-            log.error("Error inesperado al registrar devolución", e);
+            log.error("Error inesperado al registrar devolución en HU-10", e);
             ventana.muestraError("Ocurrió un error inesperado al procesar la devolución.");
         }
     }
