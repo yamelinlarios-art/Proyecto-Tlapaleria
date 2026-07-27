@@ -1,4 +1,4 @@
-package mx.uam.ayd.proyecto.presentacion.agregarProductos; // Revisa que el paquete coincida con tu proyecto
+package mx.uam.ayd.proyecto.presentacion.agregarProductos;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -11,6 +11,10 @@ import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 import mx.uam.ayd.proyecto.negocio.modelo.Venta;
 import mx.uam.ayd.proyecto.presentacion.registroVenta.ControlRegistroVenta;
 
+/**
+ * Controlador principal para la HU-05 (Agregar productos a una venta).
+ * Se encarga de coordinar la interfaz grafica con la logica de negocio.
+ */
 @Component
 public class ControlAgregarProductos {
 
@@ -23,17 +27,15 @@ public class ControlAgregarProductos {
     @Autowired
     private VistaAgregarProductos vistaAgregarProductos;
 
-    // Inyección del controlador de la HU de tu compañero
     @Autowired
     @Lazy
     private ControlRegistroVenta controlRegistroVenta;
 
-    // Referencia de la venta activa
     private Venta ventaActual;
 
     /**
-     * Punto de entrada principal. Carga el catálogo inicial y despliega la ventana.
-     * Corresponde a inicia() en el diagrama de secuencia.
+     * Inicia el flujo de la HU-05 cargando la lista de productos
+     * y mostrando la ventana principal.
      */
     public void inicia() {
         Iterable<Producto> productos = servicioProducto.recuperaProductos();
@@ -41,43 +43,40 @@ public class ControlAgregarProductos {
     }
 
     /**
-     * Genera una nueva transacción de venta.
-     * Corresponde a iniciarVenta() en el diagrama de secuencia.
+     * Crea una nueva venta vacia para comenzar a agregar productos (HU-05).
      */
     public void iniciarVenta() {
         this.ventaActual = servicioVenta.iniciarVenta();
     }
 
     /**
-     * Procesa la adición de un producto al carrito previa validación de inventario.
-     * Corresponde al flujo verificaDisponibilidad y agregarProducto en el diagrama.
+     * Agrega un producto a la venta actual tras validar que haya inventario (HU-05).
+     * Muestra la venta actualizada o un mensaje si no hay stock suficiente.
      * 
-     * @param producto Producto seleccionado en la vista
-     * @param cantidad Cantidad ingresada por el usuario
+     * @param producto producto seleccionado
+     * @param cantidad cantidad de piezas a agregar
      */
     public void agregarProductos(Producto producto, int cantidad) {
-        // 1. Verifica si hay existencias suficientes
+        // Validamos si hay existencias
         boolean disponible = servicioProducto.verificaDisponibilidad(producto, cantidad);
 
         if (disponible) {
-            // 2. Si hay stock, agrega el producto a la venta
+            // Agregamos y guardamos los cambios
             this.ventaActual = servicioVenta.agregarProducto(producto, cantidad, this.ventaActual);
-            
-            // 3. Persiste/actualiza la venta
             servicioVenta.actualizarVenta(this.ventaActual);
             
-            // 4. Notifica a la vista para reflejar el carrito actualizado
+            // Actualizamos la tabla/carrito en pantalla
             vistaAgregarProductos.mostrarVenta(this.ventaActual);
         } else {
-            // Notifica a la vista que no hay suficiente stock
             vistaAgregarProductos.muestraMensajeError("No hay inventario suficiente para el producto: " + producto.getNombre());
         }
     }
 
     /**
-     * Pasa el control a la HU de Registro/Confirmación de Venta al presionar "Siguiente".
+     * Valida que la venta tenga productos agregados (HU-05) antes de
+     * pasar el control al siguiente modulo de cobro/registro.
      */
-   public void continuarRegistroVenta() {
+    public void continuarRegistroVenta() {
         if (this.ventaActual == null || 
             this.ventaActual.getProductos() == null || 
             this.ventaActual.getProductos().isEmpty()) {
@@ -86,12 +85,9 @@ public class ControlAgregarProductos {
             return;
         }
 
-        // Ocultar tu vista
+        // Oculta esta ventana y le pasa la venta activa al siguiente flujo
         vistaAgregarProductos.setVisible(false);
 
-        //controlRegistroVenta.iniciaConVenta(this.ventaActual);
-
-        // Enviar el objeto VENTA completo a tu compañero
         Platform.runLater(() -> {
             controlRegistroVenta.iniciaConVenta(this.ventaActual);
         });

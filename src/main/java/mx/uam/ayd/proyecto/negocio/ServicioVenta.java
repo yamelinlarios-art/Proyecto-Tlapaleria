@@ -98,21 +98,22 @@ public class ServicioVenta {
     }
 
     /**
-     * Crea un objeto de venta nuevo para iniciar la transaccion
+     * Inicia una nueva venta en blanco para comenzar el flujo de la HU-05.
      * 
-     * @return una nueva venta vacia
+     * @return una nueva instancia de Venta vacia
      */
     public Venta iniciarVenta() {
         return new Venta();
     }
 
     /**
-     * Agrega un producto y la cantidad deseada al objeto de venta
+     * Agrega un producto a la venta (HU-05). Si la venta no existe
+     * todavia, crea una nueva antes de agregar el producto.
      * 
      * @param producto producto a vender
-     * @param cantidad piezas que se lleva el cliente
-     * @param venta la venta actual a la que se le suma el producto
-     * @return la venta actualizada
+     * @param cantidad piezas elegidas
+     * @param venta la venta actual
+     * @return la venta con el producto ya agregado
      */
     public Venta agregarProducto(Producto producto, int cantidad, Venta venta) {
         if (venta == null) {
@@ -123,10 +124,10 @@ public class ServicioVenta {
     }
 
     /**
-     * Guarda los cambios de una venta en la base de datos
+     * Guarda el estado actual de la venta en la base de datos (HU-05).
      * 
-     * @param venta objeto venta con los cambios
-     * @return true si lo guardo bien o false si venia nula
+     * @param venta la venta que se quiere actualizar
+     * @return true si se guardo con exito, false si la venta era nula
      */
     public boolean actualizarVenta(Venta venta) {
         if (venta == null) {
