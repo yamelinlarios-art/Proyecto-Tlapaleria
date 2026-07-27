@@ -17,6 +17,12 @@ import mx.uam.ayd.proyecto.negocio.modelo.MovimientoInventario;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 import mx.uam.ayd.proyecto.negocio.modelo.Venta;
 
+/**
+ * Servicio principal para procesar la logica de las ventas del carrito,
+ * descuenta el stock de las tablas y guarda los movimientos en la bd.
+ *
+ * @author dydier
+ */
 @Service
 public class ServicioVenta {
 
@@ -33,8 +39,12 @@ public class ServicioVenta {
     private MovimientoInventarioRepository movimientoRepository;
 
     /**
-     * Registra una nueva venta, actualiza el stock en Producto e Inventario,
-     * guarda el historial de movimiento y calcula el cambio.
+     * Hace todo el proceso de la venta: descuenta existencias en producto e inventario,
+     * genera la salida en el historial de movimientos y calcula el cambio del cliente.
+     * 
+     * @param detalles lista de productos y cantidades compradas
+     * @param montoRecibido dinero en efectivo que entrego el cliente
+     * @return la venta guardada en la base de datos
      */
     @Transactional
     public Venta registrarVenta(List<DescripcionVenta> detalles, double montoRecibido) {
@@ -52,18 +62,18 @@ public class ServicioVenta {
                     int cantidadVendida = detalle.getCantidad();
                     int nuevaExistencia = existenciaAnterior - cantidadVendida;
                     
-                    // 1. Actualizar el stock en Producto
+                    //Actualizar el stock en Producto
                     productoBD.setExistenciaActual(nuevaExistencia);
                     productoRepository.save(productoBD);
 
-                    // 2. 🚨 ACTUALIZAR EN INVENTARIO (Para que se dispare la Alerta de Stock)
+                    //ACTUALIZAR EN INVENTARIO (Para que se dispare la Alerta de Stock)
                     Inventario inventario = inventarioRepository.findById(productoBD.getIdProducto()).orElse(null);
                     if (inventario != null) {
                         inventario.setExistenciaActual(nuevaExistencia);
                         inventarioRepository.save(inventario);
                     }
                     
-                    // 3. Registrar salida en Historial de Movimientos
+                    //Registrar salida en Historial de Movimientos
                     MovimientoInventario movimiento = new MovimientoInventario();
                     movimiento.setFecha(LocalDateTime.now());
                     movimiento.setTipoMovimiento("SALIDA");
@@ -75,7 +85,7 @@ public class ServicioVenta {
 
                     movimientoRepository.save(movimiento);
                     
-                    // 4. Agregar a la venta
+                    //Agregar a la venta
                     nuevaVenta.agregaProducto(productoBD, cantidadVendida);
                 }
             }
@@ -87,10 +97,23 @@ public class ServicioVenta {
         return ventaRepository.save(nuevaVenta);
     }
 
+    /**
+     * Crea un objeto de venta nuevo para iniciar la transaccion
+     * 
+     * @return una nueva venta vacia
+     */
     public Venta iniciarVenta() {
         return new Venta();
     }
 
+    /**
+     * Agrega un producto y la cantidad deseada al objeto de venta
+     * 
+     * @param producto producto a vender
+     * @param cantidad piezas que se lleva el cliente
+     * @param venta la venta actual a la que se le suma el producto
+     * @return la venta actualizada
+     */
     public Venta agregarProducto(Producto producto, int cantidad, Venta venta) {
         if (venta == null) {
             venta = iniciarVenta();
@@ -99,6 +122,12 @@ public class ServicioVenta {
         return venta;
     }
 
+    /**
+     * Guarda los cambios de una venta en la base de datos
+     * 
+     * @param venta objeto venta con los cambios
+     * @return true si lo guardo bien o false si venia nula
+     */
     public boolean actualizarVenta(Venta venta) {
         if (venta == null) {
             return false;

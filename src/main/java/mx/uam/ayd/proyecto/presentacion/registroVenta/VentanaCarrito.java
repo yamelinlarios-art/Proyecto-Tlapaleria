@@ -1,5 +1,4 @@
 package mx.uam.ayd.proyecto.presentacion.registroVenta;
-
 import java.io.IOException;
 import java.net.URL;
 
@@ -22,6 +21,11 @@ import javafx.stage.Stage;
 import mx.uam.ayd.proyecto.negocio.modelo.DescripcionVenta;
 import mx.uam.ayd.proyecto.negocio.modelo.Venta;
 
+/**
+ * Ventana de javafx para mostrar el resumen de los productos agregados al carrito de compras.
+ * 
+ * @author Equipo Proyecto
+ */
 @Component
 public class VentanaCarrito {
 
@@ -37,51 +41,62 @@ public class VentanaCarrito {
     @FXML private TableColumn<DescripcionVenta, Double> colSubtotal;
     @FXML private Label lblTotal;
 
+    /**
+     * Constructor vacio para instanciar la ventana
+     */
     public VentanaCarrito() {
     }
 
+    /**
+     * Le asigna la referencia del controlador principal a la vista
+     * 
+     * @param control instancia del controlador
+     */
     public void setControl(ControlRegistroVenta control) {
         this.control = control;
     }
 
-private void initializeUI() {
-    if (initialized) return;
-    
-    if (!Platform.isFxApplicationThread()) {
-        Platform.runLater(this::initializeUI);
-        return;
-    }
-
-    URL fxmlUrl = getClass().getResource("/fxml/ventana-carrito-compras.fxml");
-    if (fxmlUrl == null) {
-        System.err.println("❌ Error: No se encontró el FXML '/fxml/ventana-carrito-compras.fxml'");
-        return;
-    }
-
-    try {
-        FXMLLoader loader = new FXMLLoader(fxmlUrl);
+    /**
+     * Prepara e inicializa la interfaz grafica cargando el archivo fxml en el hilo de javafx
+     */
+    private void initializeUI() {
+        if (initialized) return;
         
-        // 🔧 FIX CRÍTICO: Usar setControllerFactory para que utilice la misma instancia de Spring
-        loader.setControllerFactory(clazz -> this);
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(this::initializeUI);
+            return;
+        }
 
-        Parent root = loader.load();
-        
-        stage = new Stage();
-        stage.setTitle("Confirmación de Venta - Resumen");
-        stage.setScene(new Scene(root));
-        
-        // Mapeo seguro de columnas
-        if (colNombre != null) colNombre.setCellValueFactory(new PropertyValueFactory<>("productoNombre")); 
-        if (colPrecio != null) colPrecio.setCellValueFactory(new PropertyValueFactory<>("precioUnitario"));
-        if (colCantidad != null) colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
-        if (colSubtotal != null) colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
+        URL fxmlUrl = getClass().getResource("/fxml/ventana-carrito-compras.fxml");
+        if (fxmlUrl == null) {
+            System.err.println(" Error: No se encontró el FXML '/fxml/ventana-carrito-compras.fxml'");
+            return;
+        }
 
-        initialized = true;
-    } catch (IOException e) {
-        System.err.println("❌ Error al cargar la interfaz FXML de VentanaCarrito:");
-        e.printStackTrace();
+        try {
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
+            
+            //FIX CRÍTICO: Usar setControllerFactory para que utilice la misma instancia de Spring
+            loader.setControllerFactory(clazz -> this);
+
+            Parent root = loader.load();
+            
+            stage = new Stage();
+            stage.setTitle("Confirmación de Venta - Resumen");
+            stage.setScene(new Scene(root));
+            
+            // Mapeo seguro de columnas
+            if (colNombre != null) colNombre.setCellValueFactory(new PropertyValueFactory<>("productoNombre")); 
+            if (colPrecio != null) colPrecio.setCellValueFactory(new PropertyValueFactory<>("precioUnitario"));
+            if (colCantidad != null) colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
+            if (colSubtotal != null) colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
+
+            initialized = true;
+        } catch (IOException e) {
+            System.err.println("❌ Error al cargar la interfaz FXML de VentanaCarrito:");
+            e.printStackTrace();
+        }
     }
-}
 
     /**
      * Despliega la ventana recibiendo el objeto Venta completo.
@@ -111,6 +126,11 @@ private void initializeUI() {
         }
     }
 
+    /**
+     * Saca una ventanita de alerta o aviso emergente con un texto en pantalla
+     * 
+     * @param mensaje texto que se le muestra al usuario
+     */
     public void muestraDialogoConMensaje(String mensaje) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> this.muestraDialogoConMensaje(mensaje));
@@ -124,6 +144,11 @@ private void initializeUI() {
         alert.showAndWait();
     }
 
+    /**
+     * Muestra u oculta la pantalla segun el parametro boolean que le pases
+     * 
+     * @param visible true para mostrar y false para ocultar
+     */
     public void setVisible(boolean visible) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> this.setVisible(visible));
@@ -139,6 +164,9 @@ private void initializeUI() {
         }
     }
 
+    /**
+     * Accion del boton para confirmar la venta y pasar al cobro
+     */
     @FXML
     private void onConfirmarVenta() {
         if (control != null) {
@@ -146,6 +174,9 @@ private void initializeUI() {
         }
     }
 
+    /**
+     * Accion del boton para cancelar el proceso y cerrar las pantallas
+     */
     @FXML
     private void onCancelarVenta() {
         if (control != null) {

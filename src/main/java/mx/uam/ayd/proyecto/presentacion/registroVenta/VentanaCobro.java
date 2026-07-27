@@ -1,4 +1,3 @@
-
 package mx.uam.ayd.proyecto.presentacion.registroVenta;
 
 import java.io.IOException;
@@ -18,6 +17,11 @@ import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+/**
+ * Ventana emergente modal donde se ingresa el efectivo recibido y se calcula el cambio al cobrar.
+ * 
+ * @author Equipo Proyecto
+ */
 @Component
 public class VentanaCobro {
 
@@ -33,44 +37,56 @@ public class VentanaCobro {
     @FXML private TextField txtPago;
     @FXML private Label lblCambio;
 
-    // Constructor sin inicialización
+    /**
+     * Constructor vacio para que spring administre el componente
+     */
     public VentanaCobro() {
     }
 
+    /**
+     * Guarda la referencia del controlador principal
+     * 
+     * @param control instancia del controlador
+     */
     public void setControl(ControlRegistroVenta control) {
         this.control = control;
     }
 
-private void initializeUI() {
-    if (initialized) return;
-    
-    if (!Platform.isFxApplicationThread()) {
-        Platform.runLater(this::initializeUI);
-        return;
-    }
-
-    try {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-cobro.fxml"));
+    /**
+     * Carga y prepara el archivo fxml de la ventana de cobro en el hilo de javafx
+     */
+    private void initializeUI() {
+        if (initialized) return;
         
-        // 🔧 Usar la fábrica para usar la misma instancia inyectada por Spring
-        loader.setControllerFactory(clazz -> this);
+        if (!Platform.isFxApplicationThread()) {
+            Platform.runLater(this::initializeUI);
+            return;
+        }
 
-        Parent root = loader.load();
-        
-        stage = new Stage();
-        stage.setTitle("Proceso de Cobro");
-        stage.setScene(new Scene(root));
-        stage.initModality(Modality.APPLICATION_MODAL); // Bloquea la ventana de fondo mientras cobras
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-cobro.fxml"));
+            
+            //Usar la fábrica para usar la misma instancia inyectada por Spring
+            loader.setControllerFactory(clazz -> this);
 
-        initialized = true;
-    } catch (IOException e) {
-        System.err.println("❌ Error al cargar la interfaz FXML de VentanaCobro:");
-        e.printStackTrace();
+            Parent root = loader.load();
+            
+            stage = new Stage();
+            stage.setTitle("Proceso de Cobro");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL); // Bloquea la ventana de fondo mientras cobras
+
+            initialized = true;
+        } catch (IOException e) {
+            System.err.println("❌ Error al cargar la interfaz FXML de VentanaCobro:");
+            e.printStackTrace();
+        }
     }
-}
 
     /**
      * Muestra la ventana y prepara los campos para el cobro
+     * 
+     * @param total el total de dinero a cobrar de la venta
      */
     public void muestra(double total) {
         if (!Platform.isFxApplicationThread()) {
@@ -89,7 +105,10 @@ private void initializeUI() {
     }
 
     /**
-     * Actualiza el cambio en pantalla
+     * Actualiza el cambio en pantalla o muestra un mensaje si falta dinero
+     * 
+     * @param cambio valor numerico del cambio a entregar
+     * @param mensaje texto informativo en caso de error o efectivo insuficiente
      */
     public void actualizaCambio(double cambio, String mensaje) {
         if (!Platform.isFxApplicationThread()) {
@@ -103,6 +122,11 @@ private void initializeUI() {
         }
     }
 
+    /**
+     * Saca una alerta de informacion con el mensaje especificado
+     * 
+     * @param mensaje texto a mostrar en el dialogo
+     */
     public void muestraDialogoConMensaje(String mensaje) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> this.muestraDialogoConMensaje(mensaje));
@@ -115,6 +139,11 @@ private void initializeUI() {
         alert.showAndWait();
     }
 
+    /**
+     * Muestra u oculta la pantalla de cobro
+     * 
+     * @param visible true para desplegar y false para ocultar
+     */
     public void setVisible(boolean visible) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> this.setVisible(visible));
@@ -124,8 +153,9 @@ private void initializeUI() {
         else stage.hide();
     }
 
-    
-
+    /**
+     * Evento al presionar la tecla o boton para calcular el cambio segun el efectivo escrito
+     */
     @FXML
     private void onCalcularCambio() {
         try {
@@ -139,6 +169,9 @@ private void initializeUI() {
         }
     }
 
+    /**
+     * Evento del boton cobrar para mandar el pago y registrar la venta en la bd
+     */
     @FXML
     private void onRegistrarVenta() {
         if (txtPago.getText().isEmpty()) {

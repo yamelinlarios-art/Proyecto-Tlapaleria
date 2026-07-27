@@ -8,6 +8,11 @@ import mx.uam.ayd.proyecto.negocio.ServicioVenta;
 import mx.uam.ayd.proyecto.negocio.modelo.DescripcionVenta;
 import mx.uam.ayd.proyecto.negocio.modelo.Venta;
 
+/**
+ * Controlador de la HU-04 para gestionar el flujo del carrito de compras y el cobro.
+ * 
+ * @author kevin dydier
+ */
 @Component
 public class ControlRegistroVenta {
 
@@ -19,6 +24,13 @@ public class ControlRegistroVenta {
     // Estado del proceso: Guardamos directamente la Venta
     private Venta ventaActual;
 
+    /**
+     * Constructor donde spring inyecta el servicio de ventas y las dos pantallas.
+     * 
+     * @param servicioVenta servicio con la logica de negocio
+     * @param v1 vista del carrito de compras
+     * @param v2 vista para cobrar y dar cambio
+     */
     @Autowired
     public ControlRegistroVenta(ServicioVenta servicioVenta, VentanaCarrito v1, VentanaCobro v2) {
         this.servicioVenta = servicioVenta;
@@ -26,6 +38,9 @@ public class ControlRegistroVenta {
         this.ventanaCobro = v2;
     }
 
+    /**
+     * Se ejecuta despues de crear el componente para conectar las ventanas con este controlador
+     */
     @PostConstruct
     public void init() {
         if (ventanaCarrito != null) ventanaCarrito.setControl(this);
@@ -34,6 +49,8 @@ public class ControlRegistroVenta {
 
     /**
      * Recibe la venta completa creada en la HU de selección de productos.
+     * 
+     * @param venta objeto venta con la lista de productos acumulados
      */
    public void iniciaConVenta(Venta venta) {
     this.ventaActual = venta;
@@ -50,42 +67,42 @@ public class ControlRegistroVenta {
         ventanaCarrito.muestra(this.ventaActual);
     }
 }
+
     /**
      * Valida reglas de negocio antes de permitir el cobro.
      */
-/**
- * Valida reglas de negocio antes de permitir el cobro.
- */
-public void procesarConfirmacionVenta() {
-    if (ventaActual == null || ventaActual.getProductos() == null || ventaActual.getProductos().isEmpty()) {
-        if (ventanaCarrito != null) {
-            ventanaCarrito.muestraDialogoConMensaje("El carrito de compras está vacío.");
-        }
-        return;
-    }
-
-    // RN-04: Validar precios antes de habilitar pantalla de cobro
-    for (DescripcionVenta d : ventaActual.getProductos()) {
-        if (d != null && d.getPrecioUnitario() <= 0) {
+    public void procesarConfirmacionVenta() {
+        if (ventaActual == null || ventaActual.getProductos() == null || ventaActual.getProductos().isEmpty()) {
             if (ventanaCarrito != null) {
-                ventanaCarrito.muestraDialogoConMensaje("RN-04: Todo precio asignado debe ser strictly mayor a cero.");
+                ventanaCarrito.muestraDialogoConMensaje("El carrito de compras está vacío.");
             }
             return;
         }
-    }
 
-    // 🔧 FIX DE TRANSICIÓN: Ocultar carrito y mostrar pantalla de cobro
-    if (ventanaCarrito != null) {
-        ventanaCarrito.setVisible(false); // Oculta la ventana de Carrito
-    }
+        // RN-04: Validar precios antes de habilitar pantalla de cobro
+        for (DescripcionVenta d : ventaActual.getProductos()) {
+            if (d != null && d.getPrecioUnitario() <= 0) {
+                if (ventanaCarrito != null) {
+                    ventanaCarrito.muestraDialogoConMensaje("RN-04: Todo precio asignado debe ser strictly mayor a cero.");
+                }
+                return;
+            }
+        }
 
-    if (ventanaCobro != null) {
-        ventanaCobro.muestra(ventaActual.getTotal()); // Abre la ventana de Cobro con el total
+        // 🔧 FIX DE TRANSICIÓN: Ocultar carrito y mostrar pantalla de cobro
+        if (ventanaCarrito != null) {
+            ventanaCarrito.setVisible(false); // Oculta la ventana de Carrito
+        }
+
+        if (ventanaCobro != null) {
+            ventanaCobro.muestra(ventaActual.getTotal()); // Abre la ventana de Cobro con el total
+        }
     }
-}
 
     /**
-     * Calcula el cambio basándose en el total de la Venta activa
+     * Checa si el dinero que entrego el cliente alcanza para la venta y saca la resta del cambio.
+     * 
+     * @param efectivoRecibido dinero en efectivo ingresado por el usuario
      */
     public void calcularCambio(double efectivoRecibido) {
         if (ventanaCobro == null || ventaActual == null) return;
@@ -102,6 +119,8 @@ public void procesarConfirmacionVenta() {
 
     /**
      * Finaliza la compra pasando la Venta al servicio
+     * 
+     * @param efectivoRecibido dinero en efectivo entregado para procesar el pago
      */
     public void finalizarCompra(double efectivoRecibido) {
         if (servicioVenta == null || ventanaCobro == null || ventaActual == null) return;
@@ -119,6 +138,9 @@ public void procesarConfirmacionVenta() {
         }
     }
 
+    /**
+     * Oculta las dos pantallas para cerrar o reiniciar la transaccion
+     */
     public void termina() {
         if (ventanaCobro != null) ventanaCobro.setVisible(false);
         if (ventanaCarrito != null) ventanaCarrito.setVisible(false);
