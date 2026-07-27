@@ -29,13 +29,14 @@ public class ControlProveedor {
         this.ventana = ventana;
     }
 
-    @PostConstruct
+  @PostConstruct
     public void init() {
         ventana.setControl(this);
     }
 
     /**
-     * Inicia el flujo principal recuperando los proveedores y mostrándolos en la ventana.
+     * Carga la lista general de proveedores para la HU-06 y los despliega
+     * en la ventana principal.
      */
     public void buscaProveedores() {
         try {
@@ -47,18 +48,21 @@ public class ControlProveedor {
     }
 
     /**
-     * Inicia el flujo de consulta de detalle delegando al control de detalle mediante el ID.
-     * Método alineado con el Diagrama de Secuencia UML.
+     * Abre el detalle de un proveedor especifico (HU-06) pasandole su ID
+     * al controlador correspondiente.
      * 
-     * @param idProveedor Identificador único del proveedor
+     * @param idProveedor identificador del proveedor
      */
     public void consultarProveedor(long idProveedor) {
         controlDetalle.inicia(idProveedor);
     }
 
     /**
-     * Calcula el saldo total de un proveedor llamando al servicio.
-     * Método utilizado por la vista para rendering dinámico o cálculo de columnas.
+     * Obtiene el saldo total pendiente de un proveedor (HU-06)
+     * para mostrarlo en la tabla o lista de la vista.
+     * 
+     * @param idProveedor identificador del proveedor
+     * @return saldo pendiente acumulado o 0.0 si ocurre un error
      */
     public double obtenerSaldoProveedor(long idProveedor) {
         try {
@@ -68,6 +72,9 @@ public class ControlProveedor {
         }
     }
 
+    /**
+     * Cierra la ventana de consulta de proveedores (HU-06).
+     */
     public void termina() {
         ventana.setVisible(false);
     }

@@ -27,9 +27,8 @@ import mx.uam.ayd.proyecto.negocio.modelo.Factura;
 import mx.uam.ayd.proyecto.negocio.modelo.Proveedor;
 
 /**
- * Ventana emergente para consultar los detalles de un proveedor y sus facturas pendientes (HU-06).
- * 
- * @author JAVITOS, Yamelin, Guillermo, Dydier, Yael, Sheyla
+ * Ventana emergente para consultar los detalles de un proveedor,
+ * sus facturas pendientes y su saldo total (HU-06).
  */
 @Component
 public class VentanaDetalleProveedor {
@@ -88,8 +87,12 @@ public class VentanaDetalleProveedor {
     }
 
     /**
-     * Muestra la ventana poblando los datos del proveedor, sus facturas y el saldo total adeudado.
-     * Recibe los 3 elementos del controlador para alinearse exactamente con el diagrama de secuencia.
+     * Despliega la ventana modal cargando la informacion del proveedor,
+     * la tabla de facturas y el saldo total pendiente (HU-06).
+     * 
+     * @param proveedor objeto proveedor con sus datos
+     * @param facturas lista de facturas pendientes
+     * @param saldoTotal adeudo acumulado del proveedor
      */
     public void muestra(Proveedor proveedor, List<Factura> facturas, double saldoTotal) {
         try {
@@ -101,11 +104,7 @@ public class VentanaDetalleProveedor {
             Parent root = loader.load();
 
             configurarTablaFacturas();
-            
-            // Poblar información personal
             poblarDatosProveedor(proveedor);
-
-            // Poblar las facturas iniciales y el saldo total recibidos del controlador
             actualizarTablaFacturas(facturas);
             actualizarSaldoTotal(saldoTotal);
 
@@ -129,7 +128,6 @@ public class VentanaDetalleProveedor {
         colMonto.setCellValueFactory(new PropertyValueFactory<>("montoTotal"));
         colSaldo.setCellValueFactory(new PropertyValueFactory<>("saldoPendiente"));
 
-        // Formato para mostrar moneda en la columna de saldo
         colSaldo.setCellFactory(tc -> new TableCell<Factura, Double>() {
             @Override
             protected void updateItem(Double item, boolean empty) {
@@ -142,7 +140,6 @@ public class VentanaDetalleProveedor {
             }
         });
 
-        // Columna con botón dinámico para pagar la factura
         if (colAccion != null) {
             colAccion.setCellFactory(param -> new TableCell<Factura, Void>() {
                 private final Button btnPagar = new Button("Registrar Pago");
@@ -194,7 +191,8 @@ public class VentanaDetalleProveedor {
     }
 
     /**
-     * Vuelve a consultar al controlador si hay un pago exitoso para refrescar la UI.
+     * Vuelve a consultar al controlador las facturas y el saldo para
+     * mantener actualizada la vista tras registrar un pago (HU-06).
      */
     private void recargarFacturasYSaldo() {
         if (proveedorActual == null) return;
@@ -206,6 +204,10 @@ public class VentanaDetalleProveedor {
         actualizarSaldoTotal(saldo);
     }
 
+    /**
+     * Solicita al controlador el registro del pago de una factura (HU-06)
+     * y refresca la interfaz en caso de exito.
+     */
     private void handleRegistrarPago(Factura factura) {
         boolean exito = control.registrarPagoFactura(factura.getIdFactura());
         if (exito) {
@@ -224,6 +226,9 @@ public class VentanaDetalleProveedor {
         alert.showAndWait();
     }
 
+    /**
+     * Inicia el cierre de la ventana a traves del controlador (HU-06).
+     */
     @FXML
     private void handleCerrar() {
         if (control != null) {
@@ -233,6 +238,9 @@ public class VentanaDetalleProveedor {
         }
     }
 
+    /**
+     * Cierra el escenario (Stage) de la ventana emergente.
+     */
     public void cierra() {
         if (stage != null) {
             stage.close();
