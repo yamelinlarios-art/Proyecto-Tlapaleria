@@ -62,18 +62,18 @@ public class ServicioVenta {
                     int cantidadVendida = detalle.getCantidad();
                     int nuevaExistencia = existenciaAnterior - cantidadVendida;
                     
-                    //Actualizar el stock en Producto
+                    // Actualizar el stock en Producto
                     productoBD.setExistenciaActual(nuevaExistencia);
                     productoRepository.save(productoBD);
 
-                    //ACTUALIZAR EN INVENTARIO (Para que se dispare la Alerta de Stock)
+                    // ACTUALIZAR EN INVENTARIO (Para que se dispare la Alerta de Stock)
                     Inventario inventario = inventarioRepository.findById(productoBD.getIdProducto()).orElse(null);
                     if (inventario != null) {
                         inventario.setExistenciaActual(nuevaExistencia);
                         inventarioRepository.save(inventario);
                     }
                     
-                    //Registrar salida en Historial de Movimientos
+                    // Registrar salida en Historial de Movimientos
                     MovimientoInventario movimiento = new MovimientoInventario();
                     movimiento.setFecha(LocalDateTime.now());
                     movimiento.setTipoMovimiento("SALIDA");
@@ -85,7 +85,7 @@ public class ServicioVenta {
 
                     movimientoRepository.save(movimiento);
                     
-                    //Agregar a la venta
+                    // Agregar a la venta
                     nuevaVenta.agregaProducto(productoBD, cantidadVendida);
                 }
             }
