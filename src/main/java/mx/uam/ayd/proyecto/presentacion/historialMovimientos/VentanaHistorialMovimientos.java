@@ -66,7 +66,7 @@ public class VentanaHistorialMovimientos {
             DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     /**
-     * Asigna el controlador de la historia de usuario.
+     * Asocia el controlador encargado de esta ventana.
      *
      * @param control controlador del historial
      */
@@ -75,7 +75,7 @@ public class VentanaHistorialMovimientos {
     }
 
     /**
-     * Carga el archivo FXML y muestra la ventana.
+     * Carga el archivo FXML y abre la ventana del historial.
      */
     public void muestra() {
 
@@ -105,7 +105,7 @@ public class VentanaHistorialMovimientos {
     }
 
     /**
-     * Se ejecuta automáticamente después de cargar el FXML.
+     * Se ejecuta automáticamente al cargar el archivo FXML.
      */
     @FXML
     private void initialize() {
@@ -113,7 +113,7 @@ public class VentanaHistorialMovimientos {
     }
 
     /**
-     * Configura las columnas de la tabla.
+     * Inicializa las columnas de la tabla.
      */
     private void inicializaTabla() {
 
@@ -191,7 +191,7 @@ public class VentanaHistorialMovimientos {
     /**
      * Muestra los movimientos recibidos en la tabla.
      *
-     * @param movimientos lista de movimientos
+     * @param movimientos lista de movimientos a mostrar
      */
     public void muestraMovimientos(
             List<MovimientoInventario> movimientos) {
@@ -214,7 +214,7 @@ public class VentanaHistorialMovimientos {
     }
 
     /**
-     * Busca movimientos utilizando el texto escrito.
+     * Busca movimientos usando el texto escrito por el usuario.
      */
     @FXML
     private void buscar() {
@@ -228,7 +228,7 @@ public class VentanaHistorialMovimientos {
     }
 
     /**
-     * Limpia el filtro y vuelve a cargar todos los movimientos.
+     * Limpia el filtro y vuelve a mostrar todos los movimientos.
      */
     @FXML
     private void actualizar() {
@@ -288,9 +288,9 @@ public class VentanaHistorialMovimientos {
     }
 
     /**
-     * Muestra los datos completos de un movimiento.
+     * Muestra toda la información del movimiento seleccionado.
      *
-     * @param movimiento movimiento consultado
+     * @param movimiento movimiento que se mostrará
      */
     private void muestraDetalleMovimiento(
             MovimientoInventario movimiento) {
@@ -362,11 +362,11 @@ public class VentanaHistorialMovimientos {
     }
 
     /**
-     * Muestra una alerta.
+     * Muestra un mensaje de alerta.
      *
      * @param tipo tipo de alerta
-     * @param titulo título de la alerta
-     * @param mensaje mensaje de la alerta
+     * @param titulo título de la ventana
+     * @param mensaje mensaje que se mostrará
      */
     private void muestraAlerta(
             Alert.AlertType tipo,
@@ -382,7 +382,7 @@ public class VentanaHistorialMovimientos {
     }
 
     /**
-     * Cierra la ventana.
+     * Cierra la ventana del historial.
      */
     @FXML
     private void cerrar() {

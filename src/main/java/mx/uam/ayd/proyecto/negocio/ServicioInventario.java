@@ -14,65 +14,85 @@ import mx.uam.ayd.proyecto.negocio.modelo.Inventario;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
 
 /**
- * Servicio para la logica de negocio del inventario y las alertas de stock bajo.
+ * Servicio encargado de manejar la lógica del inventario
+ * y las alertas de productos con stock bajo.
  *
  * @author Kevin Dydier y Yael Mora Simón
  */
 @Service
 public class ServicioInventario {
 
-    private static final Logger log = LoggerFactory.getLogger(ServicioInventario.class);
+    private static final Logger log =
+            LoggerFactory.getLogger(ServicioInventario.class);
 
     private final InventarioRepository inventarioRepository;
     private final ProductoRepository productoRepository;
 
     /**
-     * Constructor para inyectar los repos de la bd
-     * 
-     * @param inventarioRepository repo de inventarios
-     * @param productoRepository repo de productos
+     * Crea el servicio e inyecta los repositorios necesarios.
+     *
+     * @param inventarioRepository repositorio de inventarios
+     * @param productoRepository repositorio de productos
      */
     @Autowired
-    public ServicioInventario(InventarioRepository inventarioRepository, ProductoRepository productoRepository) {
+    public ServicioInventario(
+            InventarioRepository inventarioRepository,
+            ProductoRepository productoRepository) {
+
         this.inventarioRepository = inventarioRepository;
         this.productoRepository = productoRepository;
     }
 
     /**
-     * Revisa la bd y busca todos los productos que tienen stock bajo o igual al minimo
-     * para ponerlos en la lista de alertas que se pinta en rojo en la tabla.
+     * Busca los productos cuya existencia es menor o igual
+     * al stock mínimo y los agrega a la lista de alertas.
      *
      * @return lista de productos que necesitan reabastecerse
      */
     public List<Producto> consultarAlertas() {
+
         log.info("Iniciando consulta de alertas de inventario...");
+
         List<Producto> productosConAlerta = new ArrayList<>();
 
-        // recuperamos todos los registros de inventario de la bd
-        Iterable<Inventario> todosLosInventarios = inventarioRepository.findAll();
+        // Recupera todos los registros del inventario.
+        Iterable<Inventario> todosLosInventarios =
+                inventarioRepository.findAll();
 
         for (Inventario item : todosLosInventarios) {
-            // checamos si la existencia actual sobrepasa o es igual al stock minimo
-            if (item.getExistenciaActual() <= item.getStockMinimo()) {
-                
-                // buscamos el producto por su id
-                Producto producto = productoRepository.findByIdProducto(item.getIdProducto());
 
-                // por si no lo encuentra con el personalizado usamos el de spring
+            // Revisa si la existencia llegó o bajó del stock mínimo.
+            if (item.getExistenciaActual()
+                    <= item.getStockMinimo()) {
+
+                // Busca el producto usando su identificador.
+                Producto producto =
+                        productoRepository.findByIdProducto(
+                                item.getIdProducto());
+
+                // Si no se encuentra con el método personalizado,
+                // se intenta buscar con el método de Spring.
                 if (producto == null) {
-                    producto = productoRepository.findById(item.getIdProducto()).orElse(null);
+                    producto =
+                            productoRepository
+                                    .findById(item.getIdProducto())
+                                    .orElse(null);
                 }
 
-                // si de plano no esta en la tabla producto creamos uno ficticio para que no truene
+                // Si el producto no existe, se crea uno temporal
+                // para evitar errores al mostrar la información.
                 if (producto == null) {
                     producto = new Producto();
                     producto.setIdProducto(item.getIdProducto());
-                    producto.setClave("PROD-0" + item.getIdProducto());
-                    producto.setNombre("Producto ID " + item.getIdProducto());
+                    producto.setClave(
+                            "PROD-0" + item.getIdProducto());
+                    producto.setNombre(
+                            "Producto ID " + item.getIdProducto());
                 }
 
-                // le pasamos el stock del inventario al objeto producto para mostrarlo en la tabla
-                producto.setExistenciaActual(item.getExistenciaActual());
+                // Agrega al producto la existencia actual del inventario.
+                producto.setExistenciaActual(
+                        item.getExistenciaActual());
 
                 productosConAlerta.add(producto);
             }
@@ -80,58 +100,88 @@ public class ServicioInventario {
 
         return productosConAlerta;
     }
-    
+
     /**
-     * Regresa la info del producto buscando en la tabla de productos y le pega su stock actual
+     * Busca un producto por su identificador y agrega
+     * la existencia actual registrada en el inventario.
      *
-     * @param idProducto id del producto que queremos
-     * @return el producto encontrado con su existencia
+     * @param idProducto identificador del producto
+     * @return producto encontrado con su existencia actual,
+     *         o null si no existe
      */
     public Producto obtenerDetalleProducto(long idProducto) {
-        Producto producto = productoRepository.findById(idProducto).orElse(null);
+
+        Producto producto =
+                productoRepository.findById(idProducto).orElse(null);
+
         if (producto != null) {
-            // le pegamos la existencia real desde el inventario
-            Inventario inventario = inventarioRepository.findById(idProducto).orElse(null);
+
+            // Recupera la existencia real del producto.
+            Inventario inventario =
+                    inventarioRepository
+                            .findById(idProducto)
+                            .orElse(null);
+
             if (inventario != null) {
-                producto.setExistenciaActual(inventario.getExistenciaActual());
+                producto.setExistenciaActual(
+                        inventario.getExistenciaActual());
             }
         }
+
         return producto;
     }
 
     /**
-     * Trae el stock minimo que esta guardado en el inventario para un producto
+     * Obtiene el stock mínimo registrado para un producto.
      *
-     * @param idProducto id del producto
-     * @return el limite minimo o cero si no hay registro
+     * @param idProducto identificador del producto
+     * @return stock mínimo del producto o cero si no existe
      */
     public int obtenerStockMinimo(long idProducto) {
-        Inventario inventario = inventarioRepository.findById(idProducto).orElse(null);
-        return (inventario != null) ? inventario.getStockMinimo() : 0;
+
+        Inventario inventario =
+                inventarioRepository
+                        .findById(idProducto)
+                        .orElse(null);
+
+        return (inventario != null)
+                ? inventario.getStockMinimo()
+                : 0;
     }
 
     /**
-     * Imprime en consola los productos con bajo stock, sirve mas para probar que funcione
+     * Busca los registros de inventario cuya existencia
+     * es menor o igual al stock mínimo.
      *
-     * @return lista con los inventarios que estan en minimo
+     * También imprime los resultados en consola para revisar
+     * que la consulta esté funcionando.
+     *
+     * @return lista de inventarios con stock bajo
      */
     public List<Inventario> obtenerProductosBajoStock() {
 
         System.out.println("===== INVENTARIO =====");
 
-        List<Inventario> productosBajoStock = new ArrayList<>();
+        List<Inventario> productosBajoStock =
+                new ArrayList<>();
 
-        for (Inventario inventario : inventarioRepository.findAll()) {
+        for (Inventario inventario :
+                inventarioRepository.findAll()) {
 
             System.out.println(inventario);
 
-            if (inventario.getExistenciaActual() <= inventario.getStockMinimo()) {
+            // Agrega el inventario cuando ya llegó
+            // o bajó del límite mínimo.
+            if (inventario.getExistenciaActual()
+                    <= inventario.getStockMinimo()) {
+
                 productosBajoStock.add(inventario);
             }
         }
 
-        System.out.println("Cantidad de productos encontrados: "
-                + productosBajoStock.size());
+        System.out.println(
+                "Cantidad de productos encontrados: "
+                        + productosBajoStock.size());
 
         return productosBajoStock;
     }

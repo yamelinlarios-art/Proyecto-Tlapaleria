@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import jakarta.annotation.PostConstruct;
 import mx.uam.ayd.proyecto.negocio.ServicioProducto;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
+
 /**
  * Control para la ventana de consulta de inventario.
  *
@@ -17,6 +18,12 @@ public class ControlConsultarInventario {
     private final ServicioProducto servicioProducto;
     private final VentanaConsultarInventario ventana;
 
+    /**
+     * Crea el controlador de la consulta de inventario.
+     *
+     * @param servicioProducto servicio encargado de los productos
+     * @param ventana ventana de consulta de inventario
+     */
     @Autowired
     public ControlConsultarInventario(
             ServicioProducto servicioProducto,
@@ -26,11 +33,17 @@ public class ControlConsultarInventario {
         this.ventana = ventana;
     }
 
+    /**
+     * Asocia este controlador con la ventana al iniciar la aplicación.
+     */
     @PostConstruct
     public void init() {
         ventana.setControl(this);
     }
 
+    /**
+     * Recupera todos los productos y los muestra en la ventana.
+     */
     public void inicia() {
 
         try {
@@ -46,10 +59,18 @@ public class ControlConsultarInventario {
         }
     }
 
+    /**
+     * Muestra nuevamente todos los productos registrados.
+     */
     public void muestraTodos() {
         inicia();
     }
 
+    /**
+     * Busca un producto por su nombre y lo muestra en la tabla.
+     *
+     * @param nombre nombre del producto a buscar
+     */
     public void buscaProducto(String nombre) {
 
         if (nombre == null || nombre.trim().isEmpty()) {
@@ -78,6 +99,9 @@ public class ControlConsultarInventario {
         }
     }
 
+    /**
+     * Cierra la ventana de consulta de inventario.
+     */
     public void termina() {
         ventana.setVisible(false);
     }

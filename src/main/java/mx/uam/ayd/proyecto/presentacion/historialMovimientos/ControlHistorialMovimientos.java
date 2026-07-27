@@ -24,7 +24,7 @@ public class ControlHistorialMovimientos {
             ventanaHistorialMovimientos;
 
     /**
-     * Constructor utilizado por Spring para inyectar dependencias.
+     * Crea el controlador del historial de movimientos.
      *
      * @param servicioMovimientoInventario servicio de movimientos
      * @param ventanaHistorialMovimientos ventana del historial
@@ -41,7 +41,7 @@ public class ControlHistorialMovimientos {
     }
 
     /**
-     * Inicia la ventana y carga los movimientos registrados.
+     * Abre la ventana del historial y carga los movimientos registrados.
      */
     public void inicia() {
 
@@ -53,7 +53,7 @@ public class ControlHistorialMovimientos {
     }
 
     /**
-     * Recupera todos los movimientos y los muestra en la ventana.
+     * Recupera todos los movimientos y los muestra en la tabla.
      */
     public void cargarMovimientos() {
 
@@ -64,9 +64,9 @@ public class ControlHistorialMovimientos {
     }
 
     /**
-     * Busca movimientos utilizando el filtro recibido.
+     * Busca movimientos utilizando el filtro escrito por el usuario.
      *
-     * @param filtro texto escrito por el usuario
+     * @param filtro texto para realizar la búsqueda
      */
     public void buscarMovimiento(String filtro) {
 
@@ -79,10 +79,10 @@ public class ControlHistorialMovimientos {
     }
 
     /**
-     * Consulta el detalle de un movimiento.
+     * Recupera la información completa de un movimiento.
      *
      * @param idMovimiento identificador del movimiento
-     * @return movimiento encontrado o null
+     * @return movimiento encontrado o null si no existe
      */
     public MovimientoInventario consultarDetalleMovimiento(
             long idMovimiento) {
@@ -91,5 +91,3 @@ public class ControlHistorialMovimientos {
                 .consultarDetalleMovimiento(idMovimiento);
     }
 }
-
-//dajlkjcsk

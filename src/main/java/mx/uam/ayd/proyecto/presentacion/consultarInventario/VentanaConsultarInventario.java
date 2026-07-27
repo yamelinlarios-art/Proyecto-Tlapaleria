@@ -19,6 +19,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import mx.uam.ayd.proyecto.negocio.modelo.Producto;
+
 /**
  * Ventana para consultar el inventario.
  *
@@ -58,13 +59,24 @@ public class VentanaConsultarInventario {
     @FXML
     private TableColumn<Producto, Integer> colExistencia;
 
+    /**
+     * Constructor de la ventana de consulta de inventario.
+     */
     public VentanaConsultarInventario() {
     }
 
+    /**
+     * Asocia el controlador que atenderá los eventos de esta ventana.
+     *
+     * @param control controlador de la ventana
+     */
     public void setControl(ControlConsultarInventario control) {
         this.control = control;
     }
 
+    /**
+     * Carga el archivo FXML e inicializa todos los componentes de la ventana.
+     */
     private void initializeUI() {
 
         if (initialized) {
@@ -119,6 +131,11 @@ public class VentanaConsultarInventario {
         }
     }
 
+    /**
+     * Muestra la lista de productos recibida en la tabla.
+     *
+     * @param productos productos que se mostrarán en pantalla
+     */
     public void muestra(Iterable<Producto> productos) {
 
         if (!Platform.isFxApplicationThread()) {
@@ -139,6 +156,11 @@ public class VentanaConsultarInventario {
         stage.show();
     }
 
+    /**
+     * Muestra únicamente el producto encontrado en la tabla.
+     *
+     * @param producto producto encontrado
+     */
     public void muestraProducto(Producto producto) {
 
         if (!Platform.isFxApplicationThread()) {
@@ -158,6 +180,11 @@ public class VentanaConsultarInventario {
         tablaProductos.setItems(listaProductos);
     }
 
+    /**
+     * Muestra un mensaje informativo al usuario.
+     *
+     * @param mensaje texto que se mostrará en el diálogo
+     */
     public void muestraDialogoConMensaje(String mensaje) {
 
         if (!Platform.isFxApplicationThread()) {
@@ -173,6 +200,11 @@ public class VentanaConsultarInventario {
         alert.showAndWait();
     }
 
+    /**
+     * Muestra u oculta la ventana.
+     *
+     * @param visible true para mostrarla, false para ocultarla
+     */
     public void setVisible(boolean visible) {
 
         if (!Platform.isFxApplicationThread()) {
@@ -191,6 +223,9 @@ public class VentanaConsultarInventario {
         }
     }
 
+    /**
+     * Busca un producto utilizando el nombre escrito por el usuario.
+     */
     @FXML
     private void onBuscarProducto() {
 
@@ -199,11 +234,17 @@ public class VentanaConsultarInventario {
         control.buscaProducto(nombre);
     }
 
+    /**
+     * Vuelve a cargar todos los productos del inventario.
+     */
     @FXML
     private void onMostrarTodos() {
         control.muestraTodos();
     }
 
+    /**
+     * Regresa a la pantalla anterior y cierra esta ventana.
+     */
     @FXML
     private void onRegresar() {
         control.termina();
