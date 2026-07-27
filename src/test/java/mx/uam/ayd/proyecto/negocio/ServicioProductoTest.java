@@ -29,7 +29,7 @@ class ServicioProductoTest {
     @Mock
     private ProductoRepository productoRepository;
 
-    // Simulamos el repositorio de movimientos para registrar la bitácora del cambio de precio
+    // Simulamos el repositorio de movimientos para registrar en el historial el cambio de precio
     @Mock
     private MovimientoInventarioRepository movimientoRepository;
 
@@ -40,7 +40,7 @@ class ServicioProductoTest {
     /**
      * Prueba 1: Valida el flujo exitoso de actualización de precio de un producto.
      * Comprueba que se modifique el precio, se guarde en el repositorio de productos 
-     * y se genere su respectivo registro en la bitácora de movimientos.
+     * y se genere su respectivo registro en el historial de movimientos.
      */
     @Test
     void testActualizarPrecioProductoExitoso() {
@@ -61,7 +61,7 @@ class ServicioProductoTest {
         // Ejecutamos el método a probar
         Producto resultado = servicioProducto.actualizarPrecioProducto(idProducto, nuevoPrecio);
 
-        // Verificaciones
+        // Validaciones: Comprobamos que el producto actualizado no sea nulo y que su precio haya cambiado al nuevo valor
         assertNotNull(resultado, "El producto actualizado no debe ser nulo");
         assertEquals(nuevoPrecio, resultado.getPrecio(), "El precio del producto debió actualizarse al nuevo valor");
         verify(productoRepository, times(1)).save(any(Producto.class));
