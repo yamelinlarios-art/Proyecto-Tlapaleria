@@ -54,7 +54,6 @@ public class VentanaProveedor {
     @FXML
     private TableColumn<Proveedor, String> colSaldo;
 
-    // Inyección del nuevo botón de la vista
     @FXML
     private Button btnVerDetalle;
 
@@ -79,7 +78,6 @@ public class VentanaProveedor {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/fxml/ventana-proveedor.fxml"));
 
-            // Asignamos esta misma clase como controlador FXML
             loader.setController(this);
 
             Parent root = loader.load();
@@ -88,13 +86,11 @@ public class VentanaProveedor {
             stage.setTitle("Directorio de Proveedores - La Nueva");
             stage.setScene(new Scene(root));
 
-            // Configuración de celdas según las propiedades de Proveedor.java
             colId.setCellValueFactory(new PropertyValueFactory<>("idProveedor"));
             colProveedor.setCellValueFactory(new PropertyValueFactory<>("corporativo"));
             colContactoPersonal.setCellValueFactory(new PropertyValueFactory<>("nombreCompleto"));
             colCategoria.setCellValueFactory(new PropertyValueFactory<>("tipoProveedor"));
 
-            // Cálculo dinámico seguro del saldo llamando al control
             colSaldo.setCellValueFactory(cellData -> {
                 Proveedor p = cellData.getValue();
                 double saldo = 0.0;
@@ -108,9 +104,8 @@ public class VentanaProveedor {
                 return new SimpleStringProperty(String.format("$%.2f", saldo));
             });
 
-            // --- HABILITAR/DESHABILITAR BOTÓN SEGÚN SELECCIÓN ---
             if (btnVerDetalle != null) {
-                btnVerDetalle.setDisable(true); // Deshabilitado de inicio
+                btnVerDetalle.setDisable(true);
                 
                 tablaProveedores.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
                     btnVerDetalle.setDisable(newSelection == null);
@@ -126,13 +121,14 @@ public class VentanaProveedor {
     }
 
     /**
-     * Acción invocada al presionar el botón "Ver Detalles" (definido en FXML via onAction="#handleVerDetalle")
+     * Acción invocada al presionar el botón "Ver Detalles".
+     * Extrae el ID del proveedor seleccionado y detona consultarProveedor(idProveedor).
      */
     @FXML
     private void handleVerDetalle() {
         Proveedor seleccionado = tablaProveedores.getSelectionModel().getSelectedItem();
         if (seleccionado != null) {
-            control.mostrarDetalleProveedor(seleccionado);
+            control.consultarProveedor(seleccionado.getIdProveedor());
         }
     }
 
@@ -157,11 +153,7 @@ public class VentanaProveedor {
         }
 
         tablaProveedores.setItems(listaObservable);
-        
-        // Forzamos la actualización visual de las celdas
         tablaProveedores.refresh();
-        
-        // Limpiamos la selección activa de la tabla para que el botón empiece desactivado
         tablaProveedores.getSelectionModel().clearSelection();
 
         lblSaldoTotalGeneral.setText(String.format("SALDO TOTAL PENDIENTE: $%.2f", saldoTotalGeneral));

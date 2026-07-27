@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import mx.uam.ayd.proyecto.datos.FacturaRepository;
 import mx.uam.ayd.proyecto.datos.ProveedorRepository;
@@ -19,11 +20,14 @@ import mx.uam.ayd.proyecto.negocio.modelo.Proveedor;
 @Service
 public class ServicioProveedor {
 
-    @Autowired
-    private ProveedorRepository proveedorRepository;
+    private final ProveedorRepository proveedorRepository;
+    private final FacturaRepository facturaRepository;
 
     @Autowired
-    private FacturaRepository facturaRepository;
+    public ServicioProveedor(ProveedorRepository proveedorRepository, FacturaRepository facturaRepository) {
+        this.proveedorRepository = proveedorRepository;
+        this.facturaRepository = facturaRepository;
+    }
 
     /**
      * Recupera todos los proveedores registrados en el sistema.
@@ -31,6 +35,7 @@ public class ServicioProveedor {
      * 
      * @return Lista de proveedores
      */
+
     public List<Proveedor> recuperarProveedores() {
         List<Proveedor> proveedores = new ArrayList<>();
         proveedorRepository.findAll().forEach(proveedores::add);
@@ -43,6 +48,7 @@ public class ServicioProveedor {
      * @param idProveedor ID del proveedor
      * @return El proveedor o null si no se encuentra
      */
+
     public Proveedor recuperarProveedor(long idProveedor) {
         return proveedorRepository.findByIdProveedor(idProveedor);
     }
@@ -51,8 +57,9 @@ public class ServicioProveedor {
      * Recupera la lista de facturas pendientes de un proveedor de forma tolerante a Mayúsculas/Minúsculas.
      * 
      * @param idProveedor ID del proveedor
-     * @return Lista de facturas pendientes
+     * @return Lista de facturas pendientes (nunca null)
      */
+  
     public List<Factura> recuperarFacturasPendientes(long idProveedor) {
         // Se buscan las facturas usando IgnoreCase para que no falle por "PENDIENTE" vs "Pendiente"
         List<Factura> pendientes = facturaRepository.findByIdProveedorAndEstadoIgnoreCase(idProveedor, "PENDIENTE");
@@ -62,7 +69,7 @@ public class ServicioProveedor {
             pendientes = facturaRepository.findByProveedorIdProveedorAndEstadoIgnoreCase(idProveedor, "PENDIENTE");
         }
         
-        return pendientes;
+        return pendientes != null ? pendientes : new ArrayList<>();
     }
 
     /**
@@ -71,24 +78,26 @@ public class ServicioProveedor {
      * @param idProveedor ID del proveedor
      * @return Saldo pendiente total
      */
+  
     public double calcularSaldoPendienteProveedor(long idProveedor) {
         List<Factura> facturasPendientes = recuperarFacturasPendientes(idProveedor);
         double saldoTotal = 0.0;
-        if (facturasPendientes != null) {
-            for (Factura f : facturasPendientes) {
-                saldoTotal += f.getSaldoPendiente();
-            }
+        
+        for (Factura f : facturasPendientes) {
+            saldoTotal += f.getSaldoPendiente();
         }
+        
         return saldoTotal;
     }
 
     /**
-     * Registra el pago de una factura, actualiza su saldo a 0.0 y cambia su estado a "Pagado".
+     * Registra el pago de una factura, actualiza su saldo a 0.0 y cambia su estado a "PAGADA".
      * RN-02 y RN-05: Se actualiza en la base de datos automáticamente.
      * 
      * @param idFactura ID de la factura a pagar
      * @return La factura actualizada o null si no existe o ya estaba pagada
      */
+    
     public Factura registrarPago(long idFactura) {
         Factura factura = facturaRepository.findByIdFactura(idFactura);
 

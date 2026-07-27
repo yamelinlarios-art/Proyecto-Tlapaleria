@@ -38,10 +38,6 @@ public class VentanaDetalleProveedor {
     @Lazy
     private ControlDetalleProveedor control;
 
-    @Autowired
-    @Lazy
-    private ControlProveedor controlProveedor;
-
     private Stage stage;
     private Proveedor proveedorActual;
 
@@ -91,7 +87,11 @@ public class VentanaDetalleProveedor {
         this.control = control;
     }
 
-    public void muestra(Proveedor proveedor) {
+    /**
+     * Muestra la ventana poblando los datos del proveedor, sus facturas y el saldo total adeudado.
+     * Recibe los 3 elementos del controlador para alinearse exactamente con el diagrama de secuencia.
+     */
+    public void muestra(Proveedor proveedor, List<Factura> facturas, double saldoTotal) {
         try {
             this.proveedorActual = proveedor;
 
@@ -101,7 +101,13 @@ public class VentanaDetalleProveedor {
             Parent root = loader.load();
 
             configurarTablaFacturas();
-            poblarDatos(proveedor);
+            
+            // Poblar información personal
+            poblarDatosProveedor(proveedor);
+
+            // Poblar las facturas iniciales y el saldo total recibidos del controlador
+            actualizarTablaFacturas(facturas);
+            actualizarSaldoTotal(saldoTotal);
 
             stage = new Stage();
             stage.setTitle("Detalles del Proveedor - " + (proveedor != null ? proveedor.getNombreCompleto() : ""));
@@ -164,31 +170,40 @@ public class VentanaDetalleProveedor {
         }
     }
 
-    private void poblarDatos(Proveedor proveedor) {
+    private void poblarDatosProveedor(Proveedor proveedor) {
         if (proveedor != null) {
             lblNombre.setText(proveedor.getNombreCompleto() != null ? proveedor.getNombreCompleto() : "N/A");
             lblContacto.setText(proveedor.getCorporativo() != null ? proveedor.getCorporativo() : "N/A");
             lblTelefono.setText(proveedor.getTelefono() != null ? proveedor.getTelefono() : "N/A");
             lblCorreo.setText(proveedor.getTipoProveedor() != null ? proveedor.getTipoProveedor() : "N/A");
             lblDireccion.setText("ID: " + proveedor.getIdProveedor());
-
-            recargarFacturasYSaldo();
         }
     }
 
-    private void recargarFacturasYSaldo() {
-        if (proveedorActual == null) return;
-
-        // Recuperar facturas pendientes desde el control de detalle
-        List<Factura> facturas = control.obtenerFacturasPendientes(proveedorActual.getIdProveedor());
+    private void actualizarTablaFacturas(List<Factura> facturas) {
         if (tablaFacturas != null && facturas != null) {
             ObservableList<Factura> listaObservable = FXCollections.observableArrayList(facturas);
             tablaFacturas.setItems(listaObservable);
         }
+    }
 
-        // Recalcular saldo total adeudado
+    private void actualizarSaldoTotal(double saldo) {
+        if (lblTotalAdeudado != null) {
+            lblTotalAdeudado.setText(String.format("$%.2f", saldo));
+        }
+    }
+
+    /**
+     * Vuelve a consultar al controlador si hay un pago exitoso para refrescar la UI.
+     */
+    private void recargarFacturasYSaldo() {
+        if (proveedorActual == null) return;
+
+        List<Factura> facturas = control.obtenerFacturasPendientes(proveedorActual.getIdProveedor());
+        actualizarTablaFacturas(facturas);
+
         double saldo = control.obtenerSaldoPendiente(proveedorActual.getIdProveedor());
-        lblTotalAdeudado.setText(String.format("$%.2f", saldo));
+        actualizarSaldoTotal(saldo);
     }
 
     private void handleRegistrarPago(Factura factura) {

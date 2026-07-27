@@ -47,24 +47,13 @@ public class ControlProveedor {
     }
 
     /**
-     * Inicia el detalle de un proveedor a partir del objeto seleccionado en la tabla.
-     */
-    public void mostrarDetalleProveedor(Proveedor proveedor) {
-        if (proveedor != null) {
-            controlDetalle.detalleProveedor(proveedor);
-        }
-    }
-
-    /**
-     * Inicia el detalle recuperando el proveedor por su ID (Según Diagrama de Secuencia).
+     * Inicia el flujo de consulta de detalle delegando al control de detalle mediante el ID.
+     * Método alineado con el Diagrama de Secuencia UML.
+     * 
+     * @param idProveedor Identificador único del proveedor
      */
     public void consultarProveedor(long idProveedor) {
-        Proveedor proveedor = servicioProveedor.recuperarProveedor(idProveedor);
-        if (proveedor != null) {
-            controlDetalle.detalleProveedor(proveedor);
-        } else {
-            ventana.muestraDialogoConMensaje("No se encontró el proveedor solicitado.");
-        }
+        controlDetalle.inicia(idProveedor);
     }
 
     /**
