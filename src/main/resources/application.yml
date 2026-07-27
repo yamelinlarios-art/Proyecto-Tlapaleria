@@ -1,18 +1,19 @@
 spring:
-
   datasource:
-    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:file:./data/tiendadb;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE
     driver-class-name: org.h2.Driver
+    username: sa
+    password:
   jpa:
     database: h2
     database-platform: org.hibernate.dialect.H2Dialect
     generate-ddl: true
     show-sql: false
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
   h2:
     console:
       enabled: true
-      
+
 server:
   port: 8080
