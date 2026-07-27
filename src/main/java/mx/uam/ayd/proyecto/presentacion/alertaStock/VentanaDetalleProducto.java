@@ -65,7 +65,6 @@ public class VentanaDetalleProducto {
             stage.initModality(Modality.APPLICATION_MODAL);
             
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ventana-dialogo-detalle-producto.fxml"));
-            // 🚨 CONECTAMOS CON SPRING: Le decimos a JavaFX que USE ESTA INSTANCIA
             loader.setControllerFactory(clazz -> this);
             
             Scene scene = new Scene(loader.load(), 400, 300);
@@ -99,10 +98,10 @@ public class VentanaDetalleProducto {
             return;
         }
         
-        // 1. Cargamos FXML si no se ha hecho
+        //Cargamos FXML si no se ha hecho
         initializeUI();
         
-        // 2. Seteamos la información en los Labels
+        //Seteamos la información en los Labels
         if (producto != null) {
             if (lblClave != null) lblClave.setText(producto.getClave());
             if (lblNombre != null) lblNombre.setText(producto.getNombre());
@@ -110,7 +109,7 @@ public class VentanaDetalleProducto {
             if (lblStockMinimo != null) lblStockMinimo.setText(String.valueOf(stockMinimo));
         }
         
-        // 3. Desplegamos la ventana modal (usamos show() para evitar bloqueos)
+        //Desplegamos la ventana modal (usamos show() para evitar bloqueos)
         if (stage != null) {
             stage.show();
             stage.toFront();

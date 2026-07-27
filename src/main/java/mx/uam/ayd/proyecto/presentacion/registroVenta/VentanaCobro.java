@@ -20,7 +20,7 @@ import javafx.stage.Stage;
 /**
  * Ventana emergente modal donde se ingresa el efectivo recibido y se calcula el cambio al cobrar.
  * 
- * @author Equipo Proyecto
+ * @author Dydier
  */
 @Component
 public class VentanaCobro {
@@ -78,7 +78,7 @@ public class VentanaCobro {
 
             initialized = true;
         } catch (IOException e) {
-            System.err.println("❌ Error al cargar la interfaz FXML de VentanaCobro:");
+            System.err.println("Error al cargar la interfaz FXML de VentanaCobro:");
             e.printStackTrace();
         }
     }

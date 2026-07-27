@@ -109,7 +109,7 @@ public class ServicioInventario {
         Inventario inventario = inventarioRepository.findById(idProducto).orElse(null);
         return (inventario != null) ? inventario.getStockMinimo() : 0;
     }
-      
+
     /**
      * Imprime en consola los productos con bajo stock, sirve mas para probar que funcione
      *

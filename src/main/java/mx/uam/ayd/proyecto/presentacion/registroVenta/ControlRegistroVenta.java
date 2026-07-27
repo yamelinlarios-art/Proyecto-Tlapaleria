@@ -52,15 +52,15 @@ public class ControlRegistroVenta {
      * 
      * @param venta objeto venta con la lista de productos acumulados
      */
-   public void iniciaConVenta(Venta venta) {
+    public void iniciaConVenta(Venta venta) {
     this.ventaActual = venta;
     
-    // Debug en consola
+    // Debug en consola (solo son comentarios de prueba)
     if (venta != null) {
-        System.out.println("📦 Productos recibidos: " + (venta.getProductos() != null ? venta.getProductos().size() : 0));
-        System.out.println("💰 Total recibido: $" + venta.getTotal());
+        System.out.println(" Productos recibidos: " + (venta.getProductos() != null ? venta.getProductos().size() : 0));
+        System.out.println(" Total recibido: $" + venta.getTotal());
     } else {
-        System.out.println("❌ Objeto Venta recibido es NULL");
+        System.out.println("Objeto Venta recibido es NULL");
     }
 
     if (ventanaCarrito != null) {
@@ -89,7 +89,7 @@ public class ControlRegistroVenta {
             }
         }
 
-        // 🔧 FIX DE TRANSICIÓN: Ocultar carrito y mostrar pantalla de cobro
+        //Ocultar carrito y mostrar pantalla de cobro
         if (ventanaCarrito != null) {
             ventanaCarrito.setVisible(false); // Oculta la ventana de Carrito
         }
